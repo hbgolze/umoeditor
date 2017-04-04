@@ -1,0 +1,80 @@
+{% extends './base.html' %}
+
+
+{% block title %}Problem: {{readablelabel}}{% endblock %}
+
+{% block content %}
+<ol class="breadcrumb">
+  <li><a href="/">All Problems</a></li>
+  <li class="active">{{problem.label}}</li>
+</ol>
+
+ <h1>{{problem.label}}</h1>
+<div class="form-group">
+
+<label>Problem Text:</label>
+{% autoescape off %}{{problem.problem_latex|linebreaks}} {% endautoescape %}  [{{problem.label}}]
+
+{% if request.user.is_superuser %}<p><a href="edittext/">Edit LaTeX Code</a></p>{% endif %}
+</div>
+{% if form.instance.author_name != '' %}<p>Author: {{form.instance.author_name}}</p>{% endif %}
+
+<label>Difficulty:</label>
+<p>
+{{form.instance.difficulty}}
+</p>
+
+<label>Solutions</label><br>
+{% for sol in sols %}
+<label>Solution {{forloop.counter}}:</label>
+  <p><small>(<a href="editsolution/{{sol.pk}}/">Edit</a>)</small> {% if request.user.is_superuser %}<small>(<a href="deletesolution/{{sol.pk}}/">Delete</a>)</small>{% endif %}</p>
+{% autoescape off %}  {{sol.solution_latex|linebreaks}} {% endautoescape %}
+  {% endfor %}
+  {% if sols|length == 0 %}<p>No Solutions Yet</p>{% endif %}
+  <button type="button" class="save btn btn-default" onclick="location.href='newsolution/'">New Solution</button>
+  <br><br>
+
+<div class="form-group">
+<p>
+  <label>Status:</label>
+</p>
+<p>
+{% if form.instance.problem_status == "PN" %}
+Propose for current year
+{% else %}
+{% if form.instance.problem_status == "PL" %}
+Propose for future year
+{% else %}
+{% if form.instance.problem_status == "MI" %}
+Needs minor revision
+{% else %}
+{% if form.instance.problem_status == "MJ" %}
+Needs major revision
+{% else %}
+{% if form.instance.problem_status == "TR" %}
+Trash
+{% endif %}
+{% endif %}
+{% endif %}
+{% endif %}
+{% endif %}
+</p>
+</div>
+<label>Comments:</label>
+<div class="comments-list">
+  {% for com in coms %}
+  <div class="media">
+    <p class="pull-right"><small>{{com.created_date}}</small></p>
+    <div class="media-body">
+      <h3 class="media-heading user_name">{{com.author_name}}</h3>
+      <p>{{com.comment_text|linebreaks}}</p>
+      {% if request.user.is_superuser %}<p><small>(<a href="deletecomment/{{com.pk}}/">Delete</a>)</small></p>{% endif %}
+      
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% if coms|length == 0 %}<p>No Comments Yet</p>{% endif %}
+
+<button type="button" class="save btn btn-default" onclick="location.href='newcomment'">New Comment</button>
+{% endblock %}

@@ -1,0 +1,22 @@
+{% extends './base.html' %}
+
+{% block title %}Solutions: {{problem.label}}{% endblock %}
+
+{% block content %}
+<ol class="breadcrumb">
+  <li><a href="/">All Problems</a></li>
+  <li><a href="/detailedview/{{problem.pk}}">{{problem.label}}</a></li>
+  <li class="active">New Solution</li>
+</ol>
+    <h2>New Solution to {{readablelabel}}</h2>
+    <form method="POST" class="post-form">{% csrf_token %}
+<div class="form-group">
+<label>Problem Text:</label>
+<p>{% autoescape off %}{{problem.problem_latex|linebreaks}} {% endautoescape %}  [{{problem.label}}]</p>
+
+</div>
+          <h3>Solution</h3>
+          {{ form.solution_text }} <br>
+        <button type="submit" class="save btn btn-default">Save</button>
+    </form>
+{% endblock %}

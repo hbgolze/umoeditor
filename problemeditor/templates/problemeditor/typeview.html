@@ -39,7 +39,7 @@ else { document.getElementById(d).style.display = "none"; }
 <tr>
 <td>
 <p>
-{{p.problem_latex}}
+{% autoescape off %}{{p.problem_latex|linebreaks}} {% endautoescape %}
 </p>
 </td>
 </tr>

@@ -9,7 +9,7 @@ No Past Tests Available.
 {% else %}
 <div class="list-group col-sm-3">
   {% for t in pasttests %}
-  <a href="{{t.year}}" class="list-group-item list-group-item-action">{{t.year}} UMO</a>
+  <a href="{{t.pk}}" class="list-group-item list-group-item-action">{{t.year}} UMO</a>
   {% endfor %}
 </div>
 {% endif %}

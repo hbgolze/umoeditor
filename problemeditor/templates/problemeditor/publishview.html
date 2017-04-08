@@ -1,0 +1,45 @@
+{% extends "./base.html" %}
+
+{% block title %}{% endblock %}
+
+
+{% block content %}
+
+
+<h2>Preview for {{year}} UMO</h2>
+
+<table class="table">
+  {% for p in problems %}
+  <tr>
+    <td valign="top" class="col-sm-1"><br>
+      {{forloop.counter}}. 
+    </td>
+    <td>
+
+      <table width="100%">
+	<tr>
+	  <td>
+	    <p>
+	      {{p.problem_latex}}
+	    </p>
+	  </td>
+	</tr>
+	<tr>
+	  <td>
+	    <p><a class="btn btn-primary" href="/detailedview/{{p.pk}}">Detailed View</a>
+	    </p>
+	    
+	  </td>
+	</tr>
+      </table>
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+
+    <form method="POST" class="post-form">{% csrf_token %}
+<p>
+        <button type="submit" class="save btn btn-primary">Publish</button>
+</p>
+    </form>
+{% endblock %}

@@ -247,7 +247,21 @@ def pasttestsview(request):
     return render(request,'problemeditor/pasttestsview.html',{'pasttests':F,'nbar':'pasttests'})
 
 @login_required
-def viewpasttest(request,year):
-    T=get_object_or_404(FinalTest,year=year)
+def viewpasttest(request,pk):
+    T=get_object_or_404(FinalTest,pk=pk)
     probs=T.problems.order_by('difficulty')
     return render(request,'problemeditor/pasttest.html',{'year':T.year,'nbar':'pasttests','problems':probs})
+
+@login_required
+def publishview(request,year):
+    problems = Problem.objects.filter(problem_status='PN')
+    if request.method == "POST":
+        T=FinalTest(year=year)
+        T.save()        
+        for p in problems:
+            T.problems.add(p)
+            p.problem_status='XX'
+            p.save()
+        T.save()
+        return redirect('/pasttests/')
+    return render(request,'problemeditor/publishview.html',{'year':year,'nbar':'pasttests','problems':problems})    

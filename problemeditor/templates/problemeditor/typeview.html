@@ -2,6 +2,21 @@
 
 {% block title %}View Problems{% endblock %}
 
+{% block head %}<script type="text/javascript" language="JavaScript">
+function HideContent(d) {
+document.getElementById(d).style.display = "none";
+}
+function ShowContent(d) {
+document.getElementById(d).style.display = "block";
+}
+function ReverseDisplay(d) {
+if(document.getElementById(d).style.display == "none") { document.getElementById(d).style.display = "block"; }
+else { document.getElementById(d).style.display = "none"; }
+}
+</script>
+
+{% endblock %}
+
 {% block content %}
 <h2>Proposed for Current Year</h2>
 
@@ -19,12 +34,13 @@
 <p>
 {{p.problem_latex}}
 </p>
+<div class="col-sm-3">
 <p><b>Author:</b> {{p.author_name}}</p>
 <p><b>Difficulty:</b>
 <form action="." method="post">
 {% csrf_token %}
 
-<select name="difficulty_{{p.pk}}" onchange="this.form.submit()">
+<select name="difficulty_{{p.pk}}" onchange="this.form.submit()" class="form-control">
 <option value="1" {% if p.difficulty == "1" %}selected{% endif %}>1
 </option>
 <option value="2" {% if p.difficulty == "2" %}selected{% endif %}>2
@@ -40,11 +56,12 @@
 </select>
 </form>
 </p>
+
 <p><b>Move To:</b>
 <form action="." method="post">
 {% csrf_token %}
 
-<select name="status_{{p.pk}}" onchange="this.form.submit()">
+<select name="status_{{p.pk}}" onchange="this.form.submit()" class="form-control">
 <option value="PN" {% if p.problem_status == "PN" %}selected{% endif %}>Propose for Current Year
 </option>
 <option value="PL" {% if p.problem_status == "PL" %}selected{% endif %}>Propose for Future Year
@@ -58,9 +75,29 @@
 </select>
 </form>
 </p>
-<p><a class="btn btn-primary" href="detailedview/{{p.pk}}">Edit Solutions, Comments, LaTeX</a>
+
+<p><a class="btn btn-primary" href="detailedview/{{p.pk}}">Edit Solutions ({{p.solutions.count}}), Comments, LaTeX</a>
 </p>
+</div>
+<a href="javascript:ReverseDisplay('comment_{{p.pk}}')">
+Click to show/hide comments ({{p.comments.count}}).
+</a>
+
+<div id="comment_{{p.pk}}" style="display:none">
+{% for c in p.comments.all %}
+  <div class="media">
+    <p class="pull-right"><small>{{c.created_date}}</small></p>
+    <div class="media-body">
+      <h3 class="media-heading user_name">{{c.author_name}}</h3>
+      <p>{{c.comment_text|linebreaks}}</p>
+
+    </div>
+  </div>
+{% endfor %}
+</div>
 <p class="pull-right"><small>[{{p.label}}], Proposed on {{p.created_date}}</small></p>
+
+
 </td>
 </tr>
 {% endfor %}
@@ -1502,6 +1539,6 @@
 
 
 <a class="btn btn-primary" href="addproblem/">Add a problem</a>
-</div>
+<!--</div>-->
 
 {% endblock %}

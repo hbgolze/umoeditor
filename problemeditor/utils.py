@@ -191,9 +191,7 @@ def goodtag(t):
 
 
 def compileasy(texcode,label,sol=''):
-    print("hey")
     repl = asyreplacementindexes(texcode)
-    print(repl)
     for i in range(0,len(repl)):
         asy_code = texcode[repl[i][0]:repl[i][1]]
         asy_code = asy_code.replace('\\begin{asy}','')
@@ -201,7 +199,6 @@ def compileasy(texcode,label,sol=''):
         asy_code = asy_code.replace('\\end{asy}','')
         asy_code = asy_code.replace('\\end{center}','</center>')
         asy_code = asy_code.rstrip().lstrip()
-        print(asy_code)
         filename = label+sol+'-'+str(i+1)
         context = Context({
                 'asy_code':asy_code,
@@ -209,7 +206,6 @@ def compileasy(texcode,label,sol=''):
                 })
         template = get_template('problemeditor/my_asy_template.asy')
         rendered_tpl = template.render(context).encode('utf-8')
-        print(rendered_tpl)
         with tempfile.TemporaryDirectory() as tempdir:
             process = Popen(
                 ['asy', '-o', os.path.join(tempdir,filename+'.pdf')],
@@ -218,11 +214,9 @@ def compileasy(texcode,label,sol=''):
                 )
             process.communicate(rendered_tpl)
             L=os.listdir(tempdir)
-            print(L)
             for j in L:
                 if 'pdf' in j:
                     command = "convert -density 150 -quality 95 %s/%s %s%s" % (tempdir, j, settings.MEDIA_ROOT, j.replace('.pdf','.png'))
-                    print(command)
                     proc = subprocess.Popen(command,
                                             shell=True,
                                             stdin=subprocess.PIPE,

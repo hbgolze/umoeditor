@@ -227,6 +227,7 @@ def detailedproblemview(request,**kwargs):
 
 @login_required
 def addproblemview(request):
+    prob=Problem()
     if request.method == "POST":
         form = AddProblemForm(request.POST, instance=prob)
         if form.is_valid():
@@ -237,7 +238,6 @@ def addproblemview(request):
             problem.save()
             return redirect('../detailedview/'+str(problem.pk)+'/')
     else:
-        prob=Problem()
         form = AddProblemForm(instance=prob)
         return render(request, 'problemeditor/addview.html', {'form': form, 'nbar': 'problemeditor'})
 

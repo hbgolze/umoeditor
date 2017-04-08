@@ -55,7 +55,7 @@ class CommentForm(forms.ModelForm):
         self.fields['author_name'].required = True
 
 class AddProblemForm(forms.ModelForm):
-    topic=forms.ModelChoiceField(queryset = Topic.objects.all(),required = True)
+#    topic=forms.ModelChoiceField(queryset = Topic.objects.all(),required = True)
     class Meta:
         model = Problem
         fields = ('problem_text',

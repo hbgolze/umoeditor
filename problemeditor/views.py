@@ -7,7 +7,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 from formtools.wizard.views import SessionWizardView
 
-from .models import Problem, Topic,  Solution,Comment,ProblemStatus
+from .models import Problem, Topic,  Solution,Comment,ProblemStatus,FinalTest
 from .forms import SolutionForm,ProblemTextForm,AddProblemForm,DetailedProblemForm,CommentForm,DiffMoveProblemForm
 from .utils import goodtag,goodurl,newtexcode,newsoltexcode,compileasy
 
@@ -47,38 +47,49 @@ def index_view(request):
     propose_later = Problem.objects.filter(problem_status='PL')
     needs_minor = Problem.objects.filter(problem_status='MI')
     needs_major = Problem.objects.filter(problem_status='MJ')
-    pna = propose_now.filter(topic__topic='Algebra')
-    pla = propose_later.filter(topic__topic='Algebra')
-    mia = needs_minor.filter(topic__topic='Algebra')
-    mja = needs_major.filter(topic__topic='Algebra')
-    pnc = propose_now.filter(topic__topic='Combinatorics')
-    plc = propose_later.filter(topic__topic='Combinatorics')
-    mic = needs_minor.filter(topic__topic='Combinatorics')
-    mjc = needs_major.filter(topic__topic='Combinatorics')
-    png = propose_now.filter(topic__topic='Geometry')
-    plg = propose_later.filter(topic__topic='Geometry')
-    mig = needs_minor.filter(topic__topic='Geometry')
-    mjg = needs_major.filter(topic__topic='Geometry')
-    pnn = propose_now.filter(topic__topic='Number Theory')
-    pln = propose_later.filter(topic__topic='Number Theory')
-    min = needs_minor.filter(topic__topic='Number Theory')
-    mjn = needs_major.filter(topic__topic='Number Theory')
-    pnga = propose_now.filter(topic__topic='Games')
-    plga = propose_later.filter(topic__topic='Games')
-    miga = needs_minor.filter(topic__topic='Games')
-    mjga = needs_major.filter(topic__topic='Games')
-    pno = propose_now.filter(topic__topic='Other')
-    plo = propose_later.filter(topic__topic='Other')
-    mio = needs_minor.filter(topic__topic='Other')
-    mjo = needs_major.filter(topic__topic='Other')
+    pna = propose_now.filter(topic='Algebra')
+    pla = propose_later.filter(topic='Algebra')
+    mia = needs_minor.filter(topic='Algebra')
+    mja = needs_major.filter(topic='Algebra')
+    pnc = propose_now.filter(topic='Combinatorics')
+    plc = propose_later.filter(topic='Combinatorics')
+    mic = needs_minor.filter(topic='Combinatorics')
+    mjc = needs_major.filter(topic='Combinatorics')
+    png = propose_now.filter(topic='Geometry')
+    plg = propose_later.filter(topic='Geometry')
+    mig = needs_minor.filter(topic='Geometry')
+    mjg = needs_major.filter(topic='Geometry')
+    pnn = propose_now.filter(topic='Number Theory')
+    pln = propose_later.filter(topic='Number Theory')
+    min = needs_minor.filter(topic='Number Theory')
+    mjn = needs_major.filter(topic='Number Theory')
+    pnga = propose_now.filter(topic='Games')
+    plga = propose_later.filter(topic='Games')
+    miga = needs_minor.filter(topic='Games')
+    mjga = needs_major.filter(topic='Games')
+    pno = propose_now.filter(topic='Other')
+    plo = propose_later.filter(topic='Other')
+    mio = needs_minor.filter(topic='Other')
+    mjo = needs_major.filter(topic='Other')
 #might need calculations to build rows (# sols, etc?)
     template=loader.get_template('problemeditor/typeview.html')
-    context= {'pna' : pna, 'pla' : pla, 'mia': mia, 'mja' : mja,
-              'pnc' : pnc, 'plc' : plc, 'mic': mic, 'mjc' : mjc,
-              'png' : png, 'plg' : plg, 'mig': mig, 'mjg' : mjg,
-              'pnn' : pnn, 'pln' : pln, 'min': min, 'mjn' : mjn,
-              'pnga' : pnga, 'plga' : plga, 'miga': miga, 'mjga' : mjga,
-              'pno' : pno, 'plo' : plo, 'mio': mio, 'mjo' : mjo, 'nbar': 'problemeditor'}
+#    context= {'pna' : pna, 'pla' : pla, 'mia': mia, 'mja' : mja,
+#              'pnc' : pnc, 'plc' : plc, 'mic': mic, 'mjc' : mjc,
+#              'png' : png, 'plg' : plg, 'mig': mig, 'mjg' : mjg,
+#              'pnn' : pnn, 'pln' : pln, 'min': min, 'mjn' : mjn,
+#              'pnga' : pnga, 'plga' : plga, 'miga': miga, 'mjga' : mjga,
+#              'pno' : pno, 'plo' : plo, 'mio': mio, 'mjo' : mjo, 'nbar': 'problemeditor'}
+    allcats= (
+        ('Proposed for Current Year',
+         ((pna,'Algebra'),(pnc,'Combinatorics'),(pnga,'Games'),(png,'Geometry'),(pnn,'Number Theory'),(pno,'Other'))),
+        ('Proposed for Future Year',
+         ((pla,'Algebra'),(plc,'Combinatorics'),(plga,'Games'),(plg,'Geometry'),(pln,'Number Theory'),(plo,'Other'))),
+        ('Needs Minor Revision',
+         ((mia,'Algebra'),(mic,'Combinatorics'),(miga,'Games'),(mig,'Geometry'),(min,'Number Theory'),(mio,'Other'))),
+        ('Needs Major Revision',
+         ((mja,'Algebra'),(mjc,'Combinatorics'),(mjga,'Games'),(mjg,'Geometry'),(mjn,'Number Theory'),(mjo,'Other'))),
+        )
+    context = {'allcats':allcats,'nbar':'problemeditor'}
     return HttpResponse(template.render(context,request))
 
 
@@ -216,18 +227,27 @@ def detailedproblemview(request,**kwargs):
 
 @login_required
 def addproblemview(request):
-    prob=Problem()
     if request.method == "POST":
         form = AddProblemForm(request.POST, instance=prob)
         if form.is_valid():
             problem = form.save()
             problem.save()
-            problem.label = problem.topic.topic+' '+str(problem.topic.top_index)
-            problem.topic.top_index+=1
-            problem.topic.save()
+            problem.label = 'Problem '+str(problem.pk)
+            problem.problem_latex = newtexcode(problem.problem_text,problem.label)
             problem.save()
             return redirect('../detailedview/'+str(problem.pk)+'/')
     else:
+        prob=Problem()
         form = AddProblemForm(instance=prob)
-    return render(request, 'problemeditor/addview.html', {'form': form, 'nbar': 'problemeditor'})
+        return render(request, 'problemeditor/addview.html', {'form': form, 'nbar': 'problemeditor'})
 
+@login_required
+def pasttestsview(request):
+    F=FinalTest.objects.order_by('year')
+    return render(request,'problemeditor/pasttestsview.html',{'pasttests':F,'nbar':'pasttests'})
+
+@login_required
+def viewpasttest(request,year):
+    T=get_object_or_404(FinalTest,year=year)
+    probs=T.problems.order_by('difficulty')
+    return render(request,'problemeditor/pasttest.html',{'year':T.year,'nbar':'pasttests','problems':probs})

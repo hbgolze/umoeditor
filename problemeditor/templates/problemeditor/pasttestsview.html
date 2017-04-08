@@ -1,0 +1,16 @@
+{% extends './base.html' %}
+
+{% block title %}Add New Problem{% endblock %}
+
+{% block content %}
+<h2>Past Tests</h2>
+{% if pasttests|length == 0 %}
+No Past Tests Available.
+{% else %}
+<div class="list-group col-sm-3">
+  {% for t in pasttests %}
+  <a href="{{t.year}}" class="list-group-item list-group-item-action">{{t.year}} UMO</a>
+  {% endfor %}
+</div>
+{% endif %}
+{% endblock %}

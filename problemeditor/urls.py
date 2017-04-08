@@ -18,6 +18,8 @@ urlpatterns = [
     url(r'^detailedview/(?P<pk>\w+)/newcomment/$', views.newcommentpkview, name='newcommentpkview'),
     url(r'^detailedview/(?P<pk>\w+)/deletecomment/(?P<cpk>\w+)/$', views.deletecommentpkview, name='deletecommentpkview'),
     url(r'^addproblem/$',views.addproblemview,name='addproblemview'),
+    url(r'^pasttests/$',views.pasttestsview,name='pasttests'),
+    url(r'^pasttests/(?P<year>\w+)/$',views.viewpasttest,name='viewpasttest'),
 #    url(r'^detailedview/(?P<pk>\w+)/editreview/(?P<apk>\w+)/$', views.editreviewpkview, name='editreviewpkview'),
 #    url(r'^detailedview/(?P<pk>\w+)/newreview/$', views.newreviewpkview, name='newreviewpkview'),
 

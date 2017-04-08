@@ -13,10 +13,10 @@ STATUS_CHOICES = (
     ('TR', 'Trash'),
     )
 
-
 class Topic(models.Model):
     topic = models.CharField(max_length=20,blank=True)
     top_index = models.IntegerField(default=1)
+#    problems = models.ManyToManyField(Problem,blank=True)
     def __str__(self):
         return self.topic
 
@@ -45,7 +45,16 @@ class Comment(models.Model):
         return self.problem_label+' comment '+str(self.created_date)+', '+str(self.author)
 
 class Problem(models.Model):
-    topic = models.ForeignKey(Topic,blank=True,null=True)
+#    topic = models.ForeignKey(Topic,blank=True,null=True)
+    TOPIC_CHOICES = (
+        ('Algebra','Algebra'),
+        ('Combinatorics','Combinatorics'),
+        ('Games','Games'),
+        ('Geometry','Geometry'),
+        ('Number Theory','Number Theory'),
+        ('Other','Other'),
+        )
+    topic = models.CharField(max_length = 20,choices=TOPIC_CHOICES,blank=False,default='Algebra')
     DIFFICULTY_CHOICES = (
         ('1','1'),
         ('2','2'),
@@ -68,6 +77,11 @@ class Problem(models.Model):
     def __str__(self):
         return self.label
 
+class FinalTest(models.Model):
+    problems=models.ManyToManyField(Problem,blank=True)
+    year = models.CharField(max_length=4)
+    def __str__(self):
+        return self.year+' UMO'
 #Probably useless
 class UserProfile(models.Model):
     # This line is required. Links UserProfile to a User model instance.

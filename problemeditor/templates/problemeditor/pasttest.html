@@ -1,0 +1,41 @@
+{% extends "./base.html" %}
+
+{% block title %}{% endblock %}
+
+
+{% block content %}
+
+
+<h2>{{year}} UMO</h2>
+
+<table class="table">
+  {% for p in problems %}
+  <tr>
+    <td valign="top" class="col-sm-1"><br>
+      {{forloop.counter}}. 
+    </td>
+    <td>
+
+      <table width="100%">
+	<tr>
+	  <td>
+	    <p>
+	      {{p.problem_latex}}
+	    </p>
+	  </td>
+	</tr>
+	<tr>
+	  <td>
+	    <p><a class="btn btn-primary" href="/detailedview/{{p.pk}}">Detailed View</a>
+	    </p>
+	    
+	  </td>
+	</tr>
+      </table>
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+
+
+{% endblock %}

@@ -114,6 +114,7 @@ def replaceenumerate(s,optional=''):
         return r
 
 def newtexcode(texcode,label):
+    label=label.replace(' ','')
     texcode=texcode.replace('<',' < ')
     repl=asyreplacementindexes(texcode)
     newtexcode=''
@@ -142,6 +143,7 @@ def newtexcode(texcode,label):
     return newtexcode
 
 def newsoltexcode(texcode,label):
+    label=label.replace(' ','')
     texcode=texcode.replace('<',' < ')
     repl=asyreplacementindexes(texcode)
     newtexcode=''
@@ -200,6 +202,7 @@ def compileasy(texcode,label,sol=''):
         asy_code = asy_code.replace('\\end{center}','</center>')
         asy_code = asy_code.rstrip().lstrip()
         filename = label+sol+'-'+str(i+1)
+        filename = filename.replace(' ','')
         context = Context({
                 'asy_code':asy_code,
                 'filename':filename,

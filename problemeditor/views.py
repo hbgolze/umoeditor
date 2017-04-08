@@ -1,9 +1,10 @@
 from django.shortcuts import render,render_to_response, get_object_or_404,redirect
 from django.http import HttpResponse,HttpResponseRedirect,Http404
-from django.template import loader,RequestContext
+from django.template import loader,RequestContext,Context
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.conf import settings
 
 from formtools.wizard.views import SessionWizardView
 
@@ -11,6 +12,14 @@ from .models import Problem, Topic,  Solution,Comment,ProblemStatus,FinalTest
 from .forms import SolutionForm,ProblemTextForm,AddProblemForm,DetailedProblemForm,CommentForm,DiffMoveProblemForm
 from .utils import goodtag,goodurl,newtexcode,newsoltexcode,compileasy
 
+from django.template.loader import get_template
+
+from subprocess import Popen,PIPE
+import tempfile
+import os
+
+import logging
+logger = logging.getLogger(__name__)
 
 # Create your views here.
 
@@ -265,3 +274,75 @@ def publishview(request,year):
         T.save()
         return redirect('/pasttests/')
     return render(request,'problemeditor/publishview.html',{'year':year,'nbar':'pasttests','problems':problems})    
+
+
+@login_required
+def test_as_pdf(request, pk):
+    test = get_object_or_404(FinalTest, pk=pk)
+    P=test.problems.order_by('difficulty')
+    context = Context({  
+            'name':test.year+' UMO',
+            'rows':P,
+            'pk':pk,
+            })
+    asyf = open(settings.BASE_DIR+'/asymptote.sty','r')
+    asyr = asyf.read()
+    asyf.close()
+    template = get_template('problemeditor/my_latex_template.tex')
+    rendered_tpl = template.render(context).encode('utf-8')  
+    # Python3 only. For python2 check out the docs!
+    with tempfile.TemporaryDirectory() as tempdir:
+        # Create subprocess, supress output with PIPE and
+        # run latex twice to generate the TOC properly.
+        # Finally read the generated pdf.
+        fa=open(os.path.join(tempdir,'asymptote.sty'),'w')
+        fa.write(asyr)
+        fa.close()
+        logger.debug(os.listdir(tempdir))
+        context = Context({  
+                'name':test.year+' UMO',
+                'rows':P,
+                'pk':pk,
+                'tempdirect':tempdir,
+                })
+        template = get_template('problemeditor/my_latex_template.tex')
+        rendered_tpl = template.render(context).encode('utf-8')  
+        ftex=open(os.path.join(tempdir,'texput.tex'),'wb')
+        ftex.write(rendered_tpl)
+        ftex.close()
+        logger.debug(os.listdir(tempdir))
+        for i in range(1):
+            process = Popen(
+                ['pdflatex', 'texput.tex'],
+                stdin=PIPE,
+                stdout=PIPE,
+                cwd = tempdir,
+            )
+            stdout_value = process.communicate()[0]
+        L=os.listdir(tempdir)
+        logger.debug(os.listdir(tempdir))
+
+        for i in range(0,len(L)):
+            if L[i][-4:]=='.asy':
+                process1 = Popen(
+                    ['asy', L[i]],
+                    stdin = PIPE,
+                    stdout = PIPE,
+                    cwd = tempdir,
+                    )
+                stdout_value = process1.communicate()[0]
+        logger.debug(os.listdir(tempdir))
+        for i in range(2):
+            process2 = Popen(
+                ['pdflatex', 'texput.tex'],
+                stdin=PIPE,
+                stdout=PIPE,
+                cwd = tempdir,
+            )
+            stdout_value = process2.communicate()[0]
+        logger.debug(os.listdir(tempdir))
+        with open(os.path.join(tempdir, 'texput.pdf'), 'rb') as f:
+            pdf = f.read()
+    r = HttpResponse(content_type='application/pdf')  
+    r.write(pdf)
+    return r

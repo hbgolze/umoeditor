@@ -287,9 +287,7 @@ def compiletikz(texcode,label,sol=''):
                     )
                 process.communicate(rendered_tpl)
             L=os.listdir(tempdir)
-            print(L)
             command = "convert -density 150 -quality 95 %s/%s -trim -bordercolor White -border 10x10 +repage %s%s" % (tempdir, 'texput.pdf', settings.MEDIA_ROOT, filename+'.png')
-            print(command)
             proc = subprocess.Popen(command,
                                     shell=True,
                                     stdin=subprocess.PIPE,

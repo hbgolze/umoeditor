@@ -18,10 +18,11 @@ else { document.getElementById(d).style.display = "none"; }
 {% endblock %}
 
 {% block content %}
+<a class="btn btn-primary" href="addproblem/">Add a problem</a>
 
 {% for labl,plist in allcats %}
 
-<h2>{{labl}}</h2>
+<h1>{{labl}}</h1>
 
 {% for problems,topic in plist %}
 <h3>{{topic}}</h3>

@@ -10,7 +10,7 @@ from formtools.wizard.views import SessionWizardView
 
 from .models import Problem, Topic,  Solution,Comment,ProblemStatus,FinalTest
 from .forms import SolutionForm,ProblemTextForm,AddProblemForm,DetailedProblemForm,CommentForm,DiffMoveProblemForm
-from .utils import goodtag,goodurl,newtexcode,newsoltexcode,compileasy
+from .utils import goodtag,goodurl,newtexcode,newsoltexcode,compileasy,compiletikz
 
 from django.template.loader import get_template
 
@@ -113,6 +113,7 @@ def editproblemtextpkview(request,**kwargs):
             problem.problem_latex = newtexcode(problem.problem_text,problem.label)
             problem.save()
             compileasy(problem.problem_text,problem.label)
+            compiletikz(problem.problem_text,problem.label)
         return redirect('../')
     else:
         form = ProblemTextForm(instance=prob)
@@ -140,6 +141,7 @@ def newsolutionpkview(request,**kwargs):
             sol.solution_latex = newsoltexcode(sol.solution_text,prob.label+'sol'+str(sol.solution_number))
             sol.save()
             compileasy(sol.solution_text,prob.label,sol='sol'+str(sol_num))
+            compiletikz(sol.solution_text,prob.label,sol='sol'+str(sol_num))
             prob.solutions.add(sol)
             prob.save()
         return redirect('../')
@@ -164,6 +166,7 @@ def editsolutionpkview(request,**kwargs):
             sol.solution_latex=newsoltexcode(sol.solution_text,prob.label+'sol'+str(sol.solution_number))
             sol.save()
             compileasy(sol.solution_text,prob.label,sol='sol'+str(sol.solution_number))
+            compiletikz(sol.solution_text,prob.label,sol='sol'+str(sol.solution_number))
             return redirect('../../')
     form = SolutionForm(instance=sol)
     return render(request, 'problemeditor/editsol.html', {'form': form, 'nbar': 'problemeditor','problem':prob})

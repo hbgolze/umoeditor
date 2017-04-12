@@ -26,7 +26,7 @@
 
 <label>Solutions</label><br>
 {% for sol in sols %}
-<label>Solution {{forloop.counter}}:</label>
+<label>Solution {{forloop.counter}}{% if sol.author_name != "" %} ({{sol.author_name}}){% endif %}:</label>
   <p><small>(<a href="editsolution/{{sol.pk}}/">Edit</a>)</small> {% if request.user.is_superuser %}<small>(<a href="deletesolution/{{sol.pk}}/">Delete</a>)</small>{% endif %}</p>
 {% autoescape off %}  {{sol.solution_latex|linebreaks}} {% endautoescape %}
   {% endfor %}

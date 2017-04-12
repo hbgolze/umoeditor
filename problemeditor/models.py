@@ -31,6 +31,8 @@ class Solution(models.Model):
     solution_number = models.IntegerField(default=1)
     problem_label = models.CharField(max_length=20,blank=True)
     authors = models.ManyToManyField(User,blank=True)
+    author_name = models.CharField(max_length=50,blank=True)
+    created_date = models.DateTimeField(default = timezone.now)
     def __str__(self):
         return self.problem_label+' sol '+str(self.solution_number)+str(self.authors.all())
 

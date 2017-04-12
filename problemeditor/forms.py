@@ -39,7 +39,7 @@ class ProblemTextForm(forms.ModelForm):
 class SolutionForm(forms.ModelForm):
     class Meta:
         model = Solution
-        fields = ('solution_text',)
+        fields = ('author_name','solution_text',)
         widgets = {
             'solution_text': forms.Textarea(attrs={'cols': 120, 'rows': 15,'id' : 'codetext'})
         }

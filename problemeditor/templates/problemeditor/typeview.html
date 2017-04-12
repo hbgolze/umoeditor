@@ -45,12 +45,14 @@ else { document.getElementById(d).style.display = "none"; }
 </tr>
 <tr>
 <td>
-  <div class="col-sm-3">
-    <p><b>Author:</b> {{p.author_name}}</p>
-    <p><b>Difficulty:</b>
+  <p><b>Author:</b> {{p.author_name}}</p>
+
+  <div class="row">
+
+    <div class="col-sm-1">
       <form action="." method="post">
 	{% csrf_token %}
-
+	<label for="difficulty_{{p.pk}}">Difficulty:</label>
 	<select name="difficulty_{{p.pk}}" onchange="this.form.submit()" class="form-control">
 	  <option value="1" {% if p.difficulty == "1" %}selected{% endif %}>1
 	  </option>
@@ -66,29 +68,32 @@ else { document.getElementById(d).style.display = "none"; }
 	  </option>
 	</select>
       </form>
-    </p>
-
-    <p><b>Move To:</b>
-      <form action="." method="post">
-	{% csrf_token %}
-	
-	<select name="status_{{p.pk}}" onchange="this.form.submit()" class="form-control">
-	  <option value="PN" {% if p.problem_status == "PN" %}selected{% endif %}>Propose for Current Year
-	  </option>
-	  <option value="PL" {% if p.problem_status == "PL" %}selected{% endif %}>Propose for Future Year
-	  </option>
-	  <option value="MI" {% if p.problem_status == "MI" %}selected{% endif %}>Needs Minor Revision
-	  </option>
-	  <option value="MJ" {% if p.problem_status == "MJ" %}selected{% endif %}>Needs Major Revision
-	  </option>
-	  <option value="TR" {% if p.problem_status == "TR" %}selected{% endif %}>Trash
-	  </option>
-	</select>
-      </form>
-    </p>
-    
-    <p><a class="btn btn-primary" href="detailedview/{{p.pk}}">Edit Solutions ({{p.solutions.count}}), Comments, LaTeX</a>
-    </p>
+    </div>
+    <label for="status_{{p.pk}}">&nbsp;&nbsp;&nbsp;Move To:</label>
+    <div class="row">
+      <div class="col-sm-3">
+	<form action="." method="post">
+	  {% csrf_token %}
+	  
+	  <select name="status_{{p.pk}}" onchange="this.form.submit()" class="form-control">
+	    <option value="PN" {% if p.problem_status == "PN" %}selected{% endif %}>Propose for Current Year
+	    </option>
+	    <option value="PL" {% if p.problem_status == "PL" %}selected{% endif %}>Propose for Future Year
+	    </option>
+	    <option value="MI" {% if p.problem_status == "MI" %}selected{% endif %}>Needs Minor Revision
+	    </option>
+	    <option value="MJ" {% if p.problem_status == "MJ" %}selected{% endif %}>Needs Major Revision
+	    </option>
+	    <option value="TR" {% if p.problem_status == "TR" %}selected{% endif %}>Trash
+	    </option>
+	  </select>
+	</form>
+      </div>
+      <div class="col-sm-3">
+	<p><a class="btn btn-primary" name="det_{{p.pk}}" href="detailedview/{{p.pk}}">Edit Solutions ({{p.solutions.count}}), Comments, LaTeX</a>
+	</p>
+      </div>
+    </div>
   </div>
 </td>
 </tr>

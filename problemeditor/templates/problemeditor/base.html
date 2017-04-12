@@ -4,6 +4,7 @@
 <head>
   <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
   <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+{% load static %}
   <link rel="stylesheet" type="text/css" href="{% static 'problemeditor/style.css' %}" />
 
 <script type="text/x-mathjax-config">
@@ -15,7 +16,7 @@
 </script>
 
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
-    <title>{% block title %}Random Contest{% endblock %}</title>
+    <title>{% block title %}UMO Editor{% endblock %}</title>
 
 {% block head %} {% endblock %}
 </head>
@@ -27,7 +28,7 @@
     {% else %}
         <p><small><a href="{% url 'login' %}" class="top-menu">Login</a></small></p>
     {% endif %}
-    <h1>Random Test Creator</h1>
+    <h1>UMO Editor</h1>
     </div>
 {% if user.is_authenticated %}
 <div class="navig">

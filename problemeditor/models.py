@@ -6,9 +6,10 @@ from django.contrib.auth.models import User
 
 # Create your models here.
 STATUS_CHOICES = (
+    ('NP', 'New Problem'),
     ('PN', 'Propose for Current Year'),
     ('PL', 'Propose for Future Year'),
-    ('MI', 'Needs Minor Revision'),
+    ('MI', 'Has Potential'),
     ('MJ', 'Needs Major Revision'),
     ('TR', 'Trash'),
     )
@@ -75,7 +76,7 @@ class Problem(models.Model):
     author_name = models.CharField(max_length=50,blank=True)
     created_date = models.DateTimeField(default = timezone.now)
     comments = models.ManyToManyField(Comment,blank=True)
-    problem_status = models.CharField(max_length=2,default='PN')#ManyToManyField(ProblemStatus,blank=True)
+    problem_status = models.CharField(max_length=2,default='NP')#ManyToManyField(ProblemStatus,blank=True)
     def __str__(self):
         return self.label
 

@@ -52,30 +52,37 @@ def index_view(request):
                 prob=Problem.objects.get(pk=pk)
                 prob.difficulty=form[i]
                 prob.save()
+    new_problems = Problem.objects.filter(problem_status='NP')
     propose_now = Problem.objects.filter(problem_status='PN')
     propose_later = Problem.objects.filter(problem_status='PL')
     needs_minor = Problem.objects.filter(problem_status='MI')
     needs_major = Problem.objects.filter(problem_status='MJ')
+    npa = new_problems.filter(topic='Algebra')
     pna = propose_now.filter(topic='Algebra')
     pla = propose_later.filter(topic='Algebra')
     mia = needs_minor.filter(topic='Algebra')
     mja = needs_major.filter(topic='Algebra')
+    npc = new_problems.filter(topic='Combinatorics')
     pnc = propose_now.filter(topic='Combinatorics')
     plc = propose_later.filter(topic='Combinatorics')
     mic = needs_minor.filter(topic='Combinatorics')
     mjc = needs_major.filter(topic='Combinatorics')
+    npg = new_problems.filter(topic='Geometry')
     png = propose_now.filter(topic='Geometry')
     plg = propose_later.filter(topic='Geometry')
     mig = needs_minor.filter(topic='Geometry')
     mjg = needs_major.filter(topic='Geometry')
+    npn = new_problems.filter(topic='Number Theory')
     pnn = propose_now.filter(topic='Number Theory')
     pln = propose_later.filter(topic='Number Theory')
     min = needs_minor.filter(topic='Number Theory')
     mjn = needs_major.filter(topic='Number Theory')
+    npga = new_problems.filter(topic='Games')
     pnga = propose_now.filter(topic='Games')
     plga = propose_later.filter(topic='Games')
     miga = needs_minor.filter(topic='Games')
     mjga = needs_major.filter(topic='Games')
+    npo = new_problems.filter(topic='Other')
     pno = propose_now.filter(topic='Other')
     plo = propose_later.filter(topic='Other')
     mio = needs_minor.filter(topic='Other')
@@ -89,11 +96,13 @@ def index_view(request):
 #              'pnga' : pnga, 'plga' : plga, 'miga': miga, 'mjga' : mjga,
 #              'pno' : pno, 'plo' : plo, 'mio': mio, 'mjo' : mjo, 'nbar': 'problemeditor'}
     allcats= (
+        ('New Problems',
+         ((npa,'Algebra'),(npc,'Combinatorics'),(npga,'Games'),(npg,'Geometry'),(npn,'Number Theory'),(npo,'Other'))),
         ('Proposed for Current Year',
          ((pna,'Algebra'),(pnc,'Combinatorics'),(pnga,'Games'),(png,'Geometry'),(pnn,'Number Theory'),(pno,'Other'))),
         ('Proposed for Future Year',
          ((pla,'Algebra'),(plc,'Combinatorics'),(plga,'Games'),(plg,'Geometry'),(pln,'Number Theory'),(plo,'Other'))),
-        ('Needs Minor Revision',
+        ('Has Potential',
          ((mia,'Algebra'),(mic,'Combinatorics'),(miga,'Games'),(mig,'Geometry'),(min,'Number Theory'),(mio,'Other'))),
         ('Needs Major Revision',
          ((mja,'Algebra'),(mjc,'Combinatorics'),(mjga,'Games'),(mjg,'Geometry'),(mjn,'Number Theory'),(mjo,'Other'))),

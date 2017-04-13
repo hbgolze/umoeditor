@@ -93,6 +93,8 @@ else { document.getElementById(d).style.display = "none"; }
 	  {% csrf_token %}
 	  
 	  <select name="status_{{p.pk}}" onchange="this.form.submit()" class="form-control">
+	    <option value="NP" {% if p.problem_status == "NP" %}selected{% endif %}>New Problem
+	    </option>
 	    <option value="PN" {% if p.problem_status == "PN" %}selected{% endif %}>Propose for Current Year
 	    </option>
 	    <option value="PL" {% if p.problem_status == "PL" %}selected{% endif %}>Propose for Future Year

@@ -13,10 +13,11 @@ PROBLEM_DIFFICULTY = (
     )
 
 PROBLEM_STATUS = (
-    ('PN','Propose for current year'),
-    ('PL','Propose for later year'),
-    ('MI','Needs minor revision'),
-    ('MJ','Needs major revision'),
+    ('NP','New Problem'),
+    ('PN','Propose for Current Year'),
+    ('PL','Propose for Later Year'),
+    ('MI','Has Potential'),
+    ('MJ','Needs Major Revision'),
     )
 
 class DetailedProblemForm(forms.ModelForm):

@@ -8,11 +8,11 @@
   <li><a href="/detailedview/{{problem.pk}}">{{problem.label}}</a></li>
   <li class="active">New Solution</li>
 </ol>
-    <h2>New Solution to {{readablelabel}}</h2>
+    <h2>New Solution to {{problem.label}} (Version {{problem.current_version.version_number}})</h2>
     <form method="POST" class="post-form">{% csrf_token %}
 <div class="form-group">
 <label>Problem Text:</label>
-<p>{% autoescape off %}{{problem.problem_latex|linebreaks}} {% endautoescape %}  [{{problem.label}}]</p>
+<p>{% autoescape off %}{{problem.current_version.problem_latex|linebreaks}} {% endautoescape %}  [{{problem.label}}]</p>
 
 </div>
           <h3>Solution</h3>

@@ -1,26 +1,26 @@
 {% extends './base.html' %}
 
-{% block title %}Problem: {{form.instance.readable_label}}{% endblock %}
+{% block title %}Problem: {{problem.label}} (Version {{form.instance.version_number}}){% endblock %}
 
 {% block content %}
 
 <ol class="breadcrumb">
   <li><a href="/">All Problems</a></li>
-  <li><a href="/detailedview/{{form.instance.pk}}">{{form.instance.label}}</a></li>
-  <li class="active">Edit LaTeX</li>
+  <li><a href="/detailedview/{{problem.pk}}">{{problem.label}}</a></li>
+  <li class="active">Edit LaTeX (Version {{form.instance.version_number}})</li>
 </ol>
     <h2>Edit Problem</h2>
     <form method="POST" class="post-form">{% csrf_token %}
 <div class="form-group">
   <label>Problem Text:</label>
-  {% autoescape off %}{{form.instance.problem_latex|linebreaks}} {% endautoescape %}  [{{form.instance.label}}]
+  {% autoescape off %}{{form.instance.problem_latex|linebreaks}} {% endautoescape %}  [{{problem.label}}]
 </div>
 
 {% if form.instance.author_name != '' %}<p>Author: {{form.instance.author_name}}</p>{% endif %}
 
 
 <div class="form-group">
-  <label for="{{form.mc_problem_text.id}}">Problem LaTeX</label>
+  <label for="{{form.problem_text.id}}">Problem LaTeX</label>
   <p>{{form.problem_text}}</p>
   {% if form.problem_text.errors %}
   <p class="help-block">    Please enter a problem.</p>

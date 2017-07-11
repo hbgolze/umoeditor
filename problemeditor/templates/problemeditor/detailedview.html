@@ -1,5 +1,19 @@
 {% extends './base.html' %}
 
+{% block head %}<script type="text/javascript" language="JavaScript">
+function HideContent(d) {
+document.getElementById(d).style.display = "none";
+}
+function ShowContent(d) {
+document.getElementById(d).style.display = "block";
+}
+function ReverseDisplay(d) {
+if(document.getElementById(d).style.display == "none") { document.getElementById(d).style.display = "block"; }
+else { document.getElementById(d).style.display = "none"; }
+}
+</script>
+
+{% endblock %}
 
 {% block title %}Problem: {{readablelabel}}{% endblock %}
 
@@ -13,45 +27,55 @@
 <div class="form-group">
 
 <label>Problem Text:</label>
-{% autoescape off %}{{problem.problem_latex|linebreaks}} {% endautoescape %}  [{{problem.label}}]
+{% autoescape off %}{{problem.current_version.problem_latex|linebreaks}} {% endautoescape %}  [{{problem.label}}]
 
 {% if request.user.is_superuser %}<p><a href="edittext/">Edit LaTeX Code</a></p>{% endif %}
 </div>
-{% if form.instance.author_name != '' %}<p>Author: {{form.instance.author_name}}</p>{% endif %}
+{% if problem.current_version.author_name != '' %}<p>Author: {{problem.current_version.author_name}}</p>{% endif %}
 
 <label>Difficulty:</label>
 <p>
-{{form.instance.difficulty}}
+{{problem.current_version.difficulty}}
 </p>
 
-<label>Solutions</label><br>
+<label>Solutions:</label>
+  {% if sols|length == 0 %}<p>No Solutions Yet</p>
+{% else %}
+<p>  <a href="javascript:ReverseDisplay('solutions')">
+    Click to show/hide solutions ({{sols.count}}).
+  </a></p>
+
+  <div id="solutions" style="display:none">
 {% for sol in sols %}
 <label>Solution {{forloop.counter}}{% if sol.author_name != "" %} ({{sol.author_name}}){% endif %}:</label>
   <p><small>(<a href="editsolution/{{sol.pk}}/">Edit</a>)</small> {% if request.user.is_superuser %}<small>(<a href="deletesolution/{{sol.pk}}/">Delete</a>)</small>{% endif %}</p>
 {% autoescape off %}  {{sol.solution_latex|linebreaks}} {% endautoescape %}
   {% endfor %}
-  {% if sols|length == 0 %}<p>No Solutions Yet</p>{% endif %}
-  <button type="button" class="save btn btn-default" onclick="location.href='newsolution/'">New Solution</button>
-  <br><br>
+
+  </div>
+
+{% endif %}
+<p>  <button type="button" class="save btn btn-default" onclick="location.href='newsolution/'">New Solution</button></p>
+<br>
 
 <div class="form-group">
 <p>
   <label>Status:</label>
 </p>
 <p>
-{% if form.instance.problem_status == "PN" %}
+{% if problem.problem_status == "PN" %}
 Propose for current year
 {% else %}
-{% if form.instance.problem_status == "PL" %}
+{% if problem.problem_status == "PL" %}
 Propose for future year
 {% else %}
-{% if form.instance.problem_status == "MI" %}
+{% if problem.problem_status == "MI" %}
 Needs minor revision
 {% else %}
-{% if form.instance.problem_status == "MJ" %}
+{% if problem.problem_status == "MJ" %}
 Needs major revision
 {% else %}
-{% if form.instance.problem_status == "TR" %}
+{% if problem.problem_status == "TR" %}
 Trash
 {% endif %}
 {% endif %}
@@ -75,6 +99,57 @@ Trash
   {% endfor %}
 </div>
 {% if coms|length == 0 %}<p>No Comments Yet</p>{% endif %}
+<p><button type="button" class="save btn btn-default" onclick="location.href='newcomment'">New Comment</button></p>
 
-<button type="button" class="save btn btn-default" onclick="location.href='newcomment'">New Comment</button>
+<label>Other Versions:</label>
+<div class="form-group">
+{% if problem.versions.all.count > 1 %}
+{% for v in problem.versions.all %}
+{% if v != problem.current_version %}
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">Version {{v.version_number}} ({{v.created_date}})</h3>
+  </div>
+  <div class="panel-body">
+    {% autoescape off %}{{v.problem_latex|linebreaks}} {% endautoescape %}  
+    
+    {% if request.user.is_superuser %}<p><a href="edittext/{{v.pk}}">Edit LaTeX Code</a></p>{% endif %}
+    {% if v.author_name != '' %}<p>Author: {{v.author_name}}</p>{% endif %}
+    
+    <label>Difficulty:</label>
+    <p>
+      {{v.difficulty}}
+    </p>
+    <label>Solutions:</label>
+    <div class="form-group">
+      {% if v.solutions.all|length == 0 %}<p>No Solutions Yet</p>
+      {% else %}
+      <p>  <a href="javascript:ReverseDisplay('solutionsv{{v.version_number}}')">
+	  Click to show/hide solutions ({{v.solutions.count}}).
+      </a></p>
+      
+      <div id="solutionsv{{v.version_number}}" style="display:none">
+	{% for sol in v.solutions.all %}
+	<label>Solution {{forloop.counter}}{% if sol.author_name != "" %} ({{sol.author_name}}){% endif %}:</label>
+	{% autoescape off %}  {{sol.solution_latex|linebreaks}} {% endautoescape %}
+	{% endfor %}
+      </div>
+      {% endif %}
+    </div>
+
+<form method="POST" class="post-form">{% csrf_token %}
+      <button type="submit" class="save btn btn-primary" name="{{v.label}}">Make Current Version</button>
+</form>
+  </div>
+</div>
+
+
+{% endif %}
+
+{% endfor %}
+{% else %}
+No other versions yet.
+{% endif %}
+</div>
+<p><button type="button" class="save btn btn-default" onclick="location.href='newversion'">New Version</button></p>
 {% endblock %}

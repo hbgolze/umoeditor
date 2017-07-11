@@ -47,6 +47,25 @@ class Comment(models.Model):
     def __str__(self):
         return self.problem_label+' comment '+str(self.created_date)+', '+str(self.author)
 
+class ProblemVersion(models.Model):
+    DIFFICULTY_CHOICES = (
+        ('1','1'),
+        ('2','2'),
+        ('3','3'),
+        ('4','4'),
+        ('5','5'),
+        ('6','6'),
+        )
+    difficulty = models.CharField(max_length = 1,choices=DIFFICULTY_CHOICES,blank=False,default='1')
+    problem_text = models.TextField(blank=True)
+    problem_latex = models.TextField(blank=True)
+    solutions = models.ManyToManyField(Solution,blank=True)
+    top_solution_number = models.IntegerField(default=0)
+    version_number = models.IntegerField(default=0)
+    author_name = models.CharField(max_length=50,blank=True)
+    created_date = models.DateTimeField(default = timezone.now)
+    label = models.CharField(max_length=20,blank=True)
+
 class Problem(models.Model):
 #    topic = models.ForeignKey(Topic,blank=True,null=True)
     TOPIC_CHOICES = (
@@ -77,6 +96,9 @@ class Problem(models.Model):
     created_date = models.DateTimeField(default = timezone.now)
     comments = models.ManyToManyField(Comment,blank=True)
     problem_status = models.CharField(max_length=2,default='NP')#ManyToManyField(ProblemStatus,blank=True)
+    versions = models.ManyToManyField(ProblemVersion,blank=True,related_name='problem_version')
+    top_version_number = models.IntegerField(default=0)
+    current_version = models.ForeignKey(ProblemVersion,blank=True,related_name='current_version', null=True)
     def __str__(self):
         return self.label
 

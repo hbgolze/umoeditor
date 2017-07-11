@@ -8,16 +8,17 @@ from . import views
 
 
 urlpatterns = [
-    url(r'^$', views.index_view, name='indexview'),
-    url(r'^newproblem/',views.addproblemview, name='addproblemview'),
+    url(r'^$', views.index_view, name='indexview'),#done
     url(r'^detailedview/(?P<pk>\w+)/$', views.detailedproblemview, name='detailedproblemview'),
     url(r'^detailedview/(?P<pk>\w+)/edittext/$', views.editproblemtextpkview, name='editproblemtextpkview'),
+    url(r'^detailedview/(?P<pk>\w+)/edittext/(?P<vpk>\w+)/$', views.editproblemtextpkview, name='editproblemtextpkview'),
     url(r'^detailedview/(?P<pk>\w+)/editsolution/(?P<spk>\w+)/$', views.editsolutionpkview, name='editsolutionpkview'),
     url(r'^detailedview/(?P<pk>\w+)/newsolution/$', views.newsolutionpkview, name='newsolutionpkview'),
     url(r'^detailedview/(?P<pk>\w+)/deletesolution/(?P<spk>\w+)/$', views.deletesolutionpkview, name='deletesolutionpkview'),
     url(r'^detailedview/(?P<pk>\w+)/newcomment/$', views.newcommentpkview, name='newcommentpkview'),
     url(r'^detailedview/(?P<pk>\w+)/deletecomment/(?P<cpk>\w+)/$', views.deletecommentpkview, name='deletecommentpkview'),
-    url(r'^addproblem/$',views.addproblemview,name='addproblemview'),
+    url(r'^detailedview/(?P<pk>\w+)/newversion/$',views.newversionview,name='newversionview'),#done
+    url(r'^addproblem/$',views.addproblemview,name='addproblemview'),#done
     url(r'^pasttests/$',views.pasttestsview,name='pasttests'),
     url(r'^pasttests/(?P<pk>\w+)/$',views.viewpasttest,name='viewpasttest'),
     url(r'^pasttests/pdfs/(?P<pk>\w+)/$',views.test_as_pdf,name='test_as_pdf'),

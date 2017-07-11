@@ -8,8 +8,8 @@ from django.conf import settings
 
 from formtools.wizard.views import SessionWizardView
 
-from .models import Problem, Topic,  Solution,Comment,ProblemStatus,FinalTest
-from .forms import SolutionForm,ProblemTextForm,AddProblemForm,DetailedProblemForm,CommentForm,DiffMoveProblemForm
+from .models import Problem, Topic,  Solution,Comment,ProblemStatus,FinalTest,ProblemVersion
+from .forms import SolutionForm,ProblemTextForm,AddProblemForm,DetailedProblemForm,CommentForm,DiffMoveProblemForm,NewVersionForm
 from .utils import goodtag,goodurl,newtexcode,newsoltexcode,compileasy,compiletikz
 
 from django.template.loader import get_template
@@ -43,15 +43,18 @@ def index_view(request):
         form=request.POST
         for i in form:
             if 'status' in i:
-                pk=i.split('_')[1]
-                prob=Problem.objects.get(pk=pk)
+                pk = i.split('_')[1]
+                prob = Problem.objects.get(pk=pk)
                 prob.problem_status=form[i]
                 prob.save()
             if 'difficulty' in i:
-                pk=i.split('_')[1]
-                prob=Problem.objects.get(pk=pk)
-                prob.difficulty=form[i]
+                pk = i.split('_')[1]
+                prob = Problem.objects.get(pk=pk)
+                prob.difficulty = form[i]
+                curr_version = prob.current_version
+                curr_version.difficulty = form[i]
                 prob.save()
+                curr_version.save()
     new_problems = Problem.objects.filter(problem_status='NP')
     propose_now = Problem.objects.filter(problem_status='PN')
     propose_later = Problem.objects.filter(problem_status='PL')
@@ -112,70 +115,79 @@ def index_view(request):
 
 
 @login_required
-def editproblemtextpkview(request,**kwargs):
+def editproblemtextpkview(request,**kwargs):#Needs to be in terms of "Versions" (is done?)
     pk=kwargs['pk']
     prob=get_object_or_404(Problem, pk=pk)
-    if request.method == "POST":
-        form = ProblemTextForm(request.POST, instance=prob)
-        if form.is_valid():
-            problem = form.save()
-            problem.problem_latex = newtexcode(problem.problem_text,problem.label)
-            problem.save()
-            compileasy(problem.problem_text,problem.label)
-            compiletikz(problem.problem_text,problem.label)
-        return redirect('../')
+    if 'vpk' in kwargs:
+        vers=get_object_or_404(ProblemVersion,pk=kwargs['vpk'])
     else:
-        form = ProblemTextForm(instance=prob)
+        vers=prob.current_version
+    if request.method == "POST":
+        form = ProblemTextForm(request.POST, instance=vers)
+        if form.is_valid():
+            version = form.save()
+            version.problem_latex = newtexcode(version.problem_text,version.label)
+            version.save()
+            compileasy(version.problem_text,version.label)
+            compiletikz(version.problem_text,version.label)
+        if 'vpk' in kwargs:
+            return redirect('../../')
+        else:
+            return redirect('../')
+    else:
+        form = ProblemTextForm(instance=vers)
     context={}
+    context['problem'] = prob
     context['form'] = form
     context['nbar'] = 'problemeditor'
     return render(request, 'problemeditor/editproblemtext.html', context)
 
 
 @login_required
-def newsolutionpkview(request,**kwargs):
+def newsolutionpkview(request,**kwargs):#Needs to be in terms of "Versions"
     pk=kwargs['pk']
     prob=get_object_or_404(Problem, pk=pk)
-
-    sol_num=prob.top_solution_number+1
-    prob.top_solution_number=sol_num
-    prob.save()
+    sol_num=prob.current_version.top_solution_number+1
+    cv=prob.current_version
     if request.method == "POST":
         sol_form = SolutionForm(request.POST)
         if sol_form.is_valid():
+            cv.top_solution_number=sol_num
+            cv.save()
             sol = sol_form.save()
             sol.solution_number=sol_num
             sol.authors.add(request.user)
-            sol.problem_label=prob.label
-            sol.solution_latex = newsoltexcode(sol.solution_text,prob.label+'sol'+str(sol.solution_number))
+            sol.problem_label=cv.label
+            sol.solution_latex = newsoltexcode(sol.solution_text,cv.label+'sol'+str(sol.solution_number))
             sol.save()
-            compileasy(sol.solution_text,prob.label,sol='sol'+str(sol_num))
-            compiletikz(sol.solution_text,prob.label,sol='sol'+str(sol_num))
-            prob.solutions.add(sol)
-            prob.save()
+            compileasy(sol.solution_text,cv.label,sol='sol'+str(sol_num))
+            compiletikz(sol.solution_text,cv.label,sol='sol'+str(sol_num))
+            cv.solutions.add(sol)
+            cv.save()
         return redirect('../')
     else:
-        sol=Solution(solution_text='', solution_number=sol_num, problem_label=prob.label)
+        sol=Solution(solution_text='', solution_number=sol_num, problem_label=cv.label)
         form = SolutionForm(instance=sol)
 
-    return render(request, 'problemeditor/newsol.html', {'form': form, 'nbar': 'problemeditor','problem':prob})
+    return render(request, 'problemeditor/newsol.html', {'form': form, 'nbar': 'problemeditor','problem':prob, 'version' : cv})
 
 
 @login_required
-def editsolutionpkview(request,**kwargs):
+def editsolutionpkview(request,**kwargs):#Needs to be in terms of "Versions"
     pk=kwargs['pk']
     spk=kwargs['spk']
     prob=get_object_or_404(Problem, pk=pk)
     sol=Solution.objects.get(pk=spk)
+    cv=prob.current_version
     if request.method == "POST":
         if request.POST.get("save"):
             sollist=request.POST.getlist('solution_text')
             sol.solution_text=sollist[0]
             sol.authors.add(request.user)
-            sol.solution_latex=newsoltexcode(sol.solution_text,prob.label+'sol'+str(sol.solution_number))
+            sol.solution_latex=newsoltexcode(sol.solution_text,cv.label+'sol'+str(sol.solution_number))
             sol.save()
-            compileasy(sol.solution_text,prob.label,sol='sol'+str(sol.solution_number))
-            compiletikz(sol.solution_text,prob.label,sol='sol'+str(sol.solution_number))
+            compileasy(sol.solution_text,cv.label,sol='sol'+str(sol.solution_number))
+            compiletikz(sol.solution_text,cv.label,sol='sol'+str(sol.solution_number))
             return redirect('../../')
     form = SolutionForm(instance=sol)
     return render(request, 'problemeditor/editsol.html', {'form': form, 'nbar': 'problemeditor','problem':prob})
@@ -227,11 +239,17 @@ def newcommentpkview(request,**kwargs):
 def detailedproblemview(request,**kwargs):
     pk=kwargs['pk']
     prob=get_object_or_404(Problem, pk=pk)
+    if request.method == "POST":
+        versions=prob.versions.all()
+        for i in versions:
+            if i.label in request.POST:
+                prob.current_version=i
+                prob.save()
     context={}
     breadcrumbs=[]
-    form=DetailedProblemForm(instance=prob)
+#    form=DetailedProblemForm(instance=prob)
     #sols...
-    sols=prob.solutions.all()
+    sols=prob.current_version.solutions.all()
     context['sols']=sols
     #coms...
     coms=prob.comments.all()
@@ -242,9 +260,32 @@ def detailedproblemview(request,**kwargs):
     #other
     context['problem']=prob
     context['nbar']='problemeditor'
-    context['form']=form
+#    context['form']=form
     context['breadcrumbs']=breadcrumbs
     return render(request, 'problemeditor/detailedview.html', context)
+
+@login_required
+def newversionview(request,pk):#args
+    problem=get_object_or_404(Problem, pk=pk)
+    vers=ProblemVersion()
+    if request.method == "POST":
+        form = NewVersionForm(request.POST, instance=vers)
+        if form.is_valid():
+            version = form.save()
+            version.save()
+            version.version_number = problem.top_version_number+1
+            version.save()
+            version.label = 'Problem '+str(problem.pk)+'v'+str(version.version_number)
+            version.save()
+            version.problem_latex = newtexcode(version.problem_text,version.label)#requires version.label...need to redo image naming conventions
+            version.save()
+            problem.versions.add(version)
+            problem.top_version_number+=1
+            problem.save()
+            return redirect('../')
+    else:
+        form = NewVersionForm(instance=vers)
+        return render(request, 'problemeditor/newversionview.html', {'form': form, 'nbar': 'problemeditor','problem' : problem})
 
 @login_required
 def addproblemview(request):
@@ -256,6 +297,16 @@ def addproblemview(request):
             problem.save()
             problem.label = 'Problem '+str(problem.pk)
             problem.problem_latex = newtexcode(problem.problem_text,problem.label)
+            problem.save()
+            pv=ProblemVersion(
+                difficulty=problem.difficulty,
+                problem_text=problem.problem_text,
+                version_number=1,
+                author_name=problem.author_name,
+                label=problem.label+'v1'
+                )
+            pv.save()
+            problem.top_version_number=1
             problem.save()
             return redirect('../detailedview/'+str(problem.pk)+'/')
     else:

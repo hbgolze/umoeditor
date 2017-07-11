@@ -80,6 +80,10 @@ img.displayed {
     border-bottom: 1px dotted #ccc;
 }
 
+.versions-list .media{
+    border-bottom: 1px dotted #ccc;
+}
+
 .stepwizard-step p {
     margin-top: 10px;
 }
@@ -243,3 +247,6 @@ background: #006699; color: #fff; }
     -webkit-box-shadow: none;
     box-shadow: none;
 }
+
+
+

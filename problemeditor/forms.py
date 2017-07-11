@@ -1,6 +1,6 @@
 from django import forms
 #from django.contrib.auth.models import User
-from problemeditor.models import Problem,Solution,Comment
+from problemeditor.models import Problem,Solution,Comment,ProblemVersion
 from .models import Topic
 
 PROBLEM_DIFFICULTY = (
@@ -29,7 +29,7 @@ class DetailedProblemForm(forms.ModelForm):
 
 class ProblemTextForm(forms.ModelForm):
     class Meta:
-        model = Problem
+        model = ProblemVersion
         fields = ('problem_text',)
         widgets = {
             'problem_text': forms.Textarea(attrs={'cols': 120, 'rows': 15,'id' : 'codetext'}),
@@ -75,6 +75,22 @@ class AddProblemForm(forms.ModelForm):
 #    def clean_types(self):
 #        data = self.cleaned_data['types']
 #        return [data]
+
+class NewVersionForm(forms.ModelForm):
+    class Meta:
+        model = ProblemVersion
+        fields = ('problem_text',
+                  'author_name',
+                  'difficulty',
+                  )
+        widgets = {
+            'problem_text': forms.Textarea(attrs={'cols': 120, 'rows': 15,'id' : 'codetext'}),
+            }
+    def __init__(self, *args, **kwargs):
+        super(NewVersionForm, self).__init__(*args, **kwargs)   
+        self.fields['problem_text'].label = 'Problem LaTeX'
+        self.fields['author_name'].required = True
+
 
 class DiffMoveProblemForm(forms.ModelForm):
     class Meta:

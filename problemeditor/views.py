@@ -297,6 +297,7 @@ def addproblemview(request):
             problem.save()
             problem.label = 'Problem '+str(problem.pk)
             problem.problem_latex = newtexcode(problem.problem_text,problem.label)
+            problem.problem_status='NP'
             problem.save()
             pv=ProblemVersion(
                 difficulty=problem.difficulty,

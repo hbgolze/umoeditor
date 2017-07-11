@@ -63,6 +63,9 @@ else { document.getElementById(d).style.display = "none"; }
   <label>Status:</label>
 </p>
 <p>
+{% if problem.problem_status == "NP" %}
+New problem
+{% else %}
 {% if problem.problem_status == "PN" %}
 Propose for current year
 {% else %}

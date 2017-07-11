@@ -301,11 +301,14 @@ def addproblemview(request):
             pv=ProblemVersion(
                 difficulty=problem.difficulty,
                 problem_text=problem.problem_text,
+                problem_latex=problem.problem_latex,
                 version_number=1,
                 author_name=problem.author_name,
                 label=problem.label+'v1'
                 )
             pv.save()
+            problem.versions.add(pv)
+            problem.current_version=pv
             problem.top_version_number=1
             problem.save()
             return redirect('../detailedview/'+str(problem.pk)+'/')

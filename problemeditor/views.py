@@ -110,28 +110,56 @@ def index_view(request):
         ('Needs Major Revision',
          ((mja,'Algebra'),(mjc,'Combinatorics'),(mjga,'Games'),(mjg,'Geometry'),(mjn,'Number Theory'),(mjo,'Other'))),
         )
-    allnums=[]
-    abbrevs= {'Algebra':'A',
-              'Combinatorics':'C',
-              'Games':'Ga',
-              'Geometry':'Ge',
-              'Number Theory':'NT',
-              'Other':'O',}
-    for i in allcats:
-        status=i[0]
-        groups=i[1]
-        pnums=[[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0]]
-        for j in range(0,len(groups)):
-            topic=groups[j]
-            nums=[]
-            li=topic[0]
-            for k in range(1,7):
-                c=li.filter(difficulty=str(k)).count()
-                pnums[k-1][j]=(c,abbrevs[topic[1]],topic[1])
+    currtablecounts=[]
+    goodtablecounts=[]
+    all_good_probs=Problem.objects.filter(problem_status__in=['PN','NP','MJ','MI','PL'])
+    all_curr_probs=Problem.objects.filter(problem_status__in=['PN','NP'])
+    topics = ['Algebra','Combinatorics','Games','Geometry','Number Theory','Other']
+    for top in topics:
+        goodcounts=[] 
+        currcounts=[]
+        goods = all_good_probs.filter(topic=top)
+        currs = all_curr_probs.filter(topic=top)
+        for i in range(1,7):
+            goodcounts.append(goods.filter(difficulty=str(i)).count())
+            currcounts.append(currs.filter(difficulty=str(i)).count())
+        goodcounts.append(goods.count())
+        currcounts.append(currs.count())
+        currtablecounts.append((top,currcounts))
+        goodtablecounts.append((top,goodcounts))
+    goodcounts=[] 
+    currcounts=[]
+    for i in range(1,7):
+        goodcounts.append(all_good_probs.filter(difficulty=str(i)).count())
+        currcounts.append(all_curr_probs.filter(difficulty=str(i)).count())
+    goodcounts.append(all_good_probs.count())
+    currcounts.append(all_curr_probs.count())
+    currtablecounts.append(('Total',currcounts))
+    goodtablecounts.append(('Total',goodcounts))
+
+
+    
+#    abbrevs= {'Algebra':'A',
+#              'Combinatorics':'C',
+#              'Games':'Ga',
+#              'Geometry':'Ge',
+#              'Number Theory':'NT',
+#              'Other':'O',}
+#    for i in allcats:
+#        status=i[0]
+#        groups=i[1]
+#        pnums=[[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0]]
+#        for j in range(0,len(groups)):
+#            topic=groups[j]
+#            nums=[]
+#            li=topic[0]
+#            for k in range(1,7):
+#                c=li.filter(difficulty=str(k)).count()
+#                pnums[k-1][j]=(c,abbrevs[topic[1]],topic[1])
 
 #            pnums.append(nums)
-        allnums.append((i[0],pnums))
-    context = {'allcats':allcats,'nbar':'problemeditor','allnums':allnums}
+#        allnums.append((i[0],pnums))
+    context = {'allcats':allcats,'nbar':'problemeditor','current':currtablecounts,'good':goodtablecounts}
     return HttpResponse(template.render(context,request))
 
 

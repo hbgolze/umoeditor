@@ -34,38 +34,78 @@ else { document.getElementById(d).style.display = "none"; }
 </table>
 
 <!--(npa,'Algebra'),(npc,'Combinatorics'),(npga,'Games'),(npg,'Geometry'),(npn,'Number Theory'),(npo,'Other'))),-->
-<table class="table">
+<div class="container">
+<div class="col-sm-6">
+<table class="table table-sm col-sm-6">
 <thead>
 <tr>
 <th>
-Status
+Current/New Problems
 </th>
-<th>Problem 1</th>
-<th>Problem 2</th>
-<th>Problem 3</th>
-<th>Problem 4</th>
-<th>Problem 5</th>
-<th>Problem 6</th>
+<th>1</th>
+<th>2</th>
+<th>3</th>
+<th>4</th>
+<th>5</th>
+<th>6</th>
+<th>Total</th>
 </tr>
 </thead>
 <tbody>
+{% for topic,counts in current %}
+{% if forloop.last %}
+<tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+{% endif %}
 <tr>
-{% for status,pnums in allnums %}
+<th scope="row">
+{{topic}}
+</th>
+{% for num in counts %}
 <td>
-{{status}}
-</td>
-{% for nums in pnums %}
-<td>
-{% for num,lab,labl in nums %}
-<a href="#typetopic{{status}}{{labl}}"> ({{num}}{{lab}})</a>
-{% endfor %}
+{{num}}
 </td>
 {% endfor %}
 </tr>
 {% endfor %}
 </tbody>
 </table>
-
+</div>
+<div class="col-sm-6">
+<table class="table table-sm">
+<thead>
+<tr>
+<th>
+All Problems
+</th>
+<th>1</th>
+<th>2</th>
+<th>3</th>
+<th>4</th>
+<th>5</th>
+<th>6</th>
+<th>Total</th>
+</tr>
+</thead>
+<tbody>
+{% for topic,counts in good %}
+{% if forloop.last %}
+<tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+{% endif %}
+<tr>
+<th scope="row">
+{{topic}}
+</th>
+{% for num in counts %}
+<td>
+{{num}}
+</td>
+{% endfor %}
+</tr>
+{% endfor %}
+</tbody>
+</table>
+</div>
+</div>
 
 <p><a class="btn btn-primary" href="addproblem/">Add a problem</a></p>
 

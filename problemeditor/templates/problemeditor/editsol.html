@@ -1,6 +1,6 @@
 {% extends './base.html' %}
 
-{% block title %}Solutions: {{readablelabel}}{% endblock %}
+{% block title %}UMO: Edit Solution to {{problem.label}}{% endblock %}
 
 {% block content %}
 <ol class="breadcrumb">
@@ -8,9 +8,9 @@
   <li><a href="/detailedview/{{problem.pk}}">{{problem.label}}</a></li>
   <li class="active">Edit Solution</li>
 </ol>
-    <h2>Edit Solution to {{problem.label}} (Version {{problem.current_version.version_number}})</h2>
+    <h2>Edit Solution to {{problem.label}} (Version {{cv.version_number}})</h2>
     <form method="POST" class="post-form">{% csrf_token %}
-{% autoescape off %}{{problem.current_version.problem_latex|linebreaks}} {% endautoescape %}  [{{problem.label}}]<br><br>
+{% autoescape off %}{{cv.problem_latex|linebreaks}} {% endautoescape %}  [{{problem.label}}]<br><br>
           <h3>Solution</h3>
 	  {% autoescape off %}{{form.instance.solution_latex|linebreaks}} {% endautoescape %}
           {{ form.solution_text }} <br>

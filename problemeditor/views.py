@@ -110,7 +110,28 @@ def index_view(request):
         ('Needs Major Revision',
          ((mja,'Algebra'),(mjc,'Combinatorics'),(mjga,'Games'),(mjg,'Geometry'),(mjn,'Number Theory'),(mjo,'Other'))),
         )
-    context = {'allcats':allcats,'nbar':'problemeditor'}
+    allnums=[]
+    abbrevs= {'Algebra':'A',
+              'Combinatorics':'C',
+              'Games':'Ga',
+              'Geometry':'Ge',
+              'Number Theory':'NT',
+              'Other':'O',}
+    for i in allcats:
+        status=i[0]
+        groups=i[1]
+        pnums=[[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0]]
+        for j in range(0,len(groups)):
+            topic=groups[j]
+            nums=[]
+            li=topic[0]
+            for k in range(1,7):
+                c=li.filter(difficulty=str(k)).count()
+                pnums[k-1][j]=(c,abbrevs[topic[1]],topic[1])
+
+#            pnums.append(nums)
+        allnums.append((i[0],pnums))
+    context = {'allcats':allcats,'nbar':'problemeditor','allnums':allnums}
     return HttpResponse(template.render(context,request))
 
 
@@ -190,7 +211,7 @@ def editsolutionpkview(request,**kwargs):#Needs to be in terms of "Versions"
             compiletikz(sol.solution_text,cv.label,sol='sol'+str(sol.solution_number))
             return redirect('../../')
     form = SolutionForm(instance=sol)
-    return render(request, 'problemeditor/editsol.html', {'form': form, 'nbar': 'problemeditor','problem':prob})
+    return render(request, 'problemeditor/editsol.html', {'form': form, 'nbar': 'problemeditor','problem':prob, 'cv':cv})
 
 
 
@@ -202,6 +223,74 @@ def deletesolutionpkview(request,**kwargs):#If solution_number is kept, this mus
     sol = get_object_or_404(Solution, pk=spk)
     sol.delete()
     return redirect('../../')
+
+
+@login_required
+def newsolutionvpkview(request,**kwargs):#Needs to be in terms of "Versions"
+    pk=kwargs['pk']
+    vpk=kwargs['vpk']
+    prob=get_object_or_404(Problem, pk=pk)
+    cv=get_object_or_404(ProblemVersion, pk=vpk)
+    sol_num=prob.current_version.top_solution_number+1
+    if request.method == "POST":
+        sol_form = SolutionForm(request.POST)
+        if sol_form.is_valid():
+            cv.top_solution_number=sol_num
+            cv.save()
+            sol = sol_form.save()
+            sol.solution_number=sol_num
+            sol.authors.add(request.user)
+            sol.problem_label=cv.label
+            sol.solution_latex = newsoltexcode(sol.solution_text,cv.label+'sol'+str(sol.solution_number))
+            sol.save()
+            compileasy(sol.solution_text,cv.label,sol='sol'+str(sol_num))
+            compiletikz(sol.solution_text,cv.label,sol='sol'+str(sol_num))
+            cv.solutions.add(sol)
+            cv.save()
+        return redirect('../../')
+    else:
+        sol=Solution(solution_text='', solution_number=sol_num, problem_label=cv.label)
+        form = SolutionForm(instance=sol)
+
+    return render(request, 'problemeditor/newsol.html', {'form': form, 'nbar': 'problemeditor','problem':prob, 'version' : cv})
+
+
+@login_required
+def editsolutionvpkview(request,**kwargs):#Needs to be in terms of "Versions"
+    pk=kwargs['pk']
+    spk=kwargs['spk']
+    prob=get_object_or_404(Problem, pk=pk)
+    vpk=kwargs['vpk']
+    cv=get_object_or_404(ProblemVersion, pk=vpk)
+    sol=Solution.objects.get(pk=spk)
+    if request.method == "POST":
+        if request.POST.get("save"):
+            sollist=request.POST.getlist('solution_text')
+            sol.solution_text=sollist[0]
+            sol.authors.add(request.user)
+            sol.solution_latex=newsoltexcode(sol.solution_text,cv.label+'sol'+str(sol.solution_number))
+            sol.save()
+            compileasy(sol.solution_text,cv.label,sol='sol'+str(sol.solution_number))
+            compiletikz(sol.solution_text,cv.label,sol='sol'+str(sol.solution_number))
+            return redirect('../../../')
+    form = SolutionForm(instance=sol)
+    return render(request, 'problemeditor/editsol.html', {'form': form, 'nbar': 'problemeditor','problem':prob,'cv':cv})
+
+
+
+
+@login_required
+def deletesolutionvpkview(request,**kwargs):#If solution_number is kept, this must be modified to adjust.
+    pk=kwargs['pk']
+    spk=kwargs['spk']
+    vpk=kwargs['vpk']
+    prob=get_object_or_404(Problem, pk=pk)
+    sol = get_object_or_404(Solution, pk=spk)
+    vers = get_object_or_404(ProblemVersion, pk=vpk)
+    sol.delete()
+    return redirect('../../../')
+
+
 
 @login_required
 def deletecommentpkview(request,**kwargs):#If solution_number is kept, this must be modified to adjust.

@@ -15,7 +15,7 @@ else { document.getElementById(d).style.display = "none"; }
 
 {% endblock %}
 
-{% block title %}Problem: {{readablelabel}}{% endblock %}
+{% block title %}UMO: {{problem.label}}{% endblock %}
 
 {% block content %}
 <ol class="breadcrumb">
@@ -29,7 +29,8 @@ else { document.getElementById(d).style.display = "none"; }
 <label>Problem Text:</label>
 {% autoescape off %}{{problem.current_version.problem_latex|linebreaks}} {% endautoescape %}  [{{problem.label}}]
 
-{% if request.user.is_superuser %}<p><a href="edittext/">Edit LaTeX Code</a></p>{% endif %}
+
+<p><a href="edittext/">Edit LaTeX Code</a></p>
 </div>
 {% if problem.current_version.author_name != '' %}<p>Author: {{problem.current_version.author_name}}</p>{% endif %}
 
@@ -117,7 +118,7 @@ Trash
   <div class="panel-body">
     {% autoescape off %}{{v.problem_latex|linebreaks}} {% endautoescape %}  
     
-    {% if request.user.is_superuser %}<p><a href="edittext/{{v.pk}}">Edit LaTeX Code</a></p>{% endif %}
+    <p><a href="edittext/{{v.pk}}">Edit LaTeX Code</a></p>
     {% if v.author_name != '' %}<p>Author: {{v.author_name}}</p>{% endif %}
     
     <label>Difficulty:</label>
@@ -135,10 +136,16 @@ Trash
       <div id="solutionsv{{v.version_number}}" style="display:none">
 	{% for sol in v.solutions.all %}
 	<label>Solution {{forloop.counter}}{% if sol.author_name != "" %} ({{sol.author_name}}){% endif %}:</label>
+	<p>
+	  <small>(<a href="{{v.pk}}/editsolution/{{sol.pk}}/">Edit</a>)</small>
+	  {% if request.user.is_superuser %}<small>(<a href="deletesolution/{{sol.pk}}/">Delete</a>)</small>{% endif %}
+	</p>
 	{% autoescape off %}  {{sol.solution_latex|linebreaks}} {% endautoescape %}
 	{% endfor %}
       </div>
       {% endif %}
+<p>  <button type="button" class="save btn btn-default" onclick="location.href='{{v.pk}}/newsolution/'">New Solution</button></p>
+
     </div>
 
 <form method="POST" class="post-form">{% csrf_token %}

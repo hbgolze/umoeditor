@@ -19,6 +19,7 @@ else { document.getElementById(d).style.display = "none"; }
 
 {% block content %}
 <table class="table">
+<tbody>
 <tr>
 {% for labl,plist in allcats %}
 <td>
@@ -29,8 +30,42 @@ else { document.getElementById(d).style.display = "none"; }
 </td>
 {% endfor %}
 </tr>
-</thead>
+</tbody>
 </table>
+
+<!--(npa,'Algebra'),(npc,'Combinatorics'),(npga,'Games'),(npg,'Geometry'),(npn,'Number Theory'),(npo,'Other'))),-->
+<table class="table">
+<thead>
+<tr>
+<th>
+Status
+</th>
+<th>Problem 1</th>
+<th>Problem 2</th>
+<th>Problem 3</th>
+<th>Problem 4</th>
+<th>Problem 5</th>
+<th>Problem 6</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+{% for status,pnums in allnums %}
+<td>
+{{status}}
+</td>
+{% for nums in pnums %}
+<td>
+{% for num,lab,labl in nums %}
+<a href="#typetopic{{status}}{{labl}}"> ({{num}}{{lab}})</a>
+{% endfor %}
+</td>
+{% endfor %}
+</tr>
+{% endfor %}
+</tbody>
+</table>
+
 
 <p><a class="btn btn-primary" href="addproblem/">Add a problem</a></p>
 
@@ -97,6 +132,14 @@ else { document.getElementById(d).style.display = "none"; }
   <p><a class="btn btn-primary" name="det_{{p.pk}}" href="detailedview/{{p.pk}}">Edit Details</a>
   </p>
   <p>{{p.versions.count}} Version{% if p.versions.count > 1%}s{% endif %}</p>
+
+<p>Solution: {% if p.current_version.solutions.count > 0 %}
+<span class="glyphicon glyphicon-ok" style="color:green"></span>
+{% else %}
+<span class="glyphicon glyphicon-remove" style="color:red"></span>
+{% endif %}
+</p>
+
 
 </td>
 <td>

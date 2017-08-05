@@ -58,6 +58,7 @@ def asyreplacementindexes(s):
 
 def tikzreplacementindexes(s):
     tikzs=tagindexpairs('tikzpicture',s)
+    print(tikzs)
     replacementpairs=[]
     for i in range(0,len(tikzs)):
         startindex=tikzs[i][0]
@@ -264,6 +265,7 @@ def compiletikz(texcode,label,sol=''):
 #        tikz_code = tikz_code.replace('\\end{tikzpicture}','')
 #        tikz_code = tikz_code.replace('\\end{center}','</center>')
         tikz_code = tikz_code.rstrip().lstrip()
+        print(tikz_code)
         filename = 'tikz'+label+sol+'-'+str(i+1)
         filename = filename.replace(' ','')
         context = Context({

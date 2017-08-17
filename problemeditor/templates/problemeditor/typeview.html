@@ -169,6 +169,28 @@ All Problems
       </select>
     </form>
   </p>
+
+<p>Change Topic:</p>
+  <p>
+    <form action="." method="post">
+      {% csrf_token %}
+      <select name="topic_{{p.pk}}" onchange="this.form.submit()">
+	<option value="Algebra" {% if p.topic == "Algebra" %}selected{% endif %}>Algebra
+	</option>
+	<option value="Combinatorics" {% if p.topic == "Combinatorics" %}selected{% endif %}>Combinatorics
+	</option>
+	<option value="Games" {% if p.topic == "Games" %}selected{% endif %}>Games
+	</option>
+	<option value="Geometry" {% if p.topic == "Geometry" %}selected{% endif %}>Geometry
+	</option>
+	<option value="Number Theory" {% if p.topic == "Number Theory" %}selected{% endif %}>Number Theory
+	</option>
+	<option value="Other" {% if p.topic == "Other" %}selected{% endif %}>Other
+	</option>
+      </select>
+    </form>
+  </p>
+
   <p><a class="btn btn-primary" name="det_{{p.pk}}" href="detailedview/{{p.pk}}">Edit Details</a>
   </p>
   <p>{{p.versions.count}} Version{% if p.versions.count > 1%}s{% endif %}</p>

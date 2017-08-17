@@ -55,6 +55,14 @@ def index_view(request):
                 curr_version.difficulty = form[i]
                 prob.save()
                 curr_version.save()
+            if 'topic' in i:
+                pk = i.split('_')[1]
+                prob = Problem.objects.get(pk=pk)
+                prob.topic = form[i]
+                curr_version = prob.current_version
+                curr_version.topic = form[i]
+                prob.save()
+                curr_version.save()
     new_problems = Problem.objects.filter(problem_status='NP')
     propose_now = Problem.objects.filter(problem_status='PN')
     propose_later = Problem.objects.filter(problem_status='PL')

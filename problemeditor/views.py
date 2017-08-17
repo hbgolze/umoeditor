@@ -5,6 +5,16 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.conf import settings
+from django.contrib.auth.forms import PasswordChangeForm
+
+
+
+from django.contrib.auth import authenticate,login,logout
+from django.contrib.auth.admin import User
+from django.views.generic import DeleteView
+from django.urls import reverse_lazy
+from django.contrib.auth import update_session_auth_hash
+
 
 from formtools.wizard.views import SessionWizardView
 

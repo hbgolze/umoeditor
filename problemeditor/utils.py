@@ -184,6 +184,18 @@ def newsoltexcode(texcode,label):
             three='+0_0'
         newtexcode+='<img class=\"displayed\" src=\"/media/'+label+'-'+str(len(repl))+'.png\"/>'
         newtexcode+=texcode[repl[-1][1]:]
+    repl2 = tikzreplacementindexes(newtexcode)
+    new2texcode=''
+    if len(repl2)==0:
+        new2texcode+=newtexcode
+    else:
+        new2texcode+=newtexcode[0:repl2[0][0]]
+        for i in range(0,len(repl2)-1):
+            new2texcode+='<img class=\"displayed\" src=\"/media/tikz'+label+'-'+str(i+1)+'.png\"/>'
+            new2texcode+=newtexcode[repl2[i][1]:repl2[i+1][0]]
+        new2texcode+='<img class=\"displayed\" src=\"/media/tikz'+label+'-'+str(len(repl2))+'.png\"/>'
+        new2texcode+=newtexcode[repl2[-1][1]:]
+    newtexcode=new2texcode
     newtexcode=replaceitemize(newtexcode)
     newtexcode=replaceenumerate(newtexcode,'(a)')
     newtexcode=replaceenumerate(newtexcode,'(i)')

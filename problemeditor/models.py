@@ -65,6 +65,7 @@ class ProblemVersion(models.Model):
     author_name = models.CharField(max_length=50,blank=True)
     created_date = models.DateTimeField(default = timezone.now)
     label = models.CharField(max_length=20,blank=True)
+    authors = models.ManyToManyField(User,blank=True)
 
 class Problem(models.Model):
 #    topic = models.ForeignKey(Topic,blank=True,null=True)

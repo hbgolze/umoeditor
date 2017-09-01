@@ -96,9 +96,12 @@ Trash
 </p>
 
 <label>Rating:</label>
-<p>
-{% ratings problem.current_version 20 20 %}
-</p>
+{% if request.user in problem.current_version.authors.all %}
+<p>{% ratings problem.current_version 20 20 'read_only' %}</p>
+{% else %}
+<p>{% ratings problem.current_version 20 20 %}</p>
+{% endif %}
+
 </div>
 <label>Comments:</label>
 <div class="comments-list">
@@ -136,7 +139,12 @@ Trash
     <p>
       {{v.difficulty}}
     </p>
-    <p>{% ratings v 20 20 %}</p>
+
+{% if request.user in v.authors.all %}
+<p>{% ratings v 20 20 'read_only' %}</p>
+{% else %}
+<p>{% ratings v 20 20 %}</p>
+{% endif %}
     <label>Solutions:</label>
     <div class="form-group">
       {% if v.solutions.all|length == 0 %}<p>No Solutions Yet</p>

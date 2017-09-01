@@ -177,7 +177,7 @@ def index_view(request):
 
 #            pnums.append(nums)
 #        allnums.append((i[0],pnums))
-    context = {'allcats':allcats,'nbar':'problemeditor','current':currtablecounts,'good':goodtablecounts}
+    context = {'allcats':allcats,'nbar':'problemeditor','current':currtablecounts,'good':goodtablecounts, 'request':request}
     return HttpResponse(template.render(context,request))
 
 
@@ -413,6 +413,7 @@ def newversionview(request,pk):#args
             version.label = 'Problem '+str(problem.pk)+'v'+str(version.version_number)
             version.save()
             version.problem_latex = newtexcode(version.problem_text,version.label)#requires version.label...need to redo image naming conventions
+            version.authors.add(request.user)
             version.save()
             problem.versions.add(version)
             problem.top_version_number+=1
@@ -442,6 +443,8 @@ def addproblemview(request):
                 author_name=problem.author_name,
                 label=problem.label+'v1'
                 )
+            pv.save()
+            pv.authors.add(request.user)
             pv.save()
             problem.versions.add(pv)
             problem.current_version=pv

@@ -210,9 +210,11 @@ All Problems
 {% endif %}
 </p>
 <label>Rating:</label>
-<p>
-{% ratings p.current_version 20 20 %}
-</p>
+{% if request.user in p.current_version.authors.all %}
+<p>{% ratings p.current_version 20 20 'read_only' %}</p>
+{% else %}
+<p>{% ratings p.current_version 20 20 %}</p>
+{% endif %}
 
 </td>
 <td>

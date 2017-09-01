@@ -2,6 +2,10 @@
 
 {% block title %}View Problems{% endblock %}
 
+{% load static %}
+
+{% load ratings %}
+
 {% block head %}<script type="text/javascript" language="JavaScript">
 function HideContent(d) {
 document.getElementById(d).style.display = "none";
@@ -14,6 +18,10 @@ if(document.getElementById(d).style.display == "none") { document.getElementById
 else { document.getElementById(d).style.display = "none"; }
 }
 </script>
+
+
+<link rel="stylesheet" href="{% static 'star-ratings/css/star-ratings.css' %}">
+<script type="text/javascript" src="{% static 'star-ratings/js/dist/star-ratings.min.js' %}"></script>
 
 {% endblock %}
 
@@ -201,7 +209,10 @@ All Problems
 <span class="glyphicon glyphicon-remove" style="color:red"></span>
 {% endif %}
 </p>
-
+<label>Rating:</label>
+<p>
+{% ratings p.current_version 20 20 %}
+</p>
 
 </td>
 <td>

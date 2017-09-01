@@ -1,5 +1,7 @@
 {% extends './base.html' %}
 
+{% load static %}
+
 {% block head %}<script type="text/javascript" language="JavaScript">
 function HideContent(d) {
 document.getElementById(d).style.display = "none";
@@ -13,7 +15,11 @@ else { document.getElementById(d).style.display = "none"; }
 }
 </script>
 
+<link rel="stylesheet" href="{% static 'star-ratings/css/star-ratings.css' %}">
+<script type="text/javascript" src="{% static 'star-ratings/js/dist/star-ratings.min.js' %}"></script>
 {% endblock %}
+
+{% load ratings %}
 
 {% block title %}UMO: {{problem.label}}{% endblock %}
 
@@ -88,6 +94,11 @@ Trash
 {% endif %}
 {% endif %}
 </p>
+
+<label>Rating:</label>
+<p>
+{% ratings problem.current_version 20 20 %}
+</p>
 </div>
 <label>Comments:</label>
 <div class="comments-list">
@@ -125,6 +136,7 @@ Trash
     <p>
       {{v.difficulty}}
     </p>
+    <p>{% ratings v 20 20 %}</p>
     <label>Solutions:</label>
     <div class="form-group">
       {% if v.solutions.all|length == 0 %}<p>No Solutions Yet</p>

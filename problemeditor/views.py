@@ -266,8 +266,11 @@ def editsolutionpkview(request,**kwargs):#Needs to be in terms of "Versions"
 def deletesolutionpkview(request,**kwargs):#If solution_number is kept, this must be modified to adjust.
     pk=kwargs['pk']
     spk=kwargs['spk']
+    prob = get_object_or_404(Problem, pk=pk)
     sol = get_object_or_404(Solution, pk=spk)
-    sol.delete()
+    prob.current_version.solutions.remove(sol)
+    prob.current_version.deleted_solutions.add(sol)
+    prob.save()
     return redirect('../../')
 
 

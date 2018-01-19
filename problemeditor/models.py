@@ -60,6 +60,7 @@ class ProblemVersion(models.Model):
     problem_text = models.TextField(blank=True)
     problem_latex = models.TextField(blank=True)
     solutions = models.ManyToManyField(Solution,blank=True)
+    deleted_solutions = models.ManyToManyField(Solution,blank=True,related_name="deleted_solutions")
     top_solution_number = models.IntegerField(default=0)
     version_number = models.IntegerField(default=0)
     author_name = models.CharField(max_length=50,blank=True)

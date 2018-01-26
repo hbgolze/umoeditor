@@ -1,6 +1,6 @@
 from django import forms
 #from django.contrib.auth.models import User
-from problemeditor.models import Problem,Solution,Comment,ProblemVersion
+from problemeditor.models import Problem,Solution,Comment,ProblemVersion,ShortList
 from .models import Topic
 
 PROBLEM_DIFFICULTY = (
@@ -100,3 +100,12 @@ class DiffMoveProblemForm(forms.ModelForm):
                   )
     def __init__(self, *args, **kwargs):
         super(DiffMoveProblemForm, self).__init__(*args, **kwargs)   
+
+
+class ShortListModelForm(forms.ModelForm):
+    class Meta:
+        model = ShortList
+        fields = ('name',)
+        widgets = {
+            'name': forms.TextInput(attrs={"class":"form-control"}),
+        }

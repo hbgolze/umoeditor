@@ -1,0 +1,33 @@
+{% extends './base.html' %}
+
+{% block title %}Mock Lists{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="row">
+    <div class="col-xs-12">
+      <h2>Mock Lists</h2>
+      {% if mocklists|length == 0 %}
+      No Mock Lists Available.
+      {% else %}
+      <div class="list-group col-sm-6">
+	{% for t in mocklists %}
+	<a href="{{t.pk}}" class="list-group-item list-group-item-action">{{t.name}} ({{t.problems.count}} Problem{% if t.problems.count == 1 %}{% else %}s{% endif %}; Created on {{t.created_date}})</a>
+	{% endfor %}
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-xs-12">
+      <h2>Start a New Mock List</h2>
+      <form action="." method="post" id="new-mocklist-form">
+        {% csrf_token %}
+        <p>{{form}}</p>
+        <p><button type="submit" class="btn btn-primary" value="New Mock List">New Mock List</button></p>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

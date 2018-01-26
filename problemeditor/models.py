@@ -116,6 +116,14 @@ class UserProfile(models.Model):
     def __unicode__(self):
         return self.user.username
 
+class ShortList(models.Model):
+    problems = models.ManyToManyField(Problem, blank=True)
+    name = models.CharField(max_length=50)
+    archived = models.BooleanField(default=False)
+    created_date = models.DateTimeField(default = timezone.now)
+    author = models.ForeignKey(User,blank=True,null=True)
+    def __str__(self):
+        return self.name
 
 def get_or_create_up(user):
     userprofile,boolcreated=UserProfile.objects.get_or_create(user=user)

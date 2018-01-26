@@ -1,0 +1,76 @@
+{% extends "./base.html" %}
+
+{% block title %}UMO Mock List: {{mocklist.name}}{% endblock %}
+
+
+{% load static %}
+
+{% load ratings %}
+
+{% block head %}<script type="text/javascript" language="JavaScript">
+function HideContent(d) {
+document.getElementById(d).style.display = "none";
+}
+function ShowContent(d) {
+document.getElementById(d).style.display = "block";
+}
+function ReverseDisplay(d) {
+if(document.getElementById(d).style.display == "none") { document.getElementById(d).style.display = "block"; }
+else { document.getElementById(d).style.display = "none"; }
+}
+</script>
+
+
+<link rel="stylesheet" href="{% static 'star-ratings/css/star-ratings.css' %}">
+<script type="text/javascript" src="{% static 'star-ratings/js/dist/star-ratings.min.js' %}"></script>
+
+{% endblock %}
+
+{% block content %}
+<ol class="breadcrumb">
+  <li><a href="/mocklists/">Mock Lists</a></li>
+  <li class="active">{{mocklist.name}}</li>
+</ol>
+<div class="container">
+  <div class="row">
+    <div class="col-xs-12">
+
+<h2>Mock List: {{mocklist.name}}</h2>
+{% if problems.count == 0 %}
+<i>Add problems to this list from the main screen.</i>
+{% endif %}
+<table class="table">
+  {% for p in problems %}
+{% include 'problemeditor/problemrow.html' %}
+
+<!--  <tr>
+    <td valign="top" class="col-sm-1"><br>
+      {{forloop.counter}}. 
+    </td>
+    <td>
+
+      <table width="100%">
+	<tr>
+	  <td>
+	    <p>
+	      {% autoescape off %}{{p.current_version.problem_latex|linebreaks}}{% endautoescape %}
+	    </p>
+	  </td>
+	</tr>
+	<tr>
+	  <td>
+	    <p><a class="btn btn-primary" href="/detailedview/{{p.pk}}">Detailed View</a>
+	    </p>
+	    
+	  </td>
+	</tr>
+      </table>
+    </td>
+  </tr>-->
+  {% endfor %}
+</table>
+</div>
+</div>
+</div>
+
+{% endblock %}

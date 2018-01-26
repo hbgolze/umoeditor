@@ -117,6 +117,22 @@ All Problems
 
 <p><a class="btn btn-primary" href="addproblem/">Add a problem</a></p>
 
+<div class="row">
+  <div class="col-sm-12">
+    <div class="list-group-horizontal">
+      <a href="/" class="list-group-item{% if not difficulty %} active{% endif %}">
+	All Difficulties
+      </a>
+      <a href="/?difficulty=1" class="list-group-item{% if difficulty == 1 %} active{% endif %}">Difficulty 1</a>
+      <a href="/?difficulty=2" class="list-group-item{% if difficulty == 2 %} active{% endif %}">Difficulty 2</a>
+      <a href="/?difficulty=3" class="list-group-item{% if difficulty == 3 %} active{% endif %}">Difficulty 3</a>
+      <a href="/?difficulty=4" class="list-group-item{% if difficulty == 4 %} active{% endif %}">Difficulty 4</a>
+      <a href="/?difficulty=5" class="list-group-item{% if difficulty == 5 %} active{% endif %}">Difficulty 5</a>
+      <a href="/?difficulty=6" class="list-group-item{% if difficulty == 6 %} active{% endif %}">Difficulty 6</a>
+    </div>
+  </div>
+</div>
+
 {% for labl,plist in allcats %}
 
 <a name="type{{labl}}"></a> 
@@ -130,131 +146,9 @@ All Problems
 {% else %}
 <table class="table">
 {% for p in problems %}
-<tr>
-<td valign="top" class="col-sm-1"><br>
-<p>{{p.label}}</p>
 
-  <p>Author: {{p.current_version.author_name}}</p>
-<!--  <label for="difficulty_{{p.pk}}"></label>-->
-<p>Difficulty:</p>
-  <p>
-    <form action="." method="post">
-      {% csrf_token %}
-      <select name="difficulty_{{p.pk}}" onchange="this.form.submit()">
-	<option value="1" {% if p.current_version.difficulty == "1" %}selected{% endif %}>1
-	</option>
-	<option value="2" {% if p.current_version.difficulty == "2" %}selected{% endif %}>2
-	</option>
-	<option value="3" {% if p.current_version.difficulty == "3" %}selected{% endif %}>3
-	</option>
-	<option value="4" {% if p.current_version.difficulty == "4" %}selected{% endif %}>4
-	</option>
-	<option value="5" {% if p.current_version.difficulty == "5" %}selected{% endif %}>5
-	</option>
-	<option value="6" {% if p.current_version.difficulty == "6" %}selected{% endif %}>6
-	</option>
-      </select>
-    </form>
-  </p>
-<!--    <label for="status_{{p.pk}}">Move To:</label>      -->
-<p>Move To:</p>
-  <p>
-    <form action="." method="post">
-      {% csrf_token %}
-      <select name="status_{{p.pk}}" onchange="this.form.submit()">
-	<option value="NP" {% if p.problem_status == "NP" %}selected{% endif %}>New Problem
-	</option>
-	<option value="PN" {% if p.problem_status == "PN" %}selected{% endif %}>Propose for Current Year
-	</option>
-	<option value="PL" {% if p.problem_status == "PL" %}selected{% endif %}>Propose for Future Year
-	</option>
-	<option value="MI" {% if p.problem_status == "MI" %}selected{% endif %}>Has Potential
-	</option>
-	<option value="MJ" {% if p.problem_status == "MJ" %}selected{% endif %}>Needs Major Revision
-	</option>
-	<option value="TR" {% if p.problem_status == "TR" %}selected{% endif %}>Trash
-	</option>
-      </select>
-    </form>
-  </p>
+{% include 'problemeditor/problemrow.html' %}
 
-<p>Change Topic:</p>
-  <p>
-    <form action="." method="post">
-      {% csrf_token %}
-      <select name="topic_{{p.pk}}" onchange="this.form.submit()">
-	<option value="Algebra" {% if p.topic == "Algebra" %}selected{% endif %}>Algebra
-	</option>
-	<option value="Combinatorics" {% if p.topic == "Combinatorics" %}selected{% endif %}>Combinatorics
-	</option>
-	<option value="Games" {% if p.topic == "Games" %}selected{% endif %}>Games
-	</option>
-	<option value="Geometry" {% if p.topic == "Geometry" %}selected{% endif %}>Geometry
-	</option>
-	<option value="Number Theory" {% if p.topic == "Number Theory" %}selected{% endif %}>Number Theory
-	</option>
-	<option value="Other" {% if p.topic == "Other" %}selected{% endif %}>Other
-	</option>
-      </select>
-    </form>
-  </p>
-
-  <p><a class="btn btn-primary" name="det_{{p.pk}}" href="detailedview/{{p.pk}}">Edit Details</a>
-  </p>
-  <p>{{p.versions.count}} Version{% if p.versions.count > 1%}s{% endif %}</p>
-
-<p>Solution: {% if p.current_version.solutions.count > 0 %}
-<span class="glyphicon glyphicon-ok" style="color:green"></span>
-{% else %}
-<span class="glyphicon glyphicon-remove" style="color:red"></span>
-{% endif %}
-</p>
-<label>Rating:</label>
-{% if request.user in p.current_version.authors.all %}
-<p>{% ratings p.current_version 20 20 'read_only' %}</p>
-{% else %}
-<p>{% ratings p.current_version 20 20 %}</p>
-{% endif %}
-
-</td>
-<td>
-<table width="100%">
-<tr>
-<td>
-<p>
-{% autoescape off %}{{p.current_version.problem_latex|linebreaks}} {% endautoescape %}
-</p>
-</td>
-</tr>
-<tr>
-<td>
-  <a href="javascript:ReverseDisplay('comment_{{p.pk}}')">
-    Click to show/hide comments ({{p.comments.count}}).
-  </a>
-
-  <div id="comment_{{p.pk}}" style="display:none">
-    {% for c in p.comments.all %}
-    <div class="media">
-      <p class="pull-right"><small>{{c.created_date}}</small></p>
-      <div class="media-body">
-	<h3 class="media-heading user_name">{{c.author_name}}</h3>
-	<p>{{c.comment_text|linebreaks}}</p>
-	
-      </div>
-    </div>
-    {% endfor %}
-  </div>
-  
-</td>
-</tr>
-<tr>
-<td>
-<p class="pull-right"><small>[{{p.label}}], Proposed on {{p.created_date}}</small></p>
-</td>
-</tr>
-</table>
-</td>
-</tr>
 {% endfor %}
 </table>
 {% endif %}

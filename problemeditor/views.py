@@ -18,8 +18,8 @@ from django.contrib.auth import update_session_auth_hash
 
 from formtools.wizard.views import SessionWizardView
 
-from .models import Problem, Topic,  Solution,Comment,ProblemStatus,FinalTest,ProblemVersion
-from .forms import SolutionForm,ProblemTextForm,AddProblemForm,DetailedProblemForm,CommentForm,DiffMoveProblemForm,NewVersionForm
+from .models import Problem, Topic,  Solution,Comment,ProblemStatus,FinalTest,ProblemVersion,ShortList
+from .forms import SolutionForm,ProblemTextForm,AddProblemForm,DetailedProblemForm,CommentForm,DiffMoveProblemForm,NewVersionForm,ShortListModelForm
 from .utils import goodtag,goodurl,newtexcode,newsoltexcode,compileasy,compiletikz
 
 from django.template.loader import get_template
@@ -49,6 +49,7 @@ def UpdatePassword(request):
 
 @login_required
 def index_view(request):
+    context={}
     if request.method=='POST':
         form=request.POST
         for i in form:
@@ -73,11 +74,39 @@ def index_view(request):
                 curr_version.topic = form[i]
                 prob.save()
                 curr_version.save()
-    new_problems = Problem.objects.filter(problem_status='NP')
-    propose_now = Problem.objects.filter(problem_status='PN')
-    propose_later = Problem.objects.filter(problem_status='PL')
-    needs_minor = Problem.objects.filter(problem_status='MI')
-    needs_major = Problem.objects.filter(problem_status='MJ')
+            if 'addtolist' in i:
+                pk = i.split('_')[1]
+                prob = Problem.objects.get(pk=pk)
+                sl = ShortList.objects.get(pk=form[i])
+                sl.problems.add(prob)
+                sl.save()
+    all_problems = Problem.objects.all()
+    if request.method == "GET":
+        if request.GET.get('difficulty') == '1':
+            all_problems = all_problems.filter(current_version__difficulty=1)
+            context['difficulty'] = 1
+        elif request.GET.get('difficulty') == '2':
+            all_problems = all_problems.filter(current_version__difficulty=2)
+            context['difficulty'] = 2
+        elif request.GET.get('difficulty') == '3':
+            all_problems = all_problems.filter(current_version__difficulty=3)
+            context['difficulty'] = 3
+        elif request.GET.get('difficulty') == '4':
+            all_problems = all_problems.filter(current_version__difficulty=4)
+            context['difficulty'] = 4
+        elif request.GET.get('difficulty') == '5':
+            all_problems = all_problems.filter(current_version__difficulty=5)
+            context['difficulty'] = 5
+        elif request.GET.get('difficulty') == '6':
+            all_problems = all_problems.filter(current_version__difficulty=6)
+            context['difficulty'] = 6
+
+
+    new_problems = all_problems.filter(problem_status='NP')
+    propose_now = all_problems.filter(problem_status='PN')
+    propose_later = all_problems.filter(problem_status='PL')
+    needs_minor = all_problems.filter(problem_status='MI')
+    needs_major = all_problems.filter(problem_status='MJ')
     npa = new_problems.filter(topic='Algebra')
     pna = propose_now.filter(topic='Algebra')
     pla = propose_later.filter(topic='Algebra')
@@ -177,7 +206,14 @@ def index_view(request):
 
 #            pnums.append(nums)
 #        allnums.append((i[0],pnums))
-    context = {'allcats':allcats,'nbar':'problemeditor','current':currtablecounts,'good':goodtablecounts, 'request':request}
+
+    context['mklists'] = ShortList.objects.all()
+
+    context['allcats'] = allcats
+    context['nbar'] = 'problemeditor'
+    context['current'] = currtablecounts
+    context['good'] = goodtablecounts
+    context['request'] = request
     return HttpResponse(template.render(context,request))
 
 
@@ -554,3 +590,52 @@ def test_as_pdf(request, pk):
     r = HttpResponse(content_type='application/pdf')  
     r.write(pdf)
     return r
+
+@login_required
+def mocklistsview(request):
+    if request.method=='POST':
+        shortlist_form = ShortListModelForm(request.POST)
+        if shortlist_form.is_valid():
+            shortlist = shortlist_form.save()
+            shortlist.author = request.user
+            shortlist.save()
+    F=ShortList.objects.all()
+    form = ShortListModelForm()
+    return render(request,'problemeditor/mocklistsview.html',{'mocklists':F,'nbar':'mocklists','form':form})
+
+
+@login_required
+def mocklist(request,pk):
+    T = get_object_or_404(ShortList,pk=pk)
+    if request.method=='POST':
+        form=request.POST
+        for i in form:
+            if 'status' in i:
+                pk = i.split('_')[1]
+                prob = Problem.objects.get(pk=pk)
+                prob.problem_status=form[i]
+                prob.save()
+            if 'difficulty' in i:
+                pk = i.split('_')[1]
+                prob = Problem.objects.get(pk=pk)
+                prob.difficulty = form[i]
+                curr_version = prob.current_version
+                curr_version.difficulty = form[i]
+                prob.save()
+                curr_version.save()
+            if 'topic' in i:
+                pk = i.split('_')[1]
+                prob = Problem.objects.get(pk=pk)
+                prob.topic = form[i]
+                curr_version = prob.current_version
+                curr_version.topic = form[i]
+                prob.save()
+                curr_version.save()
+            if 'addtolist' in i:
+                pk = i.split('_')[1]
+                prob = Problem.objects.get(pk=pk)
+                sl = ShortList.objects.get(pk=form[i])
+                sl.problems.add(prob)
+                sl.save()
+    probs = T.problems.order_by('current_version__difficulty')
+    return render(request,'problemeditor/mocklist.html',{'nbar':'mocklists','problems':probs,'mocklist' : T, 'mklists': ShortList.objects.all()})

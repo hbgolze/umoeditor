@@ -26,6 +26,8 @@ urlpatterns = [
     url(r'^pasttests/(?P<pk>\w+)/$',views.viewpasttest,name='viewpasttest'),
     url(r'^pasttests/pdfs/(?P<pk>\w+)/$',views.test_as_pdf,name='test_as_pdf'),
     url(r'^publish/(?P<year>\w+)/$',views.publishview,name='publishview'),
+    url(r'^mocklists/$',views.mocklistsview,name='mocklistsview'),
+    url(r'^mocklists/(?P<pk>\w+)/$',views.mocklist,name='mocklist'),
 #    url(r'^detailedview/(?P<pk>\w+)/editreview/(?P<apk>\w+)/$', views.editreviewpkview, name='editreviewpkview'),
 #    url(r'^detailedview/(?P<pk>\w+)/newreview/$', views.newreviewpkview, name='newreviewpkview'),
 

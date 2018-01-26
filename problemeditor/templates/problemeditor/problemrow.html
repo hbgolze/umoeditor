@@ -100,6 +100,14 @@
 <p>{% ratings p.current_version 20 20 %}</p>
 {% endif %}
 
+{% if mocklist %}
+<p>
+    <form action="." method="post">
+      {% csrf_token %}
+      <button type="submit" value="{{p.pk}}" name="remove_{{p.pk}}" class="btn btn-primary">Remove from List</button>
+    </form>
+</p>
+{% endif %}
 </td>
 
 <td>

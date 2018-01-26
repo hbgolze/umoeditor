@@ -637,5 +637,10 @@ def mocklist(request,pk):
                 sl = ShortList.objects.get(pk=form[i])
                 sl.problems.add(prob)
                 sl.save()
+            if 'remove' in i:
+                pk = i.split('_')[1]
+                prob = Problem.objects.get(pk=pk)
+                T.problems.remove(prob)
+                T.save()
     probs = T.problems.order_by('current_version__difficulty')
     return render(request,'problemeditor/mocklist.html',{'nbar':'mocklists','problems':probs,'mocklist' : T, 'mklists': ShortList.objects.all()})

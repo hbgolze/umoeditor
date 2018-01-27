@@ -32,7 +32,7 @@ class ProblemTextForm(forms.ModelForm):
         model = ProblemVersion
         fields = ('problem_text',)
         widgets = {
-            'problem_text': forms.Textarea(attrs={'cols': 120, 'rows': 15,'id' : 'codetext'}),
+            'problem_text': forms.Textarea(attrs={'cols': 120, 'rows': 15,'id' : 'codetext','class':'form-control'}),
             }
     def __init__(self, *args, **kwargs):
         super(ProblemTextForm, self).__init__(*args, **kwargs)   
@@ -42,14 +42,16 @@ class SolutionForm(forms.ModelForm):
         model = Solution
         fields = ('author_name','solution_text',)
         widgets = {
-            'solution_text': forms.Textarea(attrs={'cols': 120, 'rows': 15,'id' : 'codetext'})
+            'author_name': forms.TextInput(attrs={"class":"form-control"}),
+            'solution_text': forms.Textarea(attrs={'cols': 120, 'rows': 15,'id' : 'codetext','class':'form-control'})
         }
 class CommentForm(forms.ModelForm):
     class Meta:
         model = Comment
         fields = ('author_name','comment_text',)
         widgets = {
-            'comment_text': forms.Textarea(attrs={'cols': 100, 'rows': 15,'id' : 'codetext'})
+            'author_name': forms.TextInput(attrs={"class":"form-control"}),
+            'comment_text': forms.Textarea(attrs={'cols': 100, 'rows': 15,'id' : 'codetext','class':'form-control'})
         }
     def __init__(self, *args, **kwargs):
         super(CommentForm, self).__init__(*args, **kwargs)   
@@ -65,7 +67,8 @@ class AddProblemForm(forms.ModelForm):
                   'difficulty',
                   )
         widgets = {
-            'problem_text': forms.Textarea(attrs={'cols': 120, 'rows': 15,'id' : 'codetext'}),
+            'author_name': forms.TextInput(attrs={"class":"form-control"}),
+            'problem_text': forms.Textarea(attrs={'cols': 120, 'rows': 15,'id' : 'codetext','class':'form-control'}),
             }
     def __init__(self, *args, **kwargs):
         super(AddProblemForm, self).__init__(*args, **kwargs)   
@@ -84,7 +87,7 @@ class NewVersionForm(forms.ModelForm):
                   'difficulty',
                   )
         widgets = {
-            'problem_text': forms.Textarea(attrs={'cols': 120, 'rows': 15,'id' : 'codetext'}),
+            'problem_text': forms.Textarea(attrs={'cols': 120, 'rows': 15,'id' : 'codetext','class':'form-control'}),
             }
     def __init__(self, *args, **kwargs):
         super(NewVersionForm, self).__init__(*args, **kwargs)   

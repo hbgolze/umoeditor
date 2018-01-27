@@ -7,11 +7,17 @@
   <li><a href="/">All Problems</a></li>
   <li class="active">Add Problem</li>
 </ol>
-    <h2>Add Problem</h2>
-    <form method="POST" class="post-form">{% csrf_token %}
+<div class="container">
+  <div class="row">
+    <div class="col-xs-12">
+      <h2>Add Problem</h2>
+      <form method="POST" class="post-form">{% csrf_token %}
         {{ form.as_p }}
-<p>
-        <button type="submit" class="save btn btn-primary">Save</button>
-</p>
-    </form>
+	<p>
+          <button type="submit" class="save btn btn-primary">Save</button>
+	</p>
+      </form>
+    </div>
+  </div>
+</div>
 {% endblock %}

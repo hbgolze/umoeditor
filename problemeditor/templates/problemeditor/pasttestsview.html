@@ -3,6 +3,9 @@
 {% block title %}Add New Problem{% endblock %}
 
 {% block content %}
+<div class="container">
+  <div class="row">
+    <div class="col-xs-12">
 <h2>Past Tests</h2>
 {% if pasttests|length == 0 %}
 No Past Tests Available.
@@ -13,4 +16,7 @@ No Past Tests Available.
   {% endfor %}
 </div>
 {% endif %}
+</div>
+</div>
+</div>
 {% endblock %}

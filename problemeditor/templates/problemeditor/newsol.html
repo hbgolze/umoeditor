@@ -8,15 +8,21 @@
   <li><a href="/detailedview/{{problem.pk}}">{{problem.label}}</a></li>
   <li class="active">New Solution</li>
 </ol>
-    <h2>New Solution to {{problem.label}} (Version {{version.version_number}})</h2>
-    <form method="POST" class="post-form">{% csrf_token %}
-<div class="form-group">
-<label>Problem Text:</label>
-<p>{% autoescape off %}{{version.problem_latex|linebreaks}} {% endautoescape %}  [{{problem.label}}]</p>
-
-</div>
-          <h3>Solution</h3>
-          {{ form.as_p}} <br>
+<div class="container">
+  <div class="row">
+    <div class="col-xs-12">
+      <h2>New Solution to {{problem.label}} (Version {{version.version_number}})</h2>
+      <form method="POST" class="post-form">{% csrf_token %}
+	<div class="form-group">
+	  <label>Problem Text:</label>
+	  <p>{% autoescape off %}{{version.problem_latex|linebreaks}} {% endautoescape %}  [{{problem.label}}]</p>
+	  
+	</div>
+        <h3>Solution</h3>
+        {{ form.as_p}} <br>
         <button type="submit" class="save btn btn-default">Save</button>
-    </form>
+      </form>
+    </div>
+  </div>
+</div>
 {% endblock %}

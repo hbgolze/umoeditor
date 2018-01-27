@@ -9,6 +9,9 @@
   <li><a href="/detailedview/{{problem.pk}}">{{problem.label}}</a></li>
   <li class="active">Edit LaTeX (Version {{form.instance.version_number}})</li>
 </ol>
+<div class="container">
+<div class="row">
+<div class="col-xs-12">
     <h2>Edit Problem</h2>
     <form method="POST" class="post-form">{% csrf_token %}
 <div class="form-group">
@@ -32,4 +35,7 @@
         <button type="submit" class="save btn btn-default">Save</button>
 </p>
     </form>
+</div>
+</div>
+</div>
 {% endblock %}

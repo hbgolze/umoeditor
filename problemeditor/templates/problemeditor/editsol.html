@@ -8,6 +8,9 @@
   <li><a href="/detailedview/{{problem.pk}}">{{problem.label}}</a></li>
   <li class="active">Edit Solution</li>
 </ol>
+<div class="container">
+<div class="row">
+<div class="col-xs-12">
     <h2>Edit Solution to {{problem.label}} (Version {{cv.version_number}})</h2>
     <form method="POST" class="post-form">{% csrf_token %}
 {% autoescape off %}{{cv.problem_latex|linebreaks}} {% endautoescape %}  [{{problem.label}}]<br><br>
@@ -16,4 +19,7 @@
           {{ form.solution_text }} <br>
         <input type="submit" class="save btn btn-default" name="save" value="Save">
     </form>
+</div>
+</div>
+</div>
 {% endblock %}

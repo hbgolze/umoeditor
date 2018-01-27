@@ -8,9 +8,15 @@
   <li><a href="/detailedview/{{problem.pk}}">{{problem.label}}</a></li>
   <li class="active">New Comment</li>
 </ol>
-    <h2>New Comment to {{label}}</h2>
+<div class="container">
+<div class="row">
+<div class="col-xs-12">
+    <h2>New Comment to {{problem.label}}</h2>
     <form method="POST" class="post-form">{% csrf_token %}
           {{ form.as_p}} <br>
         <button type="submit" class="save btn btn-default">Save</button>
     </form>
+</div>
+</div>
+</div>
 {% endblock %}

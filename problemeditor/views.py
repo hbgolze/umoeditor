@@ -6,8 +6,8 @@ from django.db.models import Q
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.conf import settings
 from django.contrib.auth.forms import PasswordChangeForm
-
-
+from django.contrib.admin.models import LogEntry, ADDITION,CHANGE,DELETION
+from django.contrib.contenttypes.models import ContentType
 
 from django.contrib.auth import authenticate,login,logout
 from django.contrib.auth.admin import User
@@ -27,6 +27,8 @@ from django.template.loader import get_template
 from subprocess import Popen,PIPE
 import tempfile
 import os
+
+from datetime import datetime,timedelta
 
 import logging
 logger = logging.getLogger(__name__)
@@ -207,6 +209,13 @@ def index_view(request):
 #            pnums.append(nums)
 #        allnums.append((i[0],pnums))
 
+    log = LogEntry.objects.filter(change_message__contains="detailedview").filter(action_time__date__gte=datetime.today().date()-timedelta(days=7))
+
+#    userlog=[]
+#    for ent in log:
+        
+    context['log'] = log
+
     context['mklists'] = ShortList.objects.all()
 
     context['allcats'] = allcats
@@ -267,6 +276,14 @@ def newsolutionpkview(request,**kwargs):#Needs to be in terms of "Versions"
             compiletikz(sol.solution_text,cv.label,sol='sol'+str(sol_num))
             cv.solutions.add(sol)
             cv.save()
+            LogEntry.objects.log_action(
+                user_id = request.user.id,
+                content_type_id = ContentType.objects.get_for_model(sol).pk,
+                object_id = sol.id,
+                object_repr = sol.author_name+" added a solution to "+prob.label,
+                action_flag = ADDITION,
+                change_message = "/detailedview/"+str(prob.pk)+'/',
+                )
         return redirect('../')
     else:
         sol=Solution(solution_text='', solution_number=sol_num, problem_label=cv.label)
@@ -400,6 +417,14 @@ def newcommentpkview(request,**kwargs):
             com.save()
             prob.comments.add(com)
             prob.save()
+            LogEntry.objects.log_action(
+                user_id = request.user.id,
+                content_type_id = ContentType.objects.get_for_model(com).pk,
+                object_id = com.id,
+                object_repr = com.author_name+" added a comment to "+prob.label,
+                action_flag = ADDITION,
+                change_message = "/detailedview/"+str(prob.pk)+'/',
+                )
             return redirect('../')
     else:
         com=Comment(comment_text='', comment_number=com_num, problem_label=prob.label)
@@ -457,6 +482,14 @@ def newversionview(request,pk):#args
             problem.versions.add(version)
             problem.top_version_number+=1
             problem.save()
+            LogEntry.objects.log_action(
+                user_id = request.user.id,
+                content_type_id = ContentType.objects.get_for_model(version).pk,
+                object_id = version.id,
+                object_repr = version.author_name+" added a new version to "+problem.label,
+                action_flag = ADDITION,
+                change_message = "/detailedview/"+str(problem.pk)+'/',
+                )
             return redirect('../')
     else:
         form = NewVersionForm(instance=vers)
@@ -489,6 +522,14 @@ def addproblemview(request):
             problem.current_version=pv
             problem.top_version_number=1
             problem.save()
+            LogEntry.objects.log_action(
+                user_id = request.user.id,
+                content_type_id = ContentType.objects.get_for_model(problem).pk,
+                object_id = problem.id,
+                object_repr = problem.author_name+" added a problem ("+problem.label+")",
+                action_flag = ADDITION,
+                change_message = "/detailedview/"+str(problem.pk)+'/',
+                )
             return redirect('../detailedview/'+str(problem.pk)+'/')
     else:
         form = AddProblemForm(instance=prob)

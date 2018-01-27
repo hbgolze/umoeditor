@@ -5,37 +5,41 @@
 
 {% block content %}
 
+<div class="container">
+  <div class="row">
+    <div class="col-xs-12">
+      <h2>{{year}} UMO</h2>
 
-<h2>{{year}} UMO</h2>
-
-<table class="table">
-  {% for p in problems %}
-  <tr>
-    <td valign="top" class="col-sm-1"><br>
-      {{forloop.counter}}. 
-    </td>
-    <td>
-
-      <table width="100%">
+      <table class="table">
+	{% for p in problems %}
 	<tr>
-	  <td>
-	    <p>
-	      {% autoescape off %}{{p.current_version.problem_latex|linebreaks}}{% endautoescape %}
-	    </p>
+	  <td valign="top" class="col-sm-1"><br>
+	    {{forloop.counter}}. 
 	  </td>
-	</tr>
-	<tr>
 	  <td>
-	    <p><a class="btn btn-primary" href="/detailedview/{{p.pk}}">Detailed View</a>
-	    </p>
 	    
+	    <table width="100%">
+	      <tr>
+		<td>
+		  <p>
+		    {% autoescape off %}{{p.current_version.problem_latex|linebreaks}}{% endautoescape %}
+		  </p>
+		</td>
+	      </tr>
+	      <tr>
+		<td>
+		  <p><a class="btn btn-primary" href="/detailedview/{{p.pk}}">Detailed View</a>
+		  </p>
+		  
+		</td>
+	      </tr>
+	    </table>
 	  </td>
 	</tr>
+	{% endfor %}
       </table>
-    </td>
-  </tr>
-  {% endfor %}
-</table>
-
+    </div>
+  </div>
+</div>
 
 {% endblock %}

@@ -26,136 +26,154 @@ else { document.getElementById(d).style.display = "none"; }
 {% endblock %}
 
 {% block content %}
-<table class="table">
-<tbody>
-<tr>
-{% for labl,plist in allcats %}
-<td>
-<p>{{labl}}</p>
-{% for problems,topic in plist %}
-<p><a href="#typetopic{{labl}}{{topic}}">{{topic}} ({{problems.count}})</a></p>
-{% endfor %}
-</td>
-{% endfor %}
-</tr>
-</tbody>
-</table>
 
-<!--(npa,'Algebra'),(npc,'Combinatorics'),(npga,'Games'),(npg,'Geometry'),(npn,'Number Theory'),(npo,'Other'))),-->
 <div class="container">
-<div class="col-sm-6">
-<table class="table table-sm col-sm-6">
-<thead>
-<tr>
-<th>
-Current/New Problems
-</th>
-<th>1</th>
-<th>2</th>
-<th>3</th>
-<th>4</th>
-<th>5</th>
-<th>6</th>
-<th>Total</th>
-</tr>
-</thead>
-<tbody>
-{% for topic,counts in current %}
-{% if forloop.last %}
-<tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-{% endif %}
-<tr>
-<th scope="row">
-{{topic}}
-</th>
-{% for num in counts %}
-<td>
-{{num}}
-</td>
-{% endfor %}
-</tr>
-{% endfor %}
-</tbody>
-</table>
-</div>
-<div class="col-sm-6">
-<table class="table table-sm">
-<thead>
-<tr>
-<th>
-All Problems
-</th>
-<th>1</th>
-<th>2</th>
-<th>3</th>
-<th>4</th>
-<th>5</th>
-<th>6</th>
-<th>Total</th>
-</tr>
-</thead>
-<tbody>
-{% for topic,counts in good %}
-{% if forloop.last %}
-<tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-{% endif %}
-<tr>
-<th scope="row">
-{{topic}}
-</th>
-{% for num in counts %}
-<td>
-{{num}}
-</td>
-{% endfor %}
-</tr>
-{% endfor %}
-</tbody>
-</table>
-</div>
-</div>
-
-<p><a class="btn btn-primary" href="addproblem/">Add a problem</a></p>
-
-<div class="row">
-  <div class="col-sm-12">
-    <div class="list-group-horizontal">
-      <a href="/" class="list-group-item{% if not difficulty %} active{% endif %}">
-	All Difficulties
-      </a>
-      <a href="/?difficulty=1" class="list-group-item{% if difficulty == 1 %} active{% endif %}">Difficulty 1</a>
-      <a href="/?difficulty=2" class="list-group-item{% if difficulty == 2 %} active{% endif %}">Difficulty 2</a>
-      <a href="/?difficulty=3" class="list-group-item{% if difficulty == 3 %} active{% endif %}">Difficulty 3</a>
-      <a href="/?difficulty=4" class="list-group-item{% if difficulty == 4 %} active{% endif %}">Difficulty 4</a>
-      <a href="/?difficulty=5" class="list-group-item{% if difficulty == 5 %} active{% endif %}">Difficulty 5</a>
-      <a href="/?difficulty=6" class="list-group-item{% if difficulty == 6 %} active{% endif %}">Difficulty 6</a>
+  <div class="row">
+    <div class="col-xs-12 col-sm-9">
+      <div class="row">
+	<table class="table">
+	  <tbody>
+	    <tr>
+	      {% for labl,plist in allcats %}
+	      <td>
+		<p>{{labl}}</p>
+		{% for problems,topic in plist %}
+		<p><a href="#typetopic{{labl}}{{topic}}">{{topic}} ({{problems.count}})</a></p>
+		{% endfor %}
+	      </td>
+	      {% endfor %}
+	    </tr>
+	  </tbody>
+	</table>
+      </div>
+      <div class="row">
+	<!--(npa,'Algebra'),(npc,'Combinatorics'),(npga,'Games'),(npg,'Geometry'),(npn,'Number Theory'),(npo,'Other'))),-->
+	<div class="col-sm-6">
+	  <table class="table table-sm col-sm-6">
+	    <thead>
+	      <tr>
+		<th>
+		  Current/New Problems
+		</th>
+		<th>1</th>
+		<th>2</th>
+		<th>3</th>
+		<th>4</th>
+		<th>5</th>
+		<th>6</th>
+		<th>Total</th>
+	      </tr>
+	    </thead>
+	    <tbody>
+	      {% for topic,counts in current %}
+	      {% if forloop.last %}
+	      <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+	      {% endif %}
+	      <tr>
+		<th scope="row">
+		  {{topic}}
+		</th>
+		{% for num in counts %}
+		<td>
+		  {{num}}
+		</td>
+		{% endfor %}
+	      </tr>
+	      {% endfor %}
+	    </tbody>
+	  </table>
+	</div>
+	<div class="col-sm-6">
+	  <table class="table table-sm">
+	    <thead>
+	      <tr>
+		<th>
+		  All Problems
+		</th>
+		<th>1</th>
+		<th>2</th>
+		<th>3</th>
+		<th>4</th>
+		<th>5</th>
+		<th>6</th>
+		<th>Total</th>
+	      </tr>
+	    </thead>
+	    <tbody>
+	      {% for topic,counts in good %}
+	      {% if forloop.last %}
+	      <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+	      {% endif %}
+	      <tr>
+		<th scope="row">
+		  {{topic}}
+		</th>
+		{% for num in counts %}
+		<td>
+		  {{num}}
+		</td>
+		{% endfor %}
+	      </tr>
+	      {% endfor %}
+	    </tbody>
+	  </table>
+	</div><!--col-6-->
+      </div><!--row-->
+      <div class="row">
+	<p><a class="btn btn-primary" href="addproblem/">Add a problem</a></p>
+      </div class="row">
+      <div class="row">
+	<div class="col-sm-12">
+	  <div class="list-group-horizontal">
+	    <a href="/" class="list-group-item{% if not difficulty %} active{% endif %}">
+	      All Difficulties
+	    </a>
+	    <a href="/?difficulty=1" class="list-group-item{% if difficulty == 1 %} active{% endif %}">Difficulty 1</a>
+	    <a href="/?difficulty=2" class="list-group-item{% if difficulty == 2 %} active{% endif %}">Difficulty 2</a>
+	    <a href="/?difficulty=3" class="list-group-item{% if difficulty == 3 %} active{% endif %}">Difficulty 3</a>
+	    <a href="/?difficulty=4" class="list-group-item{% if difficulty == 4 %} active{% endif %}">Difficulty 4</a>
+	    <a href="/?difficulty=5" class="list-group-item{% if difficulty == 5 %} active{% endif %}">Difficulty 5</a>
+	    <a href="/?difficulty=6" class="list-group-item{% if difficulty == 6 %} active{% endif %}">Difficulty 6</a>
+	  </div>
+	</div>
+      </div>
+      <div class="row">
+      {% for labl,plist in allcats %}
+      
+      <a name="type{{labl}}"></a> 
+      <h1>{{labl}}</h1>
+      
+      {% for problems,topic in plist %}
+      <a name="typetopic{{labl}}{{topic}}"></a> 
+      <h3>{{topic}}</h3>
+      
+      {% if problems|length == 0 %}<p>No {{topic}} problems in this category.</p>
+      {% else %}
+      <table class="table">
+	{% for p in problems %}
+	
+	{% include 'problemeditor/problemrow.html' %}
+	
+	{% endfor %}
+      </table>
+      {% endif %}
+      {% endfor %}
+      {% endfor %}
+      </div>
+      <div class="row">
+	<a class="btn btn-primary" href="addproblem/">Add a problem</a>
+      </div>
+    </div>
+    <div class="col-sm-3">
+      <h2>Addition Log</h2>
+      <div class="list-group">
+	{% if log.count == 0 %}<i>Nothing currently in the log</i>{% endif %}
+	{% for entry in log %}
+	<a href="{{entry.change_message}}" class="list-group-item"> {{entry.object_repr}} ({{entry.action_time}})</a>
+	
+	{% endfor %}
+      </div>
     </div>
   </div>
 </div>
-
-{% for labl,plist in allcats %}
-
-<a name="type{{labl}}"></a> 
-<h1>{{labl}}</h1>
-
-{% for problems,topic in plist %}
-<a name="typetopic{{labl}}{{topic}}"></a> 
-<h3>{{topic}}</h3>
-
-{% if problems|length == 0 %}<p>No {{topic}} problems in this category.</p>
-{% else %}
-<table class="table">
-{% for p in problems %}
-
-{% include 'problemeditor/problemrow.html' %}
-
-{% endfor %}
-</table>
-{% endif %}
-{% endfor %}
-{% endfor %}
-
-<a class="btn btn-primary" href="addproblem/">Add a problem</a>
-<!--</div>-->
-
 {% endblock %}

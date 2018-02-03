@@ -752,6 +752,7 @@ def shortlist_as_pdf(request, pk):
             )
             stdout_value = process2.communicate()[0]
         logger.debug(os.listdir(tempdir))
+        print(os.listdir(tempdir))
         with open(os.path.join(tempdir, 'texput.pdf'), 'rb') as f:
             pdf = f.read()
     r = HttpResponse(content_type='application/pdf')  

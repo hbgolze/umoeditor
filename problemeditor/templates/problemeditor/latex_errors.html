@@ -1,0 +1,25 @@
+{% extends "./base.html" %}
+
+{% block title %}Errors compiling UMO Mock List: {{mocklist.name}}{% endblock %}
+
+
+
+{% block content %}
+<ol class="breadcrumb">
+  <li><a href="/mocklists/">Mock Lists</a></li>
+  <li class="active">{{mocklist.name}}</li>
+</ol>
+<div class="container">
+  <div class="row">
+    <div class="col-xs-12">
+
+<h2>Errors compiling Mock List: {{mocklist.name}}</h2>
+<p>The pdf could not compile. Here's what pdflatex said:</p>
+<pre>
+{{error_text|linebreaks}}
+</pre>
+</div>
+</div>
+</div>
+
+{% endblock %}

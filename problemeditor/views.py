@@ -752,9 +752,13 @@ def shortlist_as_pdf(request, pk):
             )
             stdout_value = process2.communicate()[0]
         logger.debug(os.listdir(tempdir))
-        print(os.listdir(tempdir))
-        with open(os.path.join(tempdir, 'texput.pdf'), 'rb') as f:
-            pdf = f.read()
-    r = HttpResponse(content_type='application/pdf')  
-    r.write(pdf)
-    return r
+        if 'texput.pdf' in os.listdir(tempdir):
+            with open(os.path.join(tempdir, 'texput.pdf'), 'rb') as f:
+                pdf = f.read()
+                r = HttpResponse(content_type='application/pdf')  
+                r.write(pdf)
+                return r
+        else:
+            with open(os.path.join(tempdir,'texput.log')) as f:
+                error_text = f.read()
+                return render(request,'problemeditor/latex_errors.html',{'nbar':'mocklists','mocklist':shortlist,'error_text':error_text})

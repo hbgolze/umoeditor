@@ -35,7 +35,7 @@ else { document.getElementById(d).style.display = "none"; }
   <div class="row">
     <div class="col-xs-12">
 
-<h2>Mock List: {{mocklist.name}} (<a href="{% url mocklist_pdf mocklist.pk %}">pdf</a>)</h2>
+<h2>Mock List: {{mocklist.name}} (<a href="{% url 'mocklist_pdf' mocklist.pk %}">pdf</a>)</h2>
 {% if problems.count == 0 %}
 <i>Add problems to this list from the main screen.</i>
 {% endif %}

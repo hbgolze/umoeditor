@@ -162,7 +162,7 @@ def index_view(request):
     currtablecounts=[]
     goodtablecounts=[]
     all_good_probs=Problem.objects.filter(problem_status__in=['PN','NP','MJ','MI','PL'])
-    all_curr_probs=Problem.objects.filter(problem_status__in=['PN','NP'])
+    all_curr_probs=Problem.objects.filter(problem_status__in=['PN','NP','PL'])
     topics = ['Algebra','Combinatorics','Games','Geometry','Number Theory','Other']
     for top in topics:
         goodcounts=[] 

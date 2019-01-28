@@ -307,7 +307,6 @@ def compiletikz(texcode,label,sol=''):
 #        tikz_code = tikz_code.replace('\\end{tikzpicture}','')
 #        tikz_code = tikz_code.replace('\\end{center}','</center>')
         tikz_code = tikz_code.rstrip().lstrip()
-        print(tikz_code)
         filename = 'tikz'+label+sol+'-'+str(i+1)
         filename = filename.replace(' ','')
         context = Context({
@@ -340,8 +339,3 @@ def compiletikz(texcode,label,sol=''):
                                     )
             stdout_value = proc.communicate()[0]
 
-def pointsum(user_responses):
-    tot=0
-    for i in user_responses:
-        tot+=i.point_value
-    return tot

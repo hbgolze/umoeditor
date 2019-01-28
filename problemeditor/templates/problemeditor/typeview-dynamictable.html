@@ -1,0 +1,33 @@
+          <table class="table table-sm col-sm-6">
+            <thead>
+              <tr>
+                <th>
+                  Current/New Problems
+                </th>
+                <th>1</th>
+                <th>2</th>
+                <th>3</th>
+                <th>4</th>
+                <th>5</th>
+                <th>6</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for topic,counts in current %}
+              {% if forloop.last %}
+              <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+              {% endif %}
+              <tr>
+                <th scope="row">
+                  {{topic}}
+                </th>
+                {% for num in counts %}
+                <td>
+                  {{num}}
+                </td>
+                {% endfor %}
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>

@@ -48,40 +48,8 @@ else { document.getElementById(d).style.display = "none"; }
       </div>
       <div class="row">
 	<!--(npa,'Algebra'),(npc,'Combinatorics'),(npga,'Games'),(npg,'Geometry'),(npn,'Number Theory'),(npo,'Other'))),-->
-	<div class="col-sm-6">
-	  <table class="table table-sm col-sm-6">
-	    <thead>
-	      <tr>
-		<th>
-		  Current/New Problems
-		</th>
-		<th>1</th>
-		<th>2</th>
-		<th>3</th>
-		<th>4</th>
-		<th>5</th>
-		<th>6</th>
-		<th>Total</th>
-	      </tr>
-	    </thead>
-	    <tbody>
-	      {% for topic,counts in current %}
-	      {% if forloop.last %}
-	      <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-	      {% endif %}
-	      <tr>
-		<th scope="row">
-		  {{topic}}
-		</th>
-		{% for num in counts %}
-		<td>
-		  {{num}}
-		</td>
-		{% endfor %}
-	      </tr>
-	      {% endfor %}
-	    </tbody>
-	  </table>
+	<div class="col-sm-6" id="dynamic-table">
+	  {% include 'problemeditor/typeview-dynamictable.html' %}
 	</div>
 	<div class="col-sm-6">
 	  <table class="table table-sm">
@@ -120,7 +88,19 @@ else { document.getElementById(d).style.display = "none"; }
 	</div><!--col-6-->
       </div><!--row-->
       <div class="row">
-	<p><a class="btn btn-primary" href="addproblem/">Add a problem</a></p>
+	<div class="col-sm-6">
+	  <form id="change-table-form">
+	    <p><input type="checkbox" name="NP"{% if 'NP' in included_cats %} checked{% endif%}> New Problems</p>
+	    <p><input type="checkbox" name="PN"{% if 'PN' in included_cats %} checked{% endif%}> Proposed for Current Year</p>
+	    <p><input type="checkbox" name="PL"{% if 'PL' in included_cats %} checked{% endif%}> Proposed for Future Year</p>
+	    <p><input type="checkbox" name="MI"{% if 'MI' in included_cats %} checked{% endif%}> Has Potential</p>
+	    <p><input type="checkbox" name="MJ"{% if 'MJ' in included_cats %} checked{% endif%}> Needs Major Revision</p>
+	    <p><button type="submit" class="btn btn-primary">Refresh Table</button></p>
+	  </form>
+	</div>
+      </div>
+      <div class="row">
+	<p><a class="btn btn-primary mt-2" href="addproblem/">Add a problem</a></p>
       </div class="row">
       <div class="row">
 	<div class="col-sm-12">
@@ -176,4 +156,23 @@ else { document.getElementById(d).style.display = "none"; }
     </div>
   </div>
 </div>
+
+<script>
+$(document).on('submit',"#change-table-form",function(e) {
+  e.preventDefault();
+  $.ajax({
+    type: 'GET',
+    url: "ajax/get-new-table",
+    data: $(this).serialize(),
+    dataType: 'json',
+    success: function(result) {
+
+console.log('hi');
+$("#dynamic-table").html(result['table']);
+    }
+  });
+  return false;
+});
+
+</script>
 {% endblock %}

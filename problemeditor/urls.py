@@ -29,6 +29,7 @@ urlpatterns = [
     url(r'^mocklists/$',views.mocklistsview,name='mocklistsview'),
     url(r'^mocklists/(?P<pk>\w+)/$',views.mocklist,name='mocklist'),
     url(r'^mocklists/pdfs/(?P<pk>\w+)/$',views.shortlist_as_pdf,name='mocklist_pdf'),
+    url(r'^ajax/get-new-table/$',views.get_new_table,name='get_new_table'),
 #    url(r'^detailedview/(?P<pk>\w+)/editreview/(?P<apk>\w+)/$', views.editreviewpkview, name='editreviewpkview'),
 #    url(r'^detailedview/(?P<pk>\w+)/newreview/$', views.newreviewpkview, name='newreviewpkview'),
 

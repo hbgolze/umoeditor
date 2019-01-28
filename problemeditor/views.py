@@ -1,6 +1,7 @@
 from django.shortcuts import render,render_to_response, get_object_or_404,redirect
-from django.http import HttpResponse,HttpResponseRedirect,Http404
+from django.http import HttpResponse,HttpResponseRedirect,Http404,JsonResponse
 from django.template import loader,RequestContext,Context
+from django.template.loader import render_to_string
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -52,6 +53,21 @@ def UpdatePassword(request):
 @login_required
 def index_view(request):
     context={}
+    f = request.GET
+    L = []
+    if 'NP' in f:
+        L.append('NP')
+    if 'PN' in f:
+        L.append('PN')
+    if 'PL' in f:
+        L.append('PL')
+    if 'MI' in f:
+        L.append('MI')
+    if 'MJ' in f:
+        L.append('MJ')
+    if len(L) == 0:
+        L = ['NP','PN']
+    
     if request.method=='POST':
         form=request.POST
         for i in form:
@@ -161,8 +177,8 @@ def index_view(request):
         )
     currtablecounts=[]
     goodtablecounts=[]
-    all_good_probs=Problem.objects.filter(problem_status__in=['PN','NP','MJ','MI','PL'])
-    all_curr_probs=Problem.objects.filter(problem_status__in=['PN','NP','PL'])
+    all_good_probs = Problem.objects.filter(problem_status__in = ['PN','NP','MJ','MI','PL'])
+    all_curr_probs = Problem.objects.filter(problem_status__in = L)#['PN','NP','PL'])
     topics = ['Algebra','Combinatorics','Games','Geometry','Number Theory','Other']
     for top in topics:
         goodcounts=[] 
@@ -223,7 +239,114 @@ def index_view(request):
     context['current'] = currtablecounts
     context['good'] = goodtablecounts
     context['request'] = request
+    context['included_cats'] = L
     return HttpResponse(template.render(context,request))
+
+@login_required
+def get_new_table(request):
+    context = {}
+
+
+
+    f = request.GET
+    L = []
+    if 'NP' in f:
+        L.append('NP')
+    if 'PN' in f:
+        L.append('PN')
+    if 'PL' in f:
+        L.append('PL')
+    if 'MI' in f:
+        L.append('MI')
+    if 'MJ' in f:
+        L.append('MJ')
+    if len(L) == 0:
+        L = ['NP','PN']
+    
+    all_problems = Problem.objects.all()
+    if request.method == "GET":
+        if request.GET.get('difficulty') == '1':
+            all_problems = all_problems.filter(current_version__difficulty=1)
+            context['difficulty'] = 1
+        elif request.GET.get('difficulty') == '2':
+            all_problems = all_problems.filter(current_version__difficulty=2)
+            context['difficulty'] = 2
+        elif request.GET.get('difficulty') == '3':
+            all_problems = all_problems.filter(current_version__difficulty=3)
+            context['difficulty'] = 3
+        elif request.GET.get('difficulty') == '4':
+            all_problems = all_problems.filter(current_version__difficulty=4)
+            context['difficulty'] = 4
+        elif request.GET.get('difficulty') == '5':
+            all_problems = all_problems.filter(current_version__difficulty=5)
+            context['difficulty'] = 5
+        elif request.GET.get('difficulty') == '6':
+            all_problems = all_problems.filter(current_version__difficulty=6)
+            context['difficulty'] = 6
+
+
+    new_problems = all_problems.filter(problem_status='NP')
+    propose_now = all_problems.filter(problem_status='PN')
+    propose_later = all_problems.filter(problem_status='PL')
+    needs_minor = all_problems.filter(problem_status='MI')
+    needs_major = all_problems.filter(problem_status='MJ')
+    npa = new_problems.filter(topic='Algebra')
+    pna = propose_now.filter(topic='Algebra')
+    pla = propose_later.filter(topic='Algebra')
+    mia = needs_minor.filter(topic='Algebra')
+    mja = needs_major.filter(topic='Algebra')
+    npc = new_problems.filter(topic='Combinatorics')
+    pnc = propose_now.filter(topic='Combinatorics')
+    plc = propose_later.filter(topic='Combinatorics')
+    mic = needs_minor.filter(topic='Combinatorics')
+    mjc = needs_major.filter(topic='Combinatorics')
+    npg = new_problems.filter(topic='Geometry')
+    png = propose_now.filter(topic='Geometry')
+    plg = propose_later.filter(topic='Geometry')
+    mig = needs_minor.filter(topic='Geometry')
+    mjg = needs_major.filter(topic='Geometry')
+    npn = new_problems.filter(topic='Number Theory')
+    pnn = propose_now.filter(topic='Number Theory')
+    pln = propose_later.filter(topic='Number Theory')
+    min = needs_minor.filter(topic='Number Theory')
+    mjn = needs_major.filter(topic='Number Theory')
+    npga = new_problems.filter(topic='Games')
+    pnga = propose_now.filter(topic='Games')
+    plga = propose_later.filter(topic='Games')
+    miga = needs_minor.filter(topic='Games')
+    mjga = needs_major.filter(topic='Games')
+    npo = new_problems.filter(topic='Other')
+    pno = propose_now.filter(topic='Other')
+    plo = propose_later.filter(topic='Other')
+    mio = needs_minor.filter(topic='Other')
+    mjo = needs_major.filter(topic='Other')
+
+    currtablecounts=[]
+    all_curr_probs = Problem.objects.filter(problem_status__in = L)#['PN','NP','PL'])
+    topics = ['Algebra','Combinatorics','Games','Geometry','Number Theory','Other']
+    for top in topics:
+        currcounts=[]
+        currs = all_curr_probs.filter(topic=top)
+        for i in range(1,7):
+            currcounts.append(currs.filter(difficulty=str(i)).count())
+        currcounts.append(currs.count())
+        currtablecounts.append((top,currcounts))
+    currcounts=[]
+    for i in range(1,7):
+        currcounts.append(all_curr_probs.filter(difficulty=str(i)).count())
+    currcounts.append(all_curr_probs.count())
+    currtablecounts.append(('Total',currcounts))
+
+
+    
+
+    context['current'] = currtablecounts
+
+
+
+    return JsonResponse({'table':render_to_string('problemeditor/typeview-dynamictable.html',context)})
+
+
 
 
 @login_required

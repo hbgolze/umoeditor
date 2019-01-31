@@ -2,10 +2,17 @@
 <html lang="en">
 {% load staticfiles %}
 <head>
+<!--
   <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
-  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">-->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.19.1/moment.min.js"></script>
+
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+
 {% load static %}
   <link rel="stylesheet" type="text/css" href="{% static 'problemeditor/style.css' %}" />
+<link rel="stylesheet" href="{% static 'problemeditor/font-awesome-4.7.0/css/font-awesome.min.css' %}" />
 
 <script type="text/x-mathjax-config">
   MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
@@ -14,8 +21,8 @@
 <script type="text/javascript" async
   src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_CHTML">
 </script>
+<script src="{% static 'js/latexlib.js' %}"></script>
 
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
     <title>{% block title %}UMO Editor{% endblock %}</title>
 
 {% block head %} {% endblock %}
@@ -33,9 +40,9 @@
 {% if user.is_authenticated %}
 <div class="navig">
 <ul class="nav nav-tabs">
-  <li role="presentation" class="{% if nbar == 'problemeditor' %}active{% endif %}"><a href="/">Problem Editor</a></li>
-  <li role="presentation" class="{% if nbar == 'mocklists' %}active{% endif %}"><a href="/mocklists/">Mock Lists</a></li>
-  <li role="presentation" class="{% if nbar == 'pasttests' %}active{% endif %}"><a href="/pasttests/">Past Tests</a></li>
+  <li class="nav-item"><a class="nav-link{% if nbar == 'problemeditor' %} active{% endif %}" href="/">Problem Editor</a></li>
+  <li class="nav-item"><a class="nav-link{% if nbar == 'mocklists' %} active{% endif %}" href="/mocklists/">Mock Lists</a></li>
+  <li class="nav-item"><a class="nav-link{% if nbar == 'pasttests' %} active{% endif %}" href="/pasttests/">Past Tests</a></li>
 
 </ul>
 </div>
@@ -46,6 +53,8 @@
   {% endblock %}
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
 </body>
 </html>
 

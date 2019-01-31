@@ -2,6 +2,7 @@ from django import forms
 #from django.contrib.auth.models import User
 from problemeditor.models import Problem,Solution,Comment,ProblemVersion,ShortList
 from .models import Topic
+from .utils import newsoltexcode,compileasy,compiletikz
 
 PROBLEM_DIFFICULTY = (
     ('1','1'),
@@ -45,6 +46,23 @@ class SolutionForm(forms.ModelForm):
             'author_name': forms.TextInput(attrs={"class":"form-control"}),
             'solution_text': forms.Textarea(attrs={'cols': 120, 'rows': 15,'id' : 'codetext','class':'form-control'})
         }
+
+class EditSolutionForm(forms.ModelForm):
+    class Meta:
+        model = Solution
+        fields = ('solution_text',)
+        widgets = {
+            'solution_text': forms.Textarea(attrs={"class":"form-control","min-width":"100%", 'rows': 15,'id' : 'codetext'})
+        }
+    def save(self,commit=True):
+        instance = super(SolutionForm, self).save(commit=False)
+        instance.solution_latex = newsoltexcode(instance.solution_text,instance.problem_label+'sol'+str(instance.solution_number))
+        compileasy(instance.solution_text,instance.problem_label,sol='sol'+str(instance.solution_number))
+        compiletikz(instance.solution_text,instance.problem_label,sol='sol'+str(instance.solution_num))
+        if commit:
+            instance.save()
+        return instance
+
 class CommentForm(forms.ModelForm):
     class Meta:
         model = Comment
@@ -67,12 +85,15 @@ class AddProblemForm(forms.ModelForm):
                   'difficulty',
                   )
         widgets = {
-            'author_name': forms.TextInput(attrs={"class":"form-control"}),
+            'author_name': forms.TextInput(attrs={"class":"form-control col-sm-6"}),
             'problem_text': forms.Textarea(attrs={'cols': 120, 'rows': 15,'id' : 'codetext','class':'form-control'}),
+            'topic': forms.Select(attrs={"class":"form-control col-6"}),
+            'difficulty': forms.Select(attrs={"class":"form-control col-1"}),
             }
     def __init__(self, *args, **kwargs):
         super(AddProblemForm, self).__init__(*args, **kwargs)   
         self.fields['problem_text'].label = 'Problem LaTeX'
+        self.fields['problem_text'].required = True
         self.fields['author_name'].required = True
         self.fields['topic'].empty_label = None
 #    def clean_types(self):

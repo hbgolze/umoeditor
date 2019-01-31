@@ -3,11 +3,13 @@
 {% block title %}UMO: Edit Solution to {{problem.label}}{% endblock %}
 
 {% block content %}
-<ol class="breadcrumb">
-  <li><a href="/">All Problems</a></li>
-  <li><a href="/detailedview/{{problem.pk}}">{{problem.label}}</a></li>
-  <li class="active">Edit Solution</li>
-</ol>
+<nav aria-label="breadcrumb" role="navigation">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="/">All Problems</a></li>
+    <li class="breadcrumb-item"><a href="/detailedview/{{problem.pk}}">{{problem.label}}</a></li>
+    <li class="breadcrumb-item active">Edit Solution</li>
+  </ol>
+</nav>
 <div class="container">
 <div class="row">
 <div class="col-xs-12">
@@ -17,7 +19,7 @@
           <h3>Solution</h3>
 	  {% autoescape off %}{{form.instance.solution_latex|linebreaks}} {% endautoescape %}
           {{ form.solution_text }} <br>
-        <input type="submit" class="save btn btn-default" name="save" value="Save">
+        <input type="submit" class="save btn btn-primary" name="save" value="Save">
     </form>
 </div>
 </div>

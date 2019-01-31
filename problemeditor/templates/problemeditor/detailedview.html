@@ -24,10 +24,12 @@ else { document.getElementById(d).style.display = "none"; }
 {% block title %}UMO: {{problem.label}}{% endblock %}
 
 {% block content %}
-<ol class="breadcrumb">
-  <li><a href="/">All Problems</a></li>
-  <li class="active">{{problem.label}}</li>
-</ol>
+<nav aria-label="breadcrumb" role="navigation">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="/">All Problems</a></li>
+    <li class="breadcrumb-item active" aria-current="page">{{problem.label}}</li>
+  </ol>
+</nav>
 
 <div class="container">
   <div class="row">
@@ -65,7 +67,7 @@ else { document.getElementById(d).style.display = "none"; }
   </div>
 
 {% endif %}
-<p>  <button type="button" class="save btn btn-default" onclick="location.href='newsolution/'">New Solution</button></p>
+<p>  <button type="button" class="save btn btn-secondary" onclick="location.href='newsolution/'">New Solution</button></p>
 <br>
 
 <div class="form-group">
@@ -121,18 +123,18 @@ Trash
   {% endfor %}
 </div>
 {% if coms|length == 0 %}<p>No Comments Yet</p>{% endif %}
-<p><button type="button" class="save btn btn-default" onclick="location.href='newcomment'">New Comment</button></p>
+<p><button type="button" class="save btn btn-secondary" onclick="location.href='newcomment'">New Comment</button></p>
 
 <label>Other Versions:</label>
 <div class="form-group">
 {% if problem.versions.all.count > 1 %}
 {% for v in problem.versions.all %}
 {% if v != problem.current_version %}
-<div class="panel panel-default">
-  <div class="panel-heading">
-    <h3 class="panel-title">Version {{v.version_number}} ({{v.created_date}})</h3>
+<div class="card">
+  <div class="card-header">
+    <h3 class="card-title">Version {{v.version_number}} ({{v.created_date}})</h3>
   </div>
-  <div class="panel-body">
+  <div class="card-body">
     {% autoescape off %}{{v.problem_latex|linebreaks}} {% endautoescape %}  
     
     <p><a href="edittext/{{v.pk}}">Edit LaTeX Code</a></p>
@@ -167,7 +169,7 @@ Trash
 	{% endfor %}
       </div>
       {% endif %}
-<p>  <button type="button" class="save btn btn-default" onclick="location.href='{{v.pk}}/newsolution/'">New Solution</button></p>
+<p>  <button type="button" class="save btn btn-secondary" onclick="location.href='{{v.pk}}/newsolution/'">New Solution</button></p>
 
     </div>
 
@@ -185,7 +187,7 @@ Trash
 No other versions yet.
 {% endif %}
 </div>
-<p><button type="button" class="save btn btn-default" onclick="location.href='newversion'">New Version</button></p>
+<p><button type="button" class="save btn btn-secondary" onclick="location.href='newversion'">New Version</button></p>
 </div>
 </div>
 </div>

@@ -27,50 +27,61 @@ else { document.getElementById(d).style.display = "none"; }
 {% endblock %}
 
 {% block content %}
-<ol class="breadcrumb">
-  <li><a href="/mocklists/">Mock Lists</a></li>
-  <li class="active">{{mocklist.name}}</li>
-</ol>
+<nav aria-label="breadcrumb" role="navigation">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="/mocklists/">Mock Lists</a></li>
+    <li class="breadcrumb-item active">{{mocklist.name}}</li>
+  </ol>
+</nav>
 <div class="container">
   <div class="row">
-    <div class="col-xs-12">
-
-<h2>Mock List: {{mocklist.name}} (<a href="{% url 'mocklist_pdf' mocklist.pk %}">pdf</a>)</h2>
-{% if problems.count == 0 %}
-<i>Add problems to this list from the main screen.</i>
-{% endif %}
-<table class="table">
-  {% for p in problems %}
-{% include 'problemeditor/problemrow.html' %}
-
-<!--  <tr>
-    <td valign="top" class="col-sm-1"><br>
-      {{forloop.counter}}. 
-    </td>
-    <td>
-
-      <table width="100%">
-	<tr>
-	  <td>
-	    <p>
-	      {% autoescape off %}{{p.current_version.problem_latex|linebreaks}}{% endautoescape %}
-	    </p>
-	  </td>
-	</tr>
-	<tr>
-	  <td>
-	    <p><a class="btn btn-primary" href="/detailedview/{{p.pk}}">Detailed View</a>
-	    </p>
-	    
-	  </td>
-	</tr>
-      </table>
-    </td>
-  </tr>-->
-  {% endfor %}
-</table>
-</div>
-</div>
+    <div class="col">
+      
+      <h2>Mock List: {{mocklist.name}} (<a href="{% url 'mocklist_pdf' mocklist.pk %}">pdf</a>)</h2>
+      {% if problems.count == 0 %}
+      <i>Add problems to this list from the main screen.</i>
+      {% endif %}
+      
+      
+      <div class="list-group mb-2" id="mocklist_problems">
+        {% for p in problems %}
+        {% include 'problemeditor/problemrow.html' with first_time=1%}
+        {% endfor %}
+      </div>
+      
+    </div>
+  </div>
 </div>
 
+<div id="difficulty-changed" style="position:fixed;right:15px;bottom:15px;margin:0;padding:0;display:none;">
+  <div class="alert alert-success">
+    Difficulty changed successfully.
+  </div>
+</div>
+<div id="status-changed" style="position:fixed;right:15px;bottom:15px;margin:0;padding:0;display:none;">
+  <div class="alert alert-success">
+    Status changed successfully.
+  </div>
+</div>
+<div id="topic-changed" style="position:fixed;right:15px;bottom:15px;margin:0;padding:0;display:none;">
+  <div class="alert alert-success">
+    Topic changed successfully.
+  </div>
+</div>
+<div id="added-to-list" style="position:fixed;right:15px;bottom:15px;margin:0;padding:0;display:none;">
+  <div class="alert alert-success">
+    Problem added to list.
+  </div>
+</div>
+<div id="prev-added-to-list" style="position:fixed;right:15px;bottom:15px;margin:0;padding:0;display:none;">
+  <div class="alert alert-warning">
+    Problem has already been added to list.
+  </div>
+</div>
+<div class="modal fade" id="solution-placeholder" role="dialog">
+
+</div>
+<script>
+{% include 'problemeditor/prow-scripts.js' %}
+</script>
 {% endblock %}

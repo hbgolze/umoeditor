@@ -34,11 +34,11 @@ else { document.getElementById(d).style.display = "none"; }
 	<table class="table">
 	  <tbody>
 	    <tr>
-	      {% for labl,plist in allcats %}
+	      {% for labl,short_label,plist in allcats %}
 	      <td>
 		<p>{{labl}}</p>
-		{% for problems,topic in plist %}
-		<p><a href="#typetopic{{labl}}{{topic}}">{{topic}} ({{problems.count}})</a></p>
+		{% for problems,topic,short_topic in plist %}
+		<p><a href="#typetopic{{short_label}}{{short_topic}}">{{topic}} ({{problems.count}})</a></p>
 		{% endfor %}
 	      </td>
 	      {% endfor %}
@@ -88,7 +88,7 @@ else { document.getElementById(d).style.display = "none"; }
 	</div><!--col-6-->
       </div><!--row-->
       <div class="row">
-	<div class="col-sm-6">
+	<div class="col-6">
 	  <form id="change-table-form">
 	    <p><input type="checkbox" name="NP"{% if 'NP' in included_cats %} checked{% endif%}> New Problems</p>
 	    <p><input type="checkbox" name="PN"{% if 'PN' in included_cats %} checked{% endif%}> Proposed for Current Year</p>
@@ -100,8 +100,10 @@ else { document.getElementById(d).style.display = "none"; }
 	</div>
       </div>
       <div class="row">
-	<p><a class="btn btn-primary mt-2" href="addproblem/">Add a problem</a></p>
-      </div class="row">
+	<div class="col">
+	<p><button class="btn btn-primary mt-2 add-problem-link">Add a problem</button></p>
+	</div>
+      </div>
       <div class="row">
 	<div class="col-sm-12">
 	  <div class="list-group-horizontal">
@@ -117,31 +119,33 @@ else { document.getElementById(d).style.display = "none"; }
 	  </div>
 	</div>
       </div>
+
+<!--Problems start here-->
       <div class="row">
-      {% for labl,plist in allcats %}
+	<div class="col">
+
+	{% for labl,short_label,plist in allcats %}
       
-      <a name="type{{labl}}"></a> 
-      <h1>{{labl}}</h1>
-      
-      {% for problems,topic in plist %}
-      <a name="typetopic{{labl}}{{topic}}"></a> 
-      <h3>{{topic}}</h3>
-      
-      {% if problems|length == 0 %}<p>No {{topic}} problems in this category.</p>
-      {% else %}
-      <table class="table">
-	{% for p in problems %}
+	<a name="type{{short_label}}"></a> 
+	<h1>{{labl}}</h1>
 	
-	{% include 'problemeditor/problemrow.html' %}
-	
+	{% for problems,topic,short_topic in plist %}
+	<a name="typetopic{{short_label}}{{short_topic}}"></a> 
+	<h3>{{topic}}</h3>
+	<div class="list-group mb-2" id="typetopic-{{short_label}}-{{short_topic}}">
+	  <div class="list-group-item" id="empty-message-{{short_label}}-{{short_topic}}"{% if problems|length > 0 %} style="display:none"{% endif %}>No {{topic}} problems in this category.</div>
+	    {% for p in problems %}
+	      {% include 'problemeditor/problemrow.html' with first_time=1%}
+	    {% endfor %}
+	</div>
 	{% endfor %}
-      </table>
-      {% endif %}
-      {% endfor %}
-      {% endfor %}
+	{% endfor %}
+	</div>
       </div>
       <div class="row">
-	<a class="btn btn-primary" href="addproblem/">Add a problem</a>
+	<div class="col">
+	<p><button class="btn btn-primary mt-2 add-problem-link">Add a problem</button></p>
+	</div>
       </div>
     </div>
     <div class="col-sm-3">
@@ -156,6 +160,38 @@ else { document.getElementById(d).style.display = "none"; }
     </div>
   </div>
 </div>
+<div id="difficulty-changed" style="position:fixed;right:15px;bottom:15px;margin:0;padding:0;display:none;">
+  <div class="alert alert-success">
+    Difficulty changed successfully.
+  </div>
+</div>
+<div id="status-changed" style="position:fixed;right:15px;bottom:15px;margin:0;padding:0;display:none;">
+  <div class="alert alert-success">
+    Status changed successfully.
+  </div>
+</div>
+<div id="topic-changed" style="position:fixed;right:15px;bottom:15px;margin:0;padding:0;display:none;">
+  <div class="alert alert-success">
+    Topic changed successfully.
+  </div>
+</div>
+<div id="added-to-list" style="position:fixed;right:15px;bottom:15px;margin:0;padding:0;display:none;">
+  <div class="alert alert-success">
+    Problem added to list.
+  </div>
+</div>
+<div id="prev-added-to-list" style="position:fixed;right:15px;bottom:15px;margin:0;padding:0;display:none;">
+  <div class="alert alert-warning">
+    Problem has already been added to list.
+  </div>
+</div>
+<div id="problem-added" style="position:fixed;right:15px;bottom:15px;margin:0;padding:0;display:none;">
+  <div class="alert alert-success">
+    New problem added.
+  </div>
+</div>
+<div class="modal fade" id="solution-placeholder" role="dialog"></div>
+<div class="modal fade" id="add-problem-placeholder" role="dialog"></div>
 
 <script>
 $(document).on('submit',"#change-table-form",function(e) {
@@ -173,6 +209,8 @@ $("#dynamic-table").html(result['table']);
   });
   return false;
 });
+
+{% include 'problemeditor/prow-scripts.js' %}
 
 </script>
 {% endblock %}

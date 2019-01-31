@@ -7,16 +7,17 @@
 
 <div class="container">
   <div class="row">
-    <div class="col-xs-12">
+    <div class="col">
       <h2>{{year}} UMO</h2>
 
-      <table class="table">
+      <div class="list-group">
 	{% for p in problems %}
-	<tr>
-	  <td valign="top" class="col-sm-1"><br>
-	    {{forloop.counter}}. 
-	  </td>
-	  <td>
+	<div class="list-group-item">
+	  <div class="row">
+	    <div class="col-1">
+	      {{forloop.counter}}.<br>
+	    </div>
+	    <div class="col-11">
 	    
 	    <table width="100%">
 	      <tr>
@@ -34,10 +35,11 @@
 		</td>
 	      </tr>
 	    </table>
-	  </td>
-	</tr>
+	  </div>
+	  </div>
+	</div>
 	{% endfor %}
-      </table>
+      </div>
     </div>
   </div>
 </div>

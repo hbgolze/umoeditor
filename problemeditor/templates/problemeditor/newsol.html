@@ -3,11 +3,13 @@
 {% block title %}Solutions: {{problem.label}}{% endblock %}
 
 {% block content %}
-<ol class="breadcrumb">
-  <li><a href="/">All Problems</a></li>
-  <li><a href="/detailedview/{{problem.pk}}">{{problem.label}}</a></li>
-  <li class="active">New Solution</li>
-</ol>
+<nav aria-label="breadcrumb" role="navigation">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="/">All Problems</a></li>
+    <li class="breadcrumb-item"><a href="/detailedview/{{problem.pk}}">{{problem.label}}</a></li>
+    <li class="breadcrumb-item active">New Solution</li>
+  </ol>
+</nav>
 <div class="container">
   <div class="row">
     <div class="col-xs-12">
@@ -20,7 +22,7 @@
 	</div>
         <h3>Solution</h3>
         {{ form.as_p}} <br>
-        <button type="submit" class="save btn btn-default">Save</button>
+        <button type="submit" class="save btn btn-primary">Save</button>
       </form>
     </div>
   </div>

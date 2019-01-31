@@ -10,6 +10,7 @@ from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.admin.models import LogEntry, ADDITION,CHANGE,DELETION
 from django.contrib.contenttypes.models import ContentType
 
+
 from django.contrib.auth import authenticate,login,logout
 from django.contrib.auth.admin import User
 from django.views.generic import DeleteView
@@ -20,7 +21,7 @@ from django.contrib.auth import update_session_auth_hash
 from formtools.wizard.views import SessionWizardView
 
 from .models import Problem, Topic,  Solution,Comment,ProblemStatus,FinalTest,ProblemVersion,ShortList
-from .forms import SolutionForm,ProblemTextForm,AddProblemForm,DetailedProblemForm,CommentForm,DiffMoveProblemForm,NewVersionForm,ShortListModelForm
+from .forms import SolutionForm,ProblemTextForm,AddProblemForm,DetailedProblemForm,CommentForm,DiffMoveProblemForm,NewVersionForm,ShortListModelForm,EditSolutionForm
 from .utils import goodtag,goodurl,newtexcode,newsoltexcode,compileasy,compiletikz
 
 from django.template.loader import get_template
@@ -66,38 +67,8 @@ def index_view(request):
     if 'MJ' in f:
         L.append('MJ')
     if len(L) == 0:
-        L = ['NP','PN']
-    
-    if request.method=='POST':
-        form=request.POST
-        for i in form:
-            if 'status' in i:
-                pk = i.split('_')[1]
-                prob = Problem.objects.get(pk=pk)
-                prob.problem_status=form[i]
-                prob.save()
-            if 'difficulty' in i:
-                pk = i.split('_')[1]
-                prob = Problem.objects.get(pk=pk)
-                prob.difficulty = form[i]
-                curr_version = prob.current_version
-                curr_version.difficulty = form[i]
-                prob.save()
-                curr_version.save()
-            if 'topic' in i:
-                pk = i.split('_')[1]
-                prob = Problem.objects.get(pk=pk)
-                prob.topic = form[i]
-                curr_version = prob.current_version
-                curr_version.topic = form[i]
-                prob.save()
-                curr_version.save()
-            if 'addtolist' in i:
-                pk = i.split('_')[1]
-                prob = Problem.objects.get(pk=pk)
-                sl = ShortList.objects.get(pk=form[i])
-                sl.problems.add(prob)
-                sl.save()
+        L = ['NP','PN']    
+
     all_problems = Problem.objects.all()
     if request.method == "GET":
         if request.GET.get('difficulty') == '1':
@@ -164,16 +135,16 @@ def index_view(request):
 #              'pnga' : pnga, 'plga' : plga, 'miga': miga, 'mjga' : mjga,
 #              'pno' : pno, 'plo' : plo, 'mio': mio, 'mjo' : mjo, 'nbar': 'problemeditor'}
     allcats= (
-        ('New Problems',
-         ((npa,'Algebra'),(npc,'Combinatorics'),(npga,'Games'),(npg,'Geometry'),(npn,'Number Theory'),(npo,'Other'))),
-        ('Proposed for Current Year',
-         ((pna,'Algebra'),(pnc,'Combinatorics'),(pnga,'Games'),(png,'Geometry'),(pnn,'Number Theory'),(pno,'Other'))),
-        ('Proposed for Future Year',
-         ((pla,'Algebra'),(plc,'Combinatorics'),(plga,'Games'),(plg,'Geometry'),(pln,'Number Theory'),(plo,'Other'))),
-        ('Has Potential',
-         ((mia,'Algebra'),(mic,'Combinatorics'),(miga,'Games'),(mig,'Geometry'),(min,'Number Theory'),(mio,'Other'))),
-        ('Needs Major Revision',
-         ((mja,'Algebra'),(mjc,'Combinatorics'),(mjga,'Games'),(mjg,'Geometry'),(mjn,'Number Theory'),(mjo,'Other'))),
+        ('New Problems','NP',
+         ((npa,'Algebra','AL'),(npc,'Combinatorics','CO'),(npga,'Games','GA'),(npg,'Geometry','GE'),(npn,'Number Theory','NT'),(npo,'Other','OT'))),
+        ('Proposed for Current Year','PN',
+         ((pna,'Algebra','AL'),(pnc,'Combinatorics','CO'),(pnga,'Games','GA'),(png,'Geometry','GE'),(pnn,'Number Theory','NT'),(pno,'Other','OT'))),
+        ('Proposed for Future Year','PL',
+         ((pla,'Algebra','AL'),(plc,'Combinatorics','CO'),(plga,'Games','GA'),(plg,'Geometry','GE'),(pln,'Number Theory','NT'),(plo,'Other','OT'))),
+        ('Has Potential','MI',
+         ((mia,'Algebra','AL'),(mic,'Combinatorics','CO'),(miga,'Games','GA'),(mig,'Geometry','GE'),(min,'Number Theory','NT'),(mio,'Other','OT'))),
+        ('Needs Major Revision','MJ',
+         ((mja,'Algebra','AL'),(mjc,'Combinatorics','CO'),(mjga,'Games','GA'),(mjg,'Geometry','GE'),(mjn,'Number Theory','NT'),(mjo,'Other','OT'))),
         )
     currtablecounts=[]
     goodtablecounts=[]
@@ -245,9 +216,6 @@ def index_view(request):
 @login_required
 def get_new_table(request):
     context = {}
-
-
-
     f = request.GET
     L = []
     if 'NP' in f:
@@ -262,7 +230,6 @@ def get_new_table(request):
         L.append('MJ')
     if len(L) == 0:
         L = ['NP','PN']
-    
     all_problems = Problem.objects.all()
     if request.method == "GET":
         if request.GET.get('difficulty') == '1':
@@ -346,6 +313,68 @@ def get_new_table(request):
 
     return JsonResponse({'table':render_to_string('problemeditor/typeview-dynamictable.html',context)})
 
+@login_required
+def change_difficulty(request):
+    form = request.POST
+    pk = form['pk']
+    prob = get_object_or_404(Problem,pk=pk)
+    prob.difficulty = form['diff']
+    curr_version = prob.current_version
+    curr_version.difficulty = form['diff']
+    prob.save()
+    curr_version.save()
+    return JsonResponse({})
+
+@login_required
+def change_status(request):
+    form = request.POST
+    pk = form['pk']
+    prob = get_object_or_404(Problem,pk=pk)
+    old_stat = prob.problem_status
+    prob.problem_status = form['stat']
+    prob.save()
+    D = {
+        'Algebra':'AL',
+        'Combinatorics':'CO',
+        'Games':'GA',
+        'Geometry':'GE',
+        'Number Theory': 'NT',
+        'Other':'OT',
+        }
+    return JsonResponse({'prob-card': render_to_string('problemeditor/problemrow.html',{'p':prob,'request':request,'mklists':ShortList.objects.all()}),'add-here':form['stat']+'-'+D[prob.topic],'subtract-here':old_stat+'-'+D[prob.topic]})
+
+@login_required
+def change_topic(request):
+    form = request.POST
+    pk = form['pk']
+    prob = get_object_or_404(Problem,pk=pk)
+    old_topic = prob.topic
+    prob.topic = form['topic']
+    curr_version = prob.current_version
+    curr_version.topic = form['topic']
+    prob.save()
+    curr_version.save()
+    D = {
+        'Algebra':'AL',
+        'Combinatorics':'CO',
+        'Games':'GA',
+        'Geometry':'GE',
+        'Number Theory': 'NT',
+        'Other':'OT',
+        }
+    return JsonResponse({'prob-card': render_to_string('problemeditor/problemrow.html',{'p':prob,'request':request,'mklists':ShortList.objects.all()}),'add-here':prob.problem_status+'-'+D[prob.topic],'subtract-here':prob.problem_status+'-'+D[old_topic]})
+
+@login_required
+def add_to_list(request):
+    form = request.POST
+    pk = form['pk']
+    prob = get_object_or_404(Problem,pk=pk)
+    sl = ShortList.objects.get(pk=form['list_pk'])
+    if sl.problems.filter(pk=pk).exists() == False:
+        sl.problems.add(prob)
+        sl.save()
+        return JsonResponse({'status': 1})
+    return JsonResponse({'status': 0})
 
 
 
@@ -660,12 +689,12 @@ def addproblemview(request):
 
 @login_required
 def pasttestsview(request):
-    F=FinalTest.objects.order_by('year')
+    F = FinalTest.objects.order_by('year')
     return render(request,'problemeditor/pasttestsview.html',{'pasttests':F,'nbar':'pasttests'})
 
 @login_required
 def viewpasttest(request,pk):
-    T=get_object_or_404(FinalTest,pk=pk)
+    T = get_object_or_404(FinalTest,pk=pk)
     probs=T.problems.order_by('difficulty')
     return render(request,'problemeditor/pasttest.html',{'year':T.year,'nbar':'pasttests','problems':probs})
 
@@ -771,43 +800,20 @@ def mocklistsview(request):
 @login_required
 def mocklist(request,pk):
     T = get_object_or_404(ShortList,pk=pk)
-    if request.method=='POST':
-        form=request.POST
-        for i in form:
-            if 'status' in i:
-                pk = i.split('_')[1]
-                prob = Problem.objects.get(pk=pk)
-                prob.problem_status=form[i]
-                prob.save()
-            if 'difficulty' in i:
-                pk = i.split('_')[1]
-                prob = Problem.objects.get(pk=pk)
-                prob.difficulty = form[i]
-                curr_version = prob.current_version
-                curr_version.difficulty = form[i]
-                prob.save()
-                curr_version.save()
-            if 'topic' in i:
-                pk = i.split('_')[1]
-                prob = Problem.objects.get(pk=pk)
-                prob.topic = form[i]
-                curr_version = prob.current_version
-                curr_version.topic = form[i]
-                prob.save()
-                curr_version.save()
-            if 'addtolist' in i:
-                pk = i.split('_')[1]
-                prob = Problem.objects.get(pk=pk)
-                sl = ShortList.objects.get(pk=form[i])
-                sl.problems.add(prob)
-                sl.save()
-            if 'remove' in i:
-                pk = i.split('_')[1]
-                prob = Problem.objects.get(pk=pk)
-                T.problems.remove(prob)
-                T.save()
     probs = T.problems.order_by('current_version__difficulty')
     return render(request,'problemeditor/mocklist.html',{'nbar':'mocklists','problems':probs,'mocklist' : T, 'mklists': ShortList.objects.all()})
+
+@login_required
+def remove_from_list(request):
+    form = request.POST
+    pk = form['pk']
+    T = get_object_or_404(ShortList,pk=pk)
+    ppk = form['ppk']
+    prob = Problem.objects.get(pk=ppk)
+    T.problems.remove(prob)
+    T.save()
+    return JsonResponse({})
+
 
 
 @login_required
@@ -885,3 +891,136 @@ def shortlist_as_pdf(request, pk):
             with open(os.path.join(tempdir,'texput.log')) as f:
                 error_text = f.read()
                 return render(request,'problemeditor/latex_errors.html',{'nbar':'mocklists','mocklist':shortlist,'error_text':error_text})
+
+@login_required
+def new_solution(request):
+    pk = request.GET.get('pk')
+    prob = get_object_or_404(Problem,pk = pk)
+    return JsonResponse({'modal-html':render_to_string('problemeditor/modal-new-solution.html',{'prob':prob})})
+
+@login_required
+def load_solutions(request):
+    pk = request.GET.get('pk')
+    prob = get_object_or_404(Problem,pk = pk)
+    return JsonResponse({'modal-html':render_to_string('problemeditor/modal-view-solutions.html',{'prob':prob})})
+
+@login_required
+def save_new_solution(request,**kwargs):
+    pk = request.POST.get('ns-pk','')
+    prob =  get_object_or_404(Problem,pk=pk)
+    sol_num = prob.current_version.top_solution_number+1
+    cv = prob.current_version
+    cv.top_solution_number = sol_num
+    cv.save();
+
+    sol_text = request.POST.get("new_solution_text","")
+    author_name = request.POST.get("author_name","")
+    sol = Solution(solution_text = sol_text,solution_number = sol_num,problem_label = cv.label, author_name = author_name)
+    sol.save()
+    sol.authors.add(request.user)
+    sol.save()
+    compileasy(sol.solution_text,cv.label,sol='sol'+str(sol_num))
+    compiletikz(sol.solution_text,cv.label,sol='sol'+str(sol_num))
+    sol.solution_latex = newsoltexcode(sol.solution_text,cv.label+'sol'+str(sol.solution_number))
+    sol.save()
+    cv.solutions.add(sol)
+    cv.save()
+
+    LogEntry.objects.log_action(
+        user_id = request.user.id,
+        content_type_id = ContentType.objects.get_for_model(sol).pk,
+        object_id = sol.id,
+        object_repr = sol.author_name+" added a solution to "+prob.label,
+        action_flag = ADDITION,
+        change_message = "/detailedview/"+str(prob.pk)+'/',
+        )
+    return JsonResponse({'pk':pk,'sol_count':prob.current_version.solutions.count()})
+
+@login_required
+def delete_sol(request,**kwargs):
+    pk = request.POST.get('pk','')
+    spk = request.POST.get('spk','')
+    prob =  get_object_or_404(Problem,pk=pk)
+    sol =  get_object_or_404(Solution,pk=spk)
+    prob.current_version.solutions.remove(sol)
+    prob.current_version.deleted_solutions.add(sol)
+    prob.save()
+    return JsonResponse({'deleted':1,'sol_count': prob.current_version.solutions.count()})
+
+@login_required
+def load_edit_sol(request,**kwargs):
+    pk = request.POST.get('pk','')
+    spk = request.POST.get('spk','')
+    prob =  get_object_or_404(Problem,pk=pk)
+    sol =  get_object_or_404(Solution,pk=spk)
+    form = EditSolutionForm(instance=sol)
+    return JsonResponse({'sol_form':render_to_string('problemeditor//edit_sol_form.html',{'form':form,'prob':prob})})
+
+@login_required
+def save_sol(request,**kwargs):
+    pk = request.POST.get('pk','')
+    spk = request.POST.get('spk','')
+    prob =  get_object_or_404(Problem,pk=pk)
+    sol =  get_object_or_404(Solution,pk=spk)
+    cv = prob.current_version
+
+    sol.solution_text = request.POST.get('solution_text')
+    sol.authors.add(request.user)
+    sol.save()
+    compileasy(sol.solution_text,cv.label,sol='sol'+str(sol.solution_number))
+    compiletikz(sol.solution_text,cv.label,sol='sol'+str(sol.solution_number))
+    sol.solution_latex=newsoltexcode(sol.solution_text,cv.label+'sol'+str(sol.solution_number))
+    sol.save()
+    return JsonResponse({'sol_text':render_to_string('problemeditor/soltext.html',{'solution':sol})})
+
+@login_required
+def add_problem(request):
+    prob = Problem()
+    form = AddProblemForm(instance = prob)
+    return JsonResponse({'modal-html':render_to_string('problemeditor/modal-add-problem.html',{'form':form})})
+
+
+@login_required
+def save_new_problem(request):
+    prob = Problem()
+    form = AddProblemForm(request.POST, instance=prob)
+    if form.is_valid():
+        problem = form.save()
+        problem.save()
+        problem.label = 'Problem '+str(problem.pk)
+        problem.problem_latex = newtexcode(problem.problem_text,problem.label)
+        problem.problem_status='NP'
+        problem.save()
+        pv = ProblemVersion(
+            difficulty=problem.difficulty,
+            problem_text=problem.problem_text,
+            problem_latex=problem.problem_latex,
+            version_number=1,
+            author_name=problem.author_name,
+            label=problem.label+'v1'
+            )
+        pv.save()
+        pv.authors.add(request.user)
+        pv.save()
+        problem.versions.add(pv)
+        problem.current_version=pv
+        problem.top_version_number=1
+        problem.save()
+        LogEntry.objects.log_action(
+            user_id = request.user.id,
+            content_type_id = ContentType.objects.get_for_model(problem).pk,
+            object_id = problem.id,
+            object_repr = problem.author_name+" added a problem ("+problem.label+")",
+            action_flag = ADDITION,
+            change_message = "/detailedview/"+str(problem.pk)+'/',
+            )
+        D = {
+            'Algebra':'AL',
+            'Combinatorics':'CO',
+            'Games':'GA',
+            'Geometry':'GE',
+            'Number Theory': 'NT',
+            'Other':'OT',
+            }
+        return JsonResponse({'prob-card': render_to_string('problemeditor/problemrow.html',{'p':problem,'request':request,'mklists':ShortList.objects.all()}),'add-here':'NP'+'-'+D[problem.topic],'pk':problem.pk})
+    return JsonResponse({})

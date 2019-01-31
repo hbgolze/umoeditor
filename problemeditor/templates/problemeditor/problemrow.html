@@ -2,18 +2,18 @@
 
 {% load ratings %}
 
-<tr>
-<td valign="top" class="col-sm-1"><br>
-<p>{{p.label}}</p>
-
-  <p>Author: {{p.current_version.author_name}}</p>
-<!--  <label for="difficulty_{{p.pk}}"></label>-->
-<p>Difficulty:</p>
-  <p>
-    <form action="." method="post">
-      {% csrf_token %}
-      <select name="difficulty_{{p.pk}}" onchange="this.form.submit()">
-        <option value="1" {% if p.current_version.difficulty == "1" %}selected{% endif %}>1
+<div class="list-group-item" id="problem-card_{{p.pk}}">
+  <div class="container">
+    <div class="row">
+  <div class="col-6 col-sm-5 col-md-4 col-lg-3"><br>
+    <p>{{p.label}}</p>
+    
+    <p>Author: {{p.current_version.author_name}}</p>
+    <!--  <label for="difficulty_{{p.pk}}"></label>-->
+    <form>
+      <label for="difficulty_{{p.pk}}">Difficulty:</label>
+      <select id="difficulty_{{p.pk}}" class="diff-select form-control form-control-sm mb-1">
+	<option value="1" {% if p.current_version.difficulty == "1" %}selected{% endif %}>1
         </option>
         <option value="2" {% if p.current_version.difficulty == "2" %}selected{% endif %}>2
         </option>
@@ -26,14 +26,9 @@
         <option value="6" {% if p.current_version.difficulty == "6" %}selected{% endif %}>6
         </option>
       </select>
-    </form>
-  </p>
-<!--    <label for="status_{{p.pk}}">Move To:</label>      -->
-<p>Move To:</p>
-  <p>
-    <form action="." method="post">
-      {% csrf_token %}
-      <select name="status_{{p.pk}}" onchange="this.form.submit()">
+      <!--    <label for="status_{{p.pk}}">Move To:</label>      -->
+      <label for="status_{{p.pk}}">Move To:</label>
+      <select id="status_{{p.pk}}" class="status-select form-control form-control-sm mb-1">
         <option value="NP" {% if p.problem_status == "NP" %}selected{% endif %}>New Problem
         </option>
         <option value="PN" {% if p.problem_status == "PN" %}selected{% endif %}>Propose for Current Year
@@ -47,13 +42,8 @@
         <option value="TR" {% if p.problem_status == "TR" %}selected{% endif %}>Trash
         </option>
       </select>
-    </form>
-  </p>
-<p>Change Topic:</p>
-  <p>
-    <form action="." method="post">
-      {% csrf_token %}
-      <select name="topic_{{p.pk}}" onchange="this.form.submit()">
+      <label for="topic_{{p.pk}}">Change Topic:</label>
+      <select id="topic_{{p.pk}}" class="change-topic form-control form-control-sm mb-1">
         <option value="Algebra" {% if p.topic == "Algebra" %}selected{% endif %}>Algebra
         </option>
         <option value="Combinatorics" {% if p.topic == "Combinatorics" %}selected{% endif %}>Combinatorics
@@ -67,84 +57,85 @@
         <option value="Other" {% if p.topic == "Other" %}selected{% endif %}>Other
         </option>
       </select>
-    </form>
-  </p>
-
-<p>Add To List:</p>
-  <p>
-    <form action="." method="post">
-      {% csrf_token %}
-      <select name="addtolist_{{p.pk}}" onchange="this.form.submit()">
+      <label for="addtolist_{{p.pk}}">Add To List:</label>
+      <select id="addtolist_{{p.pk}}" class="add-to-list form-control form-control-sm mb-2">
 	<option value="" disabled selected>Choose a List</option>
 	{% for mklist in mklists %}
 	<option value="{{mklist.pk}}">{{mklist.name}}</option>
 	{% endfor %}
       </select>
     </form>
-  </p>
+    
+    <p><a class="btn btn-primary btn-sm mt-2" name="det_{{p.pk}}" href="/detailedview/{{p.pk}}">Edit Details</a>
+    </p>
+    <p>{{p.versions.count}} Version{% if p.versions.count > 1%}s{% endif %}</p>
 
-  <p><a class="btn btn-primary" name="det_{{p.pk}}" href="/detailedview/{{p.pk}}">Edit Details</a>
-  </p>
-  <p>{{p.versions.count}} Version{% if p.versions.count > 1%}s{% endif %}</p>
-
-<p>Solution: {% if p.current_version.solutions.count > 0 %}
-<span class="glyphicon glyphicon-ok" style="color:green"></span>
-{% else %}
-<span class="glyphicon glyphicon-remove" style="color:red"></span>
-{% endif %}
-</p>
-<label>Rating:</label>
-{% if request.user in p.current_version.authors.all %}
-<p>{% ratings p.current_version 20 20 'read_only' %}</p>
-{% else %}
-<p>{% ratings p.current_version 20 20 %}</p>
-{% endif %}
-
-{% if mocklist %}
-<p>
-    <form action="." method="post">
-      {% csrf_token %}
-      <button type="submit" value="{{p.pk}}" name="remove_{{p.pk}}" class="btn btn-primary">Remove from List</button>
-    </form>
-</p>
-{% endif %}
-</td>
-
-<td>
-<table width="100%">
-<tr>
-<td>
-<p>
-{% autoescape off %}{{p.current_version.problem_latex|linebreaks}} {% endautoescape %}
-</p>
-</td>
-</tr>
-<tr>
-<td>
-  <a href="javascript:ReverseDisplay('comment_{{p.pk}}')">
-    Click to show/hide comments ({{p.comments.count}}).
-  </a>
-
-  <div id="comment_{{p.pk}}" style="display:none">
-    {% for c in p.comments.all %}
-    <div class="media">
-      <p class="pull-right"><small>{{c.created_date}}</small></p>
-      <div class="media-body">
-        <h3 class="media-heading user_name">{{c.author_name}}</h3>
-        <p>{{c.comment_text|linebreaks}}</p>
-
+    <p>
+      <div class="btn-group btn-group-sm mr-2 mb-1 mt-1" role="group" aria-label="Solution options">
+	<button class="btn btn-sm btn-secondary solution-link" id="solution-link_{{p.pk}}">Solutions ({{p.current_version.solutions.count}})</button>
+	<button class="btn btn-sm btn-primary new-solution-link" id="new-sol_{{p.pk}}" title="Add New Solution"><span class="fa fa-plus"></span></button>
       </div>
-    </div>
-    {% endfor %}
+    </p>
+    <label>Rating:</label>
+    {% if request.user in p.current_version.authors.all %}
+    <p>{% ratings p.current_version 20 20 'read_only' %}</p>
+    {% else %}
+    <p>{% ratings p.current_version 20 20 %}</p>
+    {% endif %}
+    
+    {% if mocklist %}
+    <p>
+      <button type="submit" id="remove_{{mocklist.pk}}_{{p.pk}}" class="btn btn-primary btn-sm remove-from-mocklist">Remove from List</button>
+    </p>
+    {% endif %}
   </div>
 
-</td>
-</tr>
-<tr>
-<td>
-<p class="pull-right"><small>[{{p.label}}], Proposed on {{p.created_date}}</small></p>
-</td>
-</tr>
-</table>
-</td>
-</tr>
+  <div class="col-6 col-sm-7 col-md-8 col-lg-9"><br>
+    <table width="100%">
+      <tr>
+	<td>
+	  <p>
+	    {% autoescape off %}{{p.current_version.problem_latex|linebreaks}} {% endautoescape %}
+	  </p>
+	</td>
+      </tr>
+      <tr>
+	<td>
+	  <a href="javascript:ReverseDisplay('comment_{{p.pk}}')">
+	    Click to show/hide comments ({{p.comments.count}}).
+	  </a>
+	  
+	  <div id="comment_{{p.pk}}" style="display:none">
+	    {% for c in p.comments.all %}
+	    <div class="media">
+	      <div class="media-body">
+		<div class="d-flex flex-row justify-content-between">
+		  <div class="p-2 flex-grow-1">
+		    <h3 class="mt-0 media-heading user_name">{{c.author_name}}</h3>
+		  </div>
+		  <div class="p-2 float-right">
+		    <small>{{c.created_date}}</small>
+		  </div>
+		</div>
+		<div class="d-flex flex-row">
+		  <div class="p-2">
+		    {{c.comment_text|linebreaks}}
+		  </div>
+		</div>
+	      </div>
+	    </div>
+	    {% endfor %}
+	  </div>
+	  
+	</td>
+      </tr>
+      <tr>
+	<td>
+	  <p class="pull-right"><small>[{{p.label}}], Proposed on {{p.created_date}}</small></p>
+	</td>
+      </tr>
+    </table>
+  </div>
+</div>
+</div>
+</div>

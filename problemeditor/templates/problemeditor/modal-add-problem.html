@@ -1,0 +1,24 @@
+  <div class="modal-dialog modal-lg" role="document">
+
+    <div class="modal-content">
+      <form method="POST" id="add-problem-form">
+
+        <div class="modal-header">
+          <h5 class="modal-title">Add Problem</h5>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+        <div class="modal-body">
+	  <div id="add-problem-preview">
+	  </div>
+        {{ form.as_p }}
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" id="add-problem-preview-link">Primitive Preview</button>
+          <button type="submit" name="addproblem" class="btn btn-primary">Save</button>
+        </div>
+      </form>
+    </div>
+
+  </div>
+

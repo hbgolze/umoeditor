@@ -165,7 +165,7 @@ $(document).on('submit',"#change-table-form",function(e) {
   e.preventDefault();
   $.ajax({
     type: 'GET',
-    url: "ajax/get-new-table",
+    url: "/ajax/get-new-table",
     data: $(this).serialize(),
     dataType: 'json',
     success: function(result) {

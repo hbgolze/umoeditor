@@ -43,6 +43,12 @@ urlpatterns = [
     url(r'^ajax/save-sol/$',views.save_sol,name='save_sol'),
     url(r'^ajax/add-problem/$',views.add_problem,name='add_problem'),
     url(r'^ajax/save-new-problem/$',views.save_new_problem,name='save_new_problem'),
+    url(r'^ajax/new-comment/$',views.new_comment,name='new_comment'),
+    url(r'^ajax/save-new-comment/$',views.save_new_comment,name='save_new_comment'),
+    url(r'^ajax/remove-comment/$',views.remove_comment,name='remove_comment'),
+
+
+
 #    url(r'^detailedview/(?P<pk>\w+)/editreview/(?P<apk>\w+)/$', views.editreviewpkview, name='editreviewpkview'),
 #    url(r'^detailedview/(?P<pk>\w+)/newreview/$', views.newreviewpkview, name='newreviewpkview'),
 

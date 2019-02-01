@@ -6,20 +6,7 @@
 
 {% load ratings %}
 
-{% block head %}<script type="text/javascript" language="JavaScript">
-function HideContent(d) {
-document.getElementById(d).style.display = "none";
-}
-function ShowContent(d) {
-document.getElementById(d).style.display = "block";
-}
-function ReverseDisplay(d) {
-if(document.getElementById(d).style.display == "none") { document.getElementById(d).style.display = "block"; }
-else { document.getElementById(d).style.display = "none"; }
-}
-</script>
-
-
+{% block head %}
 <link rel="stylesheet" href="{% static 'star-ratings/css/star-ratings.css' %}">
 <script type="text/javascript" src="{% static 'star-ratings/js/dist/star-ratings.min.js' %}"></script>
 
@@ -192,6 +179,7 @@ else { document.getElementById(d).style.display = "none"; }
 </div>
 <div class="modal fade" id="solution-placeholder" role="dialog"></div>
 <div class="modal fade" id="add-problem-placeholder" role="dialog"></div>
+<div class="modal fade" id="comment-placeholder" role="dialog"></div>
 
 <script>
 $(document).on('submit',"#change-table-form",function(e) {

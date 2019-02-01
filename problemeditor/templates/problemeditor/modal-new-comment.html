@@ -1,0 +1,37 @@
+  <div class="modal-dialog modal-lg" role="document">
+
+    <div class="modal-content">
+      <form id="new-comment-form">
+	
+        <div class="modal-header">
+          <h5 class="modal-title">New Comment to {{prob.label}}</h5>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+	</div>
+        <div class="modal-body">
+	  <input type="hidden" name="ns-pk" id="ns-pk" value="{{prob.pk}}">
+          <div class="form-group">
+	    <label>Problem Text:</label>
+	    <div id="prob_text-{{prob.pk}}">
+	      {% autoescape off %}{{prob.current_version.problem_latex|linebreaks}} {% endautoescape %}
+	    </div>
+          </div>
+	  <div class="form-group">
+	    <div id="comment-preview-latex" style="display:none;white-space:pre-wrap">
+	    </div>
+	  </div>
+          <div class="form-group">
+            <label for="comment_author_name" class="control-label">Author Name</label>
+	    <input class="form-control" id="comment_author_name" maxlength="50" name="author_name" type="text" required>
+            <label for="new_comment_text" class="control-label">Comment Text</label>
+            <textarea class="form-control" min-width="100%" id="codetext" name="comment_text" rows="10" required></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" id="comment-preview-link">Primitive Preview</button>
+          <button type="submit" name="addcomment" class="btn btn-primary">Add Comment</button>
+        </div>
+      </form>
+    </div>
+
+  </div>

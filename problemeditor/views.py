@@ -1024,3 +1024,46 @@ def save_new_problem(request):
             }
         return JsonResponse({'prob-card': render_to_string('problemeditor/problemrow.html',{'p':problem,'request':request,'mklists':ShortList.objects.all()}),'add-here':'NP'+'-'+D[problem.topic],'pk':problem.pk})
     return JsonResponse({})
+#comment-body.html
+
+
+@login_required
+def new_comment(request):
+    pk = request.GET.get('pk')
+    prob = get_object_or_404(Problem,pk = pk)
+    return JsonResponse({'modal-html':render_to_string('problemeditor/modal-new-comment.html',{'prob':prob})})
+
+@login_required
+def save_new_comment(request,**kwargs):
+    pk = request.POST.get('ns-pk','')
+    prob =  get_object_or_404(Problem,pk=pk)
+    com_num = prob.comments.count()+1
+
+    com_text = request.POST.get("comment_text","")
+    author_name = request.POST.get("author_name","")
+    com = Comment(comment_text = com_text, author_name = author_name, comment_number = com_num, author = request.user,problem_label = prob.label)
+    com.save()
+    prob.comments.add(com)
+    prob.save()
+    LogEntry.objects.log_action(
+        user_id = request.user.id,
+        content_type_id = ContentType.objects.get_for_model(com).pk,
+        object_id = com.id,
+        object_repr = com.author_name+" added a comment to "+prob.label,
+        action_flag = ADDITION,
+        change_message = "/detailedview/"+str(prob.pk)+'/',
+        )
+    return JsonResponse({'pk':pk,'com_count':prob.comments.count(),'com-html': render_to_string(
+'problemeditor/comment-body.html',{'request':request,'c': com,'p':prob})})
+
+@login_required
+def remove_comment(request,**kwargs):
+    pk = request.POST.get('pk','')
+    cpk = request.POST.get('cpk','')
+    prob =  get_object_or_404(Problem,pk=pk)
+    com =  get_object_or_404(Comment,pk=cpk)
+    com.delete()
+#    prob.comments.remove(com)
+#    prob.deleted_comments.add(com)
+#    prob.save()
+    return JsonResponse({'deleted':1,'com_count': prob.comments.count()})

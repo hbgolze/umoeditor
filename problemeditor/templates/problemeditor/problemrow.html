@@ -101,32 +101,30 @@
       </tr>
       <tr>
 	<td>
-	  <a href="javascript:ReverseDisplay('comment_{{p.pk}}')">
-	    Click to show/hide comments ({{p.comments.count}}).
-	  </a>
-	  
-	  <div id="comment_{{p.pk}}" style="display:none">
+<div id="accordion">
+  <div class="card">
+    <div class="card-header" id="comments-heading_{{p.pk}}">
+      <div class="d-flex flex-row justify-content-between">
+	<div class="p-0 flex-grow-1">
+          <button class="btn btn-link" data-toggle="collapse" data-target="#comments_{{p.pk}}" aria-expanded="true" aria-controls="comments_{{p.pk}}">
+          Show/hide comments (<span id="com-count_{{p.pk}}">{{p.comments.count}}</span>)
+          </button>
+	</div>
+	<div class="p-0 float-right">
+	  <button class="btn btn-sm btn-secondary add-comment-link" id="add-comment_{{p.pk}}">Add Comment</button>
+	</div>
+      </div>
+    </div>
+
+    <div id="comments_{{p.pk}}" class="collapse" aria-labelledby="comments-heading_{{p.pk}}" data-parent="#accordion">
+      <div class="list-group list-group-flush" id="comment-card_{{p.pk}}">
 	    {% for c in p.comments.all %}
-	    <div class="media">
-	      <div class="media-body">
-		<div class="d-flex flex-row justify-content-between">
-		  <div class="p-2 flex-grow-1">
-		    <h3 class="mt-0 media-heading user_name">{{c.author_name}}</h3>
-		  </div>
-		  <div class="p-2 float-right">
-		    <small>{{c.created_date}}</small>
-		  </div>
-		</div>
-		<div class="d-flex flex-row">
-		  <div class="p-2">
-		    {{c.comment_text|linebreaks}}
-		  </div>
-		</div>
-	      </div>
-	    </div>
-	    {% endfor %}
-	  </div>
-	  
+	    {% include 'problemeditor/comment-body.html' %}
+	    {% endfor %}        
+      </div>
+    </div>
+  </div>
+</div>
 	</td>
       </tr>
       <tr>

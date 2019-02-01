@@ -402,4 +402,66 @@ $(document).on("click","#add-problem-preview-link", function(e) {
 	MathJax.Hub.Queue(["Typeset",MathJax.Hub,"add-problem-preview"]);
     });
 {% endif %}
-//solution-placeholder"
+
+
+$(document).on('click','.add-comment-link',function(e) {
+	var pk = $(this).attr("id").split('_')[1];
+	$.ajax({
+		type: 'GET',
+		    url: '/ajax/new-comment/',
+		    data: 'pk='+pk,
+		    dataType: 'json',
+		    success: function(result) {		    
+		    $('#comment-placeholder').html(result['modal-html']);
+		    MathJax.Hub.Queue(["Typeset",MathJax.Hub,"comment-placeholder"]);
+		    $("#comment-placeholder").modal("show");
+		}
+	    });
+	
+    });
+$(document).on('submit',"#new-comment-form",function(event) {
+	event.preventDefault();
+	$.ajax({
+		type: 'POST',
+		    url: '/ajax/save-new-comment/',
+		    data: $(this).serialize(),
+		    dataType: 'json',
+		    success: function(result) {
+		    $("#com-count_"+result['pk']).text(result['com_count']);
+		    $("#comment-card_"+result['pk']).append(result['com-html']);
+		    MathJax.Hub.Queue(["Typeset",MathJax.Hub,"comment-card_"+result['pk']]);
+		    $("#comment-placeholder").hide();
+		    $("[data-dismiss=modal]").trigger({ type: "click" });
+		}
+	    });
+	return false;
+    });
+
+$(document).on("click","#comment-preview-link", function(e) {
+	var com_text = $("#codetext[name=comment_text]").val().trim();
+	com_text = '<p>'+com_text.replace(/</g,' < ').replace(/(?:\r\n|\r|\n)/g,'<br/>')+'</p>';
+
+	//	com_text = replace_enumitem(com_text);//These would only happen if newtexcode used on comments...but it's not yet.
+	//com_text = replace_center(com_text);
+
+	$("#comment-preview-latex").html(com_text);
+	$("#comment-preview-latex").show();
+	MathJax.Hub.Queue(["Typeset",MathJax.Hub,"comment-preview-latex"]);
+    });
+
+$(document).on('click',".remove-comment",function(event) {
+	event.preventDefault();
+	var pk = $(this).attr("id").split('_')[1];
+	var cpk = $(this).attr("id").split('_')[2];
+	$.ajax({
+		type: 'POST',
+		    url: '/ajax/remove-comment/',
+		    data: 'pk='+pk+'&cpk='+cpk,
+		    dataType: 'json',
+		    success: function(result) {
+		    $("#com-count_"+pk).text(result['com_count']);
+		    $("#comment_"+pk+"_"+cpk).remove();
+		}
+	    });
+	return false;
+    });

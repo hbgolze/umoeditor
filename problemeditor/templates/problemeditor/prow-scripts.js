@@ -464,6 +464,7 @@ $(document).on('click',".edit-latex-link", function(e) {
 		    dataType: 'json',
 		    success: function(result) {
 		    $("#edit-latex-placeholder").html(result['modal-html']);
+		    MathJax.Hub.Queue(["Typeset",MathJax.Hub,"edit-latex-placeholder"]);
 		    $('#edit-latex-placeholder').modal("show");
 		}
 	    });

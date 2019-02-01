@@ -43,12 +43,38 @@
 	      <div class="row">
 		<div class="col-5">
 		  <form id="change-table-form">
-		    <p><input type="checkbox" name="NP" checked> New Problems</p>
-		    <p><input type="checkbox" name="PN" checked> Proposed for Current Year</p>
-		    <p><input type="checkbox" name="PL"> Proposed for Future Year</p>
-		    <p><input type="checkbox" name="MI"> Has Potential</p>
-		    <p><input type="checkbox" name="MJ"> Needs Major Revision</p>
-		    <p><button type="submit" class="btn btn-primary">Refresh Table</button></p>
+<div class="form-check">
+  <input class="form-check-input" type="checkbox" id="check-NP" name="NP" checked>
+  <label class="form-check-label" for="check-NP">
+    New Problems
+  </label>
+</div>
+<div class="form-check">
+  <input class="form-check-input" type="checkbox" id="check-PN" name="PN" checked>
+  <label class="form-check-label" for="check-PN">
+    Proposed for Current Year
+  </label>
+</div>
+<div class="form-check">
+  <input class="form-check-input" type="checkbox" id="check-NP" name="PL">
+  <label class="form-check-label" for="check-PL">
+    Proposed for Future Year
+  </label>
+</div>
+<div class="form-check">
+  <input class="form-check-input" type="checkbox" id="check-MI" name="MI">
+  <label class="form-check-label" for="check-MI">
+    Has Potential
+  </label>
+</div>
+<div class="form-check">
+  <input class="form-check-input" type="checkbox" id="check-MJ" name="MJ">
+  <label class="form-check-label" for="check-MJ">
+    Needs Major Revision
+  </label>
+</div>
+
+		    <p><button type="submit" class="btn btn-primary mt-2">Refresh Table</button></p>
 		  </form>
 		</div>
 		<div class="col-7">
@@ -81,6 +107,7 @@
             <a href="/?difficulty=5" class="p-2 list-group-item{% if difficulty == '5' %} active{% endif %}">Difficulty 5</a>
             <a href="/?difficulty=6" class="p-2 list-group-item{% if difficulty == '6' %} active{% endif %}">Difficulty 6</a>
           </div>
+	  <input type="hidden" id="difficulty" value="{% if difficulty %}{{difficulty}}{% endif %}">
         </div>
       </div>
 
@@ -91,26 +118,10 @@
 	{% for labl,short_label,plist in allcats %}
       
 	<a name="type{{short_label}}"></a> 
-	<h1>{{labl}}</h1>
-	
-	{% for status_topic in plist %}
-	<a name="typetopic{{status_topic.status}}{{status_topic.short_topic}}"></a> 
-	<h3>{{status_topic.topic}}</h3>
-	<div class="list-group mb-2 typetopic-list-group" id="typetopic-{{status_topic.status}}-{{status_topic.short_topic}}">
-	  <div class="list-group-item" id="empty-message-{{status_topic.status}}-{{status_topic.short_topic}}"{% if status_topic.problems.count > 0 %} style="display:none"{% endif %}>No {{status_topic.topic}} problems in this category.</div>
-	  {% if difficulty %}
-  	    {% for p in status_topic.problems.all %}
-	      {% if p.current_version.difficulty == difficulty %}
-	      {% include 'problemeditor/problemrow.html' with first_time=1%}
-	      {% endif %}
-	    {% endfor %}
-	  {% else %}
-  	    {% for p in status_topic.problems.all %}
-	      {% include 'problemeditor/problemrow.html' with first_time=1%}
-	    {% endfor %}
-	  {% endif %}
+	<h1>{{labl}} <button class="btn btn-secondary btn-sm refresh-status-link" id="refresh-status_{{short_label}}"><i class="fa fa-refresh" id="refresh-span_{{short_label}}"></i></button></h1>
+	<div id="status-{{short_label}}">
+	  {% include 'problemeditor/typeview-statusdiv.html' %}
 	</div>
-	{% endfor %}
 	{% endfor %}
 	</div>
       </div>
@@ -193,6 +204,38 @@ $("#dynamic-table-placeholder").html(result['table']);
   return false;
 });
 
+
+$(document).on('click',".refresh-status-link", function(e) {
+  e.preventDefault();
+  var st = $(this).attr('id').split('_')[1];
+$("#refresh-span_"+st).addClass('fa-spin');
+  $.ajax({
+    type: 'POST',
+    url: "/ajax/refresh-status/",
+    data: "st="+st+"&diff="+$("#difficulty").val(),
+    dataType: 'json',
+    success: function(result) {
+
+      $("#status-"+st).html(result['refreshed-html']);
+      MathJax.Hub.Queue(["Typeset",MathJax.Hub,"status-"+st]);
+
+
+  $(".typetopic-list-group").each(function(index) {
+    if ($(this).children().length == 1) {
+      $(this).children().each(function(index2) {
+        $(this).show();
+      });
+    }
+  });
+$("#refresh-span_"+st).removeClass('fa-spin');
+
+
+
+
+    }
+  });
+  return false;
+});
 {% include 'problemeditor/prow-scripts.js' %}
 
 </script>

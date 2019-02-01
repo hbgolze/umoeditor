@@ -1088,3 +1088,17 @@ def remove_comment(request,**kwargs):
 #    prob.deleted_comments.add(com)
 #    prob.save()
     return JsonResponse({'deleted':1,'com_count': prob.comments.count()})
+
+@login_required
+def refresh_status(request):
+    st = request.POST.get('st')
+    diff = request.POST.get("diff")
+    problem_status = get_object_or_404(ProblemStatus,status = st)
+    plist = StatusTopic.objects.filter(status = st)
+    context = {}
+    if diff != '':
+        context['difficulty'] = diff
+    context['mklists'] = ShortList.objects.all()
+    context['plist'] = plist
+    context['request'] = request
+    return JsonResponse({'refreshed-html':render_to_string('problemeditor/typeview-statusdiv.html',context)})

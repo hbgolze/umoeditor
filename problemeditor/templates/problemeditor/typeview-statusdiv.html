@@ -1,0 +1,18 @@
+          {% for status_topic in plist %}
+          <a name="typetopic{{status_topic.status}}{{status_topic.short_topic}}"></a>
+          <h3>{{status_topic.topic}}</h3>
+          <div class="list-group mb-2 typetopic-list-group" id="typetopic-{{status_topic.status}}-{{status_topic.short_topic}}">
+            <div class="list-group-item" id="empty-message-{{status_topic.status}}-{{status_topic.short_topic}}"{% if status_topic.problems.count > 0 %} style="display:none"{% endif %}>No {{status_topic.topic}} problems in this category.</div>
+            {% if difficulty %}
+            {% for p in status_topic.problems.all %}
+            {% if p.current_version.difficulty == difficulty %}
+            {% include 'problemeditor/problemrow.html' with first_time=1%}
+            {% endif %}
+            {% endfor %}
+            {% else %}
+            {% for p in status_topic.problems.all %}
+            {% include 'problemeditor/problemrow.html' with first_time=1%}
+            {% endfor %}
+            {% endif %}
+          </div>
+          {% endfor %}

@@ -44,12 +44,37 @@
               <div class="row">
                 <div class="col-5">
                   <form id="change-table-form">
-                    <p><input type="checkbox" name="NP" checked> New Problems</p>
-                    <p><input type="checkbox" name="PN" checked> Proposed for Current Year</p>
-                    <p><input type="checkbox" name="PL"> Proposed for Future Year</p>
-                    <p><input type="checkbox" name="MI"> Has Potential</p>
-                    <p><input type="checkbox" name="MJ"> Needs Major Revision</p>
-                    <p><button type="submit" class="btn btn-primary">Refresh Table</button></p>
+<div class="form-check">
+  <input class="form-check-input" type="checkbox" id="check-NP" name="NP" checked>
+  <label class="form-check-label" for="check-NP">
+    New Problems
+  </label>
+</div>
+<div class="form-check">
+  <input class="form-check-input" type="checkbox" id="check-PN" name="PN" checked>
+  <label class="form-check-label" for="check-PN">
+    Proposed for Current Year
+  </label>
+</div>
+<div class="form-check">
+  <input class="form-check-input" type="checkbox" id="check-NP" name="PL">
+  <label class="form-check-label" for="check-PL">
+    Proposed for Future Year
+  </label>
+</div>
+<div class="form-check">
+  <input class="form-check-input" type="checkbox" id="check-MI" name="MI">
+  <label class="form-check-label" for="check-MI">
+    Has Potential
+  </label>
+</div>
+<div class="form-check">
+  <input class="form-check-input" type="checkbox" id="check-MJ" name="MJ">
+  <label class="form-check-label" for="check-MJ">
+    Needs Major Revision
+  </label>
+</div>
+                    <p><button type="submit" class="btn btn-primary mt-2">Refresh Table</button></p>
                   </form>
                 </div>
                 <div class="col-7">

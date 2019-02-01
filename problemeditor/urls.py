@@ -47,6 +47,7 @@ urlpatterns = [
     url(r'^ajax/new-comment/$',views.new_comment,name='new_comment'),
     url(r'^ajax/save-new-comment/$',views.save_new_comment,name='save_new_comment'),
     url(r'^ajax/remove-comment/$',views.remove_comment,name='remove_comment'),
+    url(r'^ajax/refresh-status/$',views.refresh_status,name='refresh_status'),
 
 
 

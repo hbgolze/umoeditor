@@ -16,15 +16,15 @@ STATUS_CHOICES = (
 
 class Topic(models.Model):
     topic = models.CharField(max_length=20,blank=True)
-    top_index = models.IntegerField(default=1)
-#    problems = models.ManyToManyField(Problem,blank=True)
+    short_topic = models.CharField(max_length=2,blank=True)
     def __str__(self):
         return self.topic
 
 class ProblemStatus(models.Model):
-    approval_user = models.ForeignKey(User,blank=True,null=True)
-    status = models.CharField(max_length = 2,choices=STATUS_CHOICES,blank=False,default='PN')
-    author_name = models.CharField(max_length=50,blank=True)
+    status = models.CharField(max_length = 2,blank = True)
+    description = models.CharField(max_length = 30,blank = True)
+    def __str__(self):
+        return self.description
 
 class Solution(models.Model):
     solution_text = models.TextField()
@@ -69,7 +69,8 @@ class ProblemVersion(models.Model):
     authors = models.ManyToManyField(User,blank=True)
 
 class Problem(models.Model):
-#    topic = models.ForeignKey(Topic,blank=True,null=True)
+    topic_new = models.ForeignKey(Topic,blank=True,null=True)
+    problem_status_new = models.ForeignKey(ProblemStatus,blank=True,null=True)
     TOPIC_CHOICES = (
         ('Algebra','Algebra'),
         ('Combinatorics','Combinatorics'),

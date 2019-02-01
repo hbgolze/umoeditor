@@ -14,6 +14,17 @@ STATUS_CHOICES = (
     ('TR', 'Trash'),
     )
 
+class StatusTopic(models.Model):
+    topic = models.CharField(max_length=20,blank=True)
+    short_topic = models.CharField(max_length=2,blank=True)
+    status = models.CharField(max_length = 2,blank = True)
+    status_description = models.CharField(max_length = 30,blank = True)
+    order = models.IntegerField()
+    def __str__(self):
+        return self.status_description + ": " + self.topic
+    class Meta:
+        ordering = ['order','topic']
+
 class Topic(models.Model):
     topic = models.CharField(max_length=20,blank=True)
     short_topic = models.CharField(max_length=2,blank=True)
@@ -102,6 +113,7 @@ class Problem(models.Model):
     versions = models.ManyToManyField(ProblemVersion,blank=True,related_name='problem_version')
     top_version_number = models.IntegerField(default=0)
     current_version = models.ForeignKey(ProblemVersion,blank=True,related_name='current_version', null=True)
+    status_topic = models.ForeignKey(StatusTopic,blank=True, related_name="problems", null=True)
     def __str__(self):
         return self.label
 

@@ -29,32 +29,32 @@
       <!--    <label for="status_{{p.pk}}">Move To:</label>      -->
       <label for="status_{{p.pk}}">Move To:</label>
       <select id="status_{{p.pk}}" class="status-select form-control form-control-sm mb-1">
-        <option value="NP" {% if p.problem_status == "NP" %}selected{% endif %}>New Problem
+        <option value="NP" {% if p.problem_status_new.status == "NP" %}selected{% endif %}>New Problem
         </option>
-        <option value="PN" {% if p.problem_status == "PN" %}selected{% endif %}>Propose for Current Year
+        <option value="PN" {% if p.problem_status_new.status == "PN" %}selected{% endif %}>Propose for Current Year
         </option>
-        <option value="PL" {% if p.problem_status == "PL" %}selected{% endif %}>Propose for Future Year
+        <option value="PL" {% if p.problem_status_new.status == "PL" %}selected{% endif %}>Propose for Future Year
         </option>
-        <option value="MI" {% if p.problem_status == "MI" %}selected{% endif %}>Has Potential
+        <option value="MI" {% if p.problem_status_new.status == "MI" %}selected{% endif %}>Has Potential
         </option>
-        <option value="MJ" {% if p.problem_status == "MJ" %}selected{% endif %}>Needs Major Revision
+        <option value="MJ" {% if p.problem_status_new.status == "MJ" %}selected{% endif %}>Needs Major Revision
         </option>
-        <option value="TR" {% if p.problem_status == "TR" %}selected{% endif %}>Trash
+        <option value="TR" {% if p.problem_status_new.status == "TR" %}selected{% endif %}>Trash
         </option>
       </select>
       <label for="topic_{{p.pk}}">Change Topic:</label>
       <select id="topic_{{p.pk}}" class="change-topic form-control form-control-sm mb-1">
-        <option value="Algebra" {% if p.topic == "Algebra" %}selected{% endif %}>Algebra
+        <option value="Algebra" {% if p.topic_new.topic == "Algebra" %}selected{% endif %}>Algebra
         </option>
-        <option value="Combinatorics" {% if p.topic == "Combinatorics" %}selected{% endif %}>Combinatorics
+        <option value="Combinatorics" {% if p.topic_new.topic == "Combinatorics" %}selected{% endif %}>Combinatorics
         </option>
-        <option value="Games" {% if p.topic == "Games" %}selected{% endif %}>Games
+        <option value="Games" {% if p.topic_new.topic == "Games" %}selected{% endif %}>Games
         </option>
-        <option value="Geometry" {% if p.topic == "Geometry" %}selected{% endif %}>Geometry
+        <option value="Geometry" {% if p.topic_new.topic == "Geometry" %}selected{% endif %}>Geometry
         </option>
-        <option value="Number Theory" {% if p.topic == "Number Theory" %}selected{% endif %}>Number Theory
+        <option value="Number Theory" {% if p.topic_new.topic == "Number Theory" %}selected{% endif %}>Number Theory
         </option>
-        <option value="Other" {% if p.topic == "Other" %}selected{% endif %}>Other
+        <option value="Other" {% if p.topic_new.topic == "Other" %}selected{% endif %}>Other
         </option>
       </select>
       <label for="addtolist_{{p.pk}}">Add To List:</label>

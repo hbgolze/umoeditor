@@ -24,8 +24,8 @@
 	      {% for labl,short_label,plist in allcats %}
 	      <td>
 		<p>{{labl}}</p>
-		{% for problems,topic,short_topic in plist %}
-		<p><a href="#typetopic{{short_label}}{{short_topic}}">{{topic}} ({{problems.count}})</a></p>
+		{% for status_topic in plist %}
+		<p><a href="#typetopic{{status_topic.status}}{{status_topic.short_topic}}">{{status_topic.topic}} ({{status_topic.problems.count}})</a></p>
 		{% endfor %}
 	      </td>
 	      {% endfor %}
@@ -34,77 +34,54 @@
 	</table>
       </div>
       <div class="row">
-	<!--(npa,'Algebra'),(npc,'Combinatorics'),(npga,'Games'),(npg,'Geometry'),(npn,'Number Theory'),(npo,'Other'))),-->
-	<div class="col-sm-6" id="dynamic-table">
-	  {% include 'problemeditor/typeview-dynamictable.html' %}
-	</div>
-	<div class="col-sm-6">
-	  <table class="table table-sm">
-	    <thead>
-	      <tr>
-		<th>
-		  All Problems
-		</th>
-		<th>1</th>
-		<th>2</th>
-		<th>3</th>
-		<th>4</th>
-		<th>5</th>
-		<th>6</th>
-		<th>Total</th>
-	      </tr>
-	    </thead>
-	    <tbody>
-	      {% for topic,counts in good %}
-	      {% if forloop.last %}
-	      <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-	      {% endif %}
-	      <tr>
-		<th scope="row">
-		  {{topic}}
-		</th>
-		{% for num in counts %}
-		<td>
-		  {{num}}
-		</td>
-		{% endfor %}
-	      </tr>
-	      {% endfor %}
-	    </tbody>
-	  </table>
-	</div><!--col-6-->
-      </div><!--row-->
-      <div class="row">
-	<div class="col-6">
-	  <form id="change-table-form">
-	    <p><input type="checkbox" name="NP"{% if 'NP' in included_cats %} checked{% endif%}> New Problems</p>
-	    <p><input type="checkbox" name="PN"{% if 'PN' in included_cats %} checked{% endif%}> Proposed for Current Year</p>
-	    <p><input type="checkbox" name="PL"{% if 'PL' in included_cats %} checked{% endif%}> Proposed for Future Year</p>
-	    <p><input type="checkbox" name="MI"{% if 'MI' in included_cats %} checked{% endif%}> Has Potential</p>
-	    <p><input type="checkbox" name="MJ"{% if 'MJ' in included_cats %} checked{% endif%}> Needs Major Revision</p>
-	    <p><button type="submit" class="btn btn-primary">Refresh Table</button></p>
-	  </form>
-	</div>
+        <div class="col">
+	  <div class="card">
+	    <div class="card-header">
+	      Problem Difficulty Table
+	    </div>
+	    <div class="card-body">
+	      <div class="row">
+		<div class="col-5">
+		  <form id="change-table-form">
+		    <p><input type="checkbox" name="NP" checked> New Problems</p>
+		    <p><input type="checkbox" name="PN" checked> Proposed for Current Year</p>
+		    <p><input type="checkbox" name="PL"> Proposed for Future Year</p>
+		    <p><input type="checkbox" name="MI"> Has Potential</p>
+		    <p><input type="checkbox" name="MJ"> Needs Major Revision</p>
+		    <p><button type="submit" class="btn btn-primary">Refresh Table</button></p>
+		  </form>
+		</div>
+		<div class="col-7">
+		  <div class="float-center" id="dynamic-table-placeholder">
+		    Table will be displayed here.
+		  </div>
+		</div>
+	      </div>
+	    </div>
+	  </div>
+        </div>
       </div>
+
       <div class="row">
 	<div class="col">
 	<p><button class="btn btn-primary mt-2 add-problem-link">Add a problem</button></p>
 	</div>
       </div>
-      <div class="row">
-	<div class="col-sm-12">
-	  <div class="list-group-horizontal">
-	    <a href="/" class="list-group-item{% if not difficulty %} active{% endif %}">
-	      All Difficulties
-	    </a>
-	    <a href="/?difficulty=1" class="list-group-item{% if difficulty == 1 %} active{% endif %}">Difficulty 1</a>
-	    <a href="/?difficulty=2" class="list-group-item{% if difficulty == 2 %} active{% endif %}">Difficulty 2</a>
-	    <a href="/?difficulty=3" class="list-group-item{% if difficulty == 3 %} active{% endif %}">Difficulty 3</a>
-	    <a href="/?difficulty=4" class="list-group-item{% if difficulty == 4 %} active{% endif %}">Difficulty 4</a>
-	    <a href="/?difficulty=5" class="list-group-item{% if difficulty == 5 %} active{% endif %}">Difficulty 5</a>
-	    <a href="/?difficulty=6" class="list-group-item{% if difficulty == 6 %} active{% endif %}">Difficulty 6</a>
-	  </div>
-	</div>
+
+      <div class="row mb-2">
+        <div class="col-sm-12">
+          <div class="list-group-horizontal">
+            <a href="/" class="p-2 list-group-item{% if not difficulty %} active{% endif %}">
+              All Difficulties
+            </a>
+            <a href="/?difficulty=1" class="p-2 list-group-item{% if difficulty == '1' %} active{% endif %}">Difficulty 1</a>
+            <a href="/?difficulty=2" class="p-2 list-group-item{% if difficulty == '2' %} active{% endif %}">Difficulty 2</a>
+            <a href="/?difficulty=3" class="p-2 list-group-item{% if difficulty == '3' %} active{% endif %}">Difficulty 3</a>
+            <a href="/?difficulty=4" class="p-2 list-group-item{% if difficulty == '4' %} active{% endif %}">Difficulty 4</a>
+            <a href="/?difficulty=5" class="p-2 list-group-item{% if difficulty == '5' %} active{% endif %}">Difficulty 5</a>
+            <a href="/?difficulty=6" class="p-2 list-group-item{% if difficulty == '6' %} active{% endif %}">Difficulty 6</a>
+          </div>
+        </div>
       </div>
 
 <!--Problems start here-->
@@ -116,14 +93,22 @@
 	<a name="type{{short_label}}"></a> 
 	<h1>{{labl}}</h1>
 	
-	{% for problems,topic,short_topic in plist %}
-	<a name="typetopic{{short_label}}{{short_topic}}"></a> 
-	<h3>{{topic}}</h3>
-	<div class="list-group mb-2" id="typetopic-{{short_label}}-{{short_topic}}">
-	  <div class="list-group-item" id="empty-message-{{short_label}}-{{short_topic}}"{% if problems|length > 0 %} style="display:none"{% endif %}>No {{topic}} problems in this category.</div>
-	    {% for p in problems %}
+	{% for status_topic in plist %}
+	<a name="typetopic{{status_topic.status}}{{status_topic.short_topic}}"></a> 
+	<h3>{{status_topic.topic}}</h3>
+	<div class="list-group mb-2 typetopic-list-group" id="typetopic-{{status_topic.status}}-{{status_topic.short_topic}}">
+	  <div class="list-group-item" id="empty-message-{{status_topic.status}}-{{status_topic.short_topic}}"{% if status_topic.problems.count > 0 %} style="display:none"{% endif %}>No {{status_topic.topic}} problems in this category.</div>
+	  {% if difficulty %}
+  	    {% for p in status_topic.problems.all %}
+	      {% if p.current_version.difficulty == difficulty %}
+	      {% include 'problemeditor/problemrow.html' with first_time=1%}
+	      {% endif %}
+	    {% endfor %}
+	  {% else %}
+  	    {% for p in status_topic.problems.all %}
 	      {% include 'problemeditor/problemrow.html' with first_time=1%}
 	    {% endfor %}
+	  {% endif %}
 	</div>
 	{% endfor %}
 	{% endfor %}
@@ -182,6 +167,17 @@
 <div class="modal fade" id="comment-placeholder" role="dialog"></div>
 
 <script>
+{% if difficulty %}
+$(document).ready(function() {
+  $(".typetopic-list-group").each(function(index) {
+    if ($(this).children().length == 1) {
+      $(this).children().each(function(index2) {
+        $(this).show();
+      });
+    }
+  });
+});
+{% endif %}
 $(document).on('submit',"#change-table-form",function(e) {
   e.preventDefault();
   $.ajax({
@@ -191,8 +187,7 @@ $(document).on('submit',"#change-table-form",function(e) {
     dataType: 'json',
     success: function(result) {
 
-console.log('hi');
-$("#dynamic-table").html(result['table']);
+$("#dynamic-table-placeholder").html(result['table']);
     }
   });
   return false;

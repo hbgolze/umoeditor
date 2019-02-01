@@ -9,6 +9,7 @@ from . import views
 
 urlpatterns = [
     url(r'^$', views.index_view, name='indexview'),#done
+    url(r'^index2/$', views.index_view2, name='indexview2'),
     url(r'^detailedview/(?P<pk>\w+)/$', views.detailedproblemview, name='detailedproblemview'),
     url(r'^detailedview/(?P<pk>\w+)/edittext/$', views.editproblemtextpkview, name='editproblemtextpkview'),
     url(r'^detailedview/(?P<pk>\w+)/edittext/(?P<vpk>\w+)/$', views.editproblemtextpkview, name='editproblemtextpkview'),

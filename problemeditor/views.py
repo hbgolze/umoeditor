@@ -70,7 +70,6 @@ def index_view(request):
 
     template = loader.get_template('problemeditor/typeview.html')
 
-
     allcats = (
         ('New Problems', 'NP', StatusTopic.objects.filter(status='NP')),
         ('Proposed for Current Year', 'PN', StatusTopic.objects.filter(status='PN')),
@@ -78,11 +77,154 @@ def index_view(request):
         ('Has Potential', 'MI', StatusTopic.objects.filter(status='MI')),
         ('Needs Major Revision', 'MJ', StatusTopic.objects.filter(status='MJ'))
         )
+    
+
+    log = LogEntry.objects.filter(change_message__contains="detailedview").filter(action_time__date__gte = datetime.today().date()-timedelta(days=7))
+
+    context['log'] = log
+    context['mklists'] = ShortList.objects.all()
+    context['allcats'] = allcats
+    context['nbar'] = 'problemeditor'
+    context['request'] = request
+    return HttpResponse(template.render(context,request))
+
+
+@login_required
+def index_view2(request):
+    context={}
+    f = request.GET
+
+    all_problems = Problem.objects.all()
+    if request.method == "GET":
+        if request.GET.get('difficulty') == '1':
+            all_problems = all_problems.filter(current_version__difficulty=1)
+            context['difficulty'] = 1
+        elif request.GET.get('difficulty') == '2':
+            all_problems = all_problems.filter(current_version__difficulty=2)
+            context['difficulty'] = 2
+        elif request.GET.get('difficulty') == '3':
+            all_problems = all_problems.filter(current_version__difficulty=3)
+            context['difficulty'] = 3
+        elif request.GET.get('difficulty') == '4':
+            all_problems = all_problems.filter(current_version__difficulty=4)
+            context['difficulty'] = 4
+        elif request.GET.get('difficulty') == '5':
+            all_problems = all_problems.filter(current_version__difficulty=5)
+            context['difficulty'] = 5
+        elif request.GET.get('difficulty') == '6':
+            all_problems = all_problems.filter(current_version__difficulty=6)
+            context['difficulty'] = 6
+
+
+    new_problems = all_problems.filter(problem_status='NP')
+    propose_now = all_problems.filter(problem_status='PN')
+    propose_later = all_problems.filter(problem_status='PL')
+    needs_minor = all_problems.filter(problem_status='MI')
+    needs_major = all_problems.filter(problem_status='MJ')
+    npa = new_problems.filter(topic='Algebra')
+    pna = propose_now.filter(topic='Algebra')
+    pla = propose_later.filter(topic='Algebra')
+    mia = needs_minor.filter(topic='Algebra')
+    mja = needs_major.filter(topic='Algebra')
+    npc = new_problems.filter(topic='Combinatorics')
+    pnc = propose_now.filter(topic='Combinatorics')
+    plc = propose_later.filter(topic='Combinatorics')
+    mic = needs_minor.filter(topic='Combinatorics')
+    mjc = needs_major.filter(topic='Combinatorics')
+    npg = new_problems.filter(topic='Geometry')
+    png = propose_now.filter(topic='Geometry')
+    plg = propose_later.filter(topic='Geometry')
+    mig = needs_minor.filter(topic='Geometry')
+    mjg = needs_major.filter(topic='Geometry')
+    npn = new_problems.filter(topic='Number Theory')
+    pnn = propose_now.filter(topic='Number Theory')
+    pln = propose_later.filter(topic='Number Theory')
+    min = needs_minor.filter(topic='Number Theory')
+    mjn = needs_major.filter(topic='Number Theory')
+    npga = new_problems.filter(topic='Games')
+    pnga = propose_now.filter(topic='Games')
+    plga = propose_later.filter(topic='Games')
+    miga = needs_minor.filter(topic='Games')
+    mjga = needs_major.filter(topic='Games')
+    npo = new_problems.filter(topic='Other')
+    pno = propose_now.filter(topic='Other')
+    plo = propose_later.filter(topic='Other')
+    mio = needs_minor.filter(topic='Other')
+    mjo = needs_major.filter(topic='Other')
+#might need calculations to build rows (# sols, etc?)
+    template=loader.get_template('problemeditor/typeview2.html')
+#    context= {'pna' : pna, 'pla' : pla, 'mia': mia, 'mja' : mja,
+#              'pnc' : pnc, 'plc' : plc, 'mic': mic, 'mjc' : mjc,
+#              'png' : png, 'plg' : plg, 'mig': mig, 'mjg' : mjg,
+#              'pnn' : pnn, 'pln' : pln, 'min': min, 'mjn' : mjn,
+#              'pnga' : pnga, 'plga' : plga, 'miga': miga, 'mjga' : mjga,
+#              'pno' : pno, 'plo' : plo, 'mio': mio, 'mjo' : mjo, 'nbar': 'problemeditor'}
+    allcats= (
+        ('New Problems','NP',
+         ((npa,'Algebra','AL'),(npc,'Combinatorics','CO'),(npga,'Games','GA'),(npg,'Geometry','GE'),(npn,'Number Theory','NT'),(npo,'Other','OT'))),
+        ('Proposed for Current Year','PN',
+         ((pna,'Algebra','AL'),(pnc,'Combinatorics','CO'),(pnga,'Games','GA'),(png,'Geometry','GE'),(pnn,'Number Theory','NT'),(pno,'Other','OT'))),
+        ('Proposed for Future Year','PL',
+         ((pla,'Algebra','AL'),(plc,'Combinatorics','CO'),(plga,'Games','GA'),(plg,'Geometry','GE'),(pln,'Number Theory','NT'),(plo,'Other','OT'))),
+        ('Has Potential','MI',
+         ((mia,'Algebra','AL'),(mic,'Combinatorics','CO'),(miga,'Games','GA'),(mig,'Geometry','GE'),(min,'Number Theory','NT'),(mio,'Other','OT'))),
+        ('Needs Major Revision','MJ',
+         ((mja,'Algebra','AL'),(mjc,'Combinatorics','CO'),(mjga,'Games','GA'),(mjg,'Geometry','GE'),(mjn,'Number Theory','NT'),(mjo,'Other','OT'))),
+        )
+#    currtablecounts=[]
+#    goodtablecounts=[]
+#    all_good_probs = Problem.objects.filter(problem_status__in = ['PN','NP','MJ','MI','PL'])
+#    all_curr_probs = Problem.objects.filter(problem_status__in = L)#['PN','NP','PL'])
+#    topics = ['Algebra','Combinatorics','Games','Geometry','Number Theory','Other']
+#    for top in topics:
+#        goodcounts=[] 
+#        currcounts=[]
+#        goods = all_good_probs.filter(topic=top)
+#        currs = all_curr_probs.filter(topic=top)
+#        for i in range(1,7):
+#            goodcounts.append(goods.filter(difficulty=str(i)).count())
+#            currcounts.append(currs.filter(difficulty=str(i)).count())
+#        goodcounts.append(goods.count())
+#        currcounts.append(currs.count())
+#        currtablecounts.append((top,currcounts))
+#        goodtablecounts.append((top,goodcounts))
+#    goodcounts=[] 
+#    currcounts=[]
+#    for i in range(1,7):
+#        goodcounts.append(all_good_probs.filter(difficulty=str(i)).count())
+#        currcounts.append(all_curr_probs.filter(difficulty=str(i)).count())
+#    goodcounts.append(all_good_probs.count())
+#    currcounts.append(all_curr_probs.count())
+#    currtablecounts.append(('Total',currcounts))
+#    goodtablecounts.append(('Total',goodcounts))
+
 
     
+#    abbrevs= {'Algebra':'A',
+#              'Combinatorics':'C',
+#              'Games':'Ga',
+#              'Geometry':'Ge',
+#              'Number Theory':'NT',
+#              'Other':'O',}
+#    for i in allcats:
+#        status=i[0]
+#        groups=i[1]
+#        pnums=[[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0]]
+#        for j in range(0,len(groups)):
+#            topic=groups[j]
+#            nums=[]
+#            li=topic[0]
+#            for k in range(1,7):
+#                c=li.filter(difficulty=str(k)).count()
+#                pnums[k-1][j]=(c,abbrevs[topic[1]],topic[1])
+
+#            pnums.append(nums)
+#        allnums.append((i[0],pnums))
 
     log = LogEntry.objects.filter(change_message__contains="detailedview").filter(action_time__date__gte=datetime.today().date()-timedelta(days=7))
 
+#    userlog=[]
+#    for ent in log:
         
     context['log'] = log
 
@@ -90,8 +232,12 @@ def index_view(request):
 
     context['allcats'] = allcats
     context['nbar'] = 'problemeditor'
+#    context['current'] = currtablecounts
+#    context['good'] = goodtablecounts
     context['request'] = request
+#    context['included_cats'] = L
     return HttpResponse(template.render(context,request))
+
 
 @login_required
 def get_new_table(request):

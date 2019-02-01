@@ -1,0 +1,180 @@
+{% extends "./base.html" %}
+
+{% block title %}View Problems{% endblock %}
+
+{% load static %}
+
+{% load ratings %}
+
+{% block head %}
+<link rel="stylesheet" href="{% static 'star-ratings/css/star-ratings.css' %}">
+<script type="text/javascript" src="{% static 'star-ratings/js/dist/star-ratings.min.js' %}"></script>
+
+{% endblock %}
+
+{% block content %}
+
+<div class="container">
+  <div class="row">
+    <div class="col-xs-12 col-sm-9">
+      <div class="row">
+	<table class="table">
+	  <tbody>
+	    <tr>
+	      {% for labl,short_label,plist in allcats %}
+	      <td>
+		<p>{{labl}}</p>
+		{% for problems,topic,short_topic in plist %}
+		<p><a href="#typetopic{{short_label}}{{short_topic}}">{{topic}} ({{problems.count}})</a></p>
+		{% endfor %}
+	      </td>
+	      {% endfor %}
+	    </tr>
+	  </tbody>
+	</table>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <div class="card">
+            <div class="card-header">
+              Problem Difficulty Table
+            </div>
+            <div class="card-body">
+              <div class="row">
+                <div class="col-5">
+                  <form id="change-table-form">
+                    <p><input type="checkbox" name="NP" checked> New Problems</p>
+                    <p><input type="checkbox" name="PN" checked> Proposed for Current Year</p>
+                    <p><input type="checkbox" name="PL"> Proposed for Future Year</p>
+                    <p><input type="checkbox" name="MI"> Has Potential</p>
+                    <p><input type="checkbox" name="MJ"> Needs Major Revision</p>
+                    <p><button type="submit" class="btn btn-primary">Refresh Table</button></p>
+                  </form>
+                </div>
+                <div class="col-7">
+                  <div class="float-center" id="dynamic-table-placeholder">
+                    Table will be displayed here.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <div class="row">
+	<div class="col">
+	  <p><button class="btn btn-primary mt-2 add-problem-link">Add a problem</button></p>
+	</div>
+      </div>
+
+      <div class="row mb-2">
+	<div class="col-sm-12">
+	  <div class="list-group-horizontal">
+	    <a href="/index2" class="p-2 list-group-item{% if not difficulty %} active{% endif %}">
+	      All Difficulties
+	    </a>
+	    <a href="/index2?difficulty=1" class="p-2 list-group-item{% if difficulty == 1 %} active{% endif %}">Difficulty 1</a>
+	    <a href="/index2?difficulty=2" class="p-2 list-group-item{% if difficulty == 2 %} active{% endif %}">Difficulty 2</a>
+	    <a href="/index2?difficulty=3" class="p-2 list-group-item{% if difficulty == 3 %} active{% endif %}">Difficulty 3</a>
+	    <a href="/index2?difficulty=4" class="p-2 list-group-item{% if difficulty == 4 %} active{% endif %}">Difficulty 4</a>
+	    <a href="/index2?difficulty=5" class="p-2 list-group-item{% if difficulty == 5 %} active{% endif %}">Difficulty 5</a>
+	    <a href="/index2?difficulty=6" class="p-2 list-group-item{% if difficulty == 6 %} active{% endif %}">Difficulty 6</a>
+	  </div>
+	</div>
+      </div>
+
+<!--Problems start here-->
+      <div class="row">
+	<div class="col">
+
+	  {% for labl,short_label,plist in allcats %}
+	  
+	  <a name="type{{short_label}}"></a> 
+	  <h1>{{labl}}</h1>
+
+	  {% for problems,topic,short_topic in plist %}
+	  <a name="typetopic{{short_label}}{{short_topic}}"></a> 
+	  <h3>{{topic}}</h3>
+	  <div class="list-group mb-2" id="typetopic-{{short_label}}-{{short_topic}}">
+	    <div class="list-group-item" id="empty-message-{{short_label}}-{{short_topic}}"{% if problems|length > 0 %} style="display:none"{% endif %}>No {{topic}} problems in this category.</div>
+	    {% for p in problems %}
+	    {% include 'problemeditor/problemrow.html' with first_time=1%}
+	    {% endfor %}
+	  </div>
+	  {% endfor %}
+	  {% endfor %}
+	</div>
+      </div>
+      <div class="row">
+	<div class="col">
+	  <p><button class="btn btn-primary mt-2 add-problem-link">Add a problem</button></p>
+	</div>
+      </div>
+    </div>
+    <div class="col-sm-3">
+      <h2>Addition Log</h2>
+      <div class="list-group">
+{% if log.count == 0 %}<i>Nothing currently in the log</i>{% endif %}
+{% for entry in log %}
+<a href="{{entry.change_message}}" class="list-group-item"> {{entry.object_repr}} ({{entry.action_time}})</a>
+
+{% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+<div id="difficulty-changed" style="position:fixed;right:15px;bottom:15px;margin:0;padding:0;display:none;">
+  <div class="alert alert-success">
+    Difficulty changed successfully.
+  </div>
+</div>
+<div id="status-changed" style="position:fixed;right:15px;bottom:15px;margin:0;padding:0;display:none;">
+  <div class="alert alert-success">
+    Status changed successfully.
+  </div>
+</div>
+<div id="topic-changed" style="position:fixed;right:15px;bottom:15px;margin:0;padding:0;display:none;">
+  <div class="alert alert-success">
+    Topic changed successfully.
+  </div>
+</div>
+<div id="added-to-list" style="position:fixed;right:15px;bottom:15px;margin:0;padding:0;display:none;">
+  <div class="alert alert-success">
+    Problem added to list.
+  </div>
+</div>
+<div id="prev-added-to-list" style="position:fixed;right:15px;bottom:15px;margin:0;padding:0;display:none;">
+  <div class="alert alert-warning">
+    Problem has already been added to list.
+  </div>
+</div>
+<div id="problem-added" style="position:fixed;right:15px;bottom:15px;margin:0;padding:0;display:none;">
+  <div class="alert alert-success">
+    New problem added.
+  </div>
+</div>
+<div class="modal fade" id="solution-placeholder" role="dialog"></div>
+<div class="modal fade" id="add-problem-placeholder" role="dialog"></div>
+<div class="modal fade" id="comment-placeholder" role="dialog"></div>
+
+<script>
+$(document).on('submit',"#change-table-form",function(e) {
+  e.preventDefault();
+  $.ajax({
+    type: 'GET',
+    url: "ajax/get-new-table",
+    data: $(this).serialize(),
+    dataType: 'json',
+    success: function(result) {
+console.log('hi');
+$("#dynamic-table").html(result['table']);
+    }
+  });
+  return false;
+});
+{% include 'problemeditor/prow-scripts.js' %}
+</script>
+{% endblock %}

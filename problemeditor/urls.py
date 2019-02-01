@@ -48,7 +48,9 @@ urlpatterns = [
     url(r'^ajax/save-new-comment/$',views.save_new_comment,name='save_new_comment'),
     url(r'^ajax/remove-comment/$',views.remove_comment,name='remove_comment'),
     url(r'^ajax/refresh-status/$',views.refresh_status,name='refresh_status'),
-
+    url(r'^ajax/edit-problemtext/$',views.edit_problemtext,name='edit_problemtext'),
+    url(r'^ajax/archive-mocklist/$',views.archive_mocklist,name='archive_mocklist'),
+    url(r'^ajax/unarchive-mocklist/$',views.unarchive_mocklist,name='unarchive_mocklist'),
 
 
 #    url(r'^detailedview/(?P<pk>\w+)/editreview/(?P<apk>\w+)/$', views.editreviewpkview, name='editreviewpkview'),

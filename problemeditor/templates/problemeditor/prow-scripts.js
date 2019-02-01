@@ -1,15 +1,3 @@
-/*
-      <select id="topic_{{p.pk}}" class="change-topic form-control form-control-sm mb-1">
-        <option value="Algebra" {% if p.topic == "Algebra" %}selected{% endif %}>Algebra
-        </option>
-      </select>
-      <select id="addtolist_{{p.pk}}" class="add-to-list form-control form-control-sm mb-1">
-	<option value="" disabled selected>Choose a List</option>
-	{% for mklist in mklists %}
-	<option value="{{mklist.pk}}">{{mklist.name}}</option>
-	{% endfor %}
-*/
-
 function getCookie(name) {
     var cookieValue = null;
     if (document.cookie && document.cookie !== '') {
@@ -464,4 +452,48 @@ $(document).on('click',".remove-comment",function(event) {
 		}
 	    });
 	return false;
+    });
+
+$(document).on('click',".edit-latex-link", function(e) {
+	e.preventDefault();
+	var pk = $(this).attr("id").split('_')[1];
+	$.ajax({
+		type: 'POST',
+		    url: '/ajax/edit-problemtext/',
+		    data: 'pk='+pk,
+		    dataType: 'json',
+		    success: function(result) {
+		    $("#edit-latex-placeholder").html(result['modal-html']);
+		    $('#edit-latex-placeholder').modal("show");
+		}
+	    });
+    });
+
+$(document).on('submit',"#edit-latex-form",function(e) {
+	e.preventDefault();
+	$.ajax({
+		type: 'POST',
+		    url: '/ajax/save-problemtext/',
+		    data: $(this).serialize(),
+		    dataType: 'json',
+		    success: function(result) {
+		    $("#problem-code_"+result['pk']).html(result['prob-html']);
+		    MathJax.Hub.Queue(["Typeset",MathJax.Hub,"problem-code_"+result['pk']]);
+		    $("#edit-latex-placeholder").hide();
+		    $("[data-dismiss=modal]").trigger({ type: "click" });
+
+		}
+	    });
+    });
+
+$(document).on('click','#edit-latex-preview-link',function(e) {
+	p_text = $("#edit-latex-form textarea[name=problem_text]").val().trim();//may need editing if a second 'edit latex' button is added
+	p_text = '<p>'+p_text.replace(/</g,' < ').replace(/(?:\r\n|\r|\n)/g,'<br/>')+'</p>';
+
+	p_text = replace_enumitem(p_text);
+	p_text = replace_center(p_text);
+
+	$("#edit-ptext-preview").html(p_text);
+	$("#edit-ptext-preview").show();
+	MathJax.Hub.Queue(["Typeset",MathJax.Hub,"edit-ptext-preview"]);
     });

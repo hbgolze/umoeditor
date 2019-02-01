@@ -94,9 +94,12 @@
     <table width="100%">
       <tr>
 	<td>
-	  <p>
-	    {% autoescape off %}{{p.current_version.problem_latex|linebreaks}} {% endautoescape %}
-	  </p>
+	  <div id="problem-code_{{p.pk}}">
+	    {% include 'problemeditor/ptext.html' %}
+	  </div>
+	  <div class="float-right mb-2">
+	    <button class="btn btn-primary btn-sm edit-latex-link" id="edit-latex_{{p.pk}}">Edit LaTeX</button>
+	  </div>
 	</td>
       </tr>
       <tr>

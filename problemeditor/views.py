@@ -570,16 +570,16 @@ def deletecommentpkview(request,**kwargs):#If solution_number is kept, this must
 
 @login_required
 def newcommentpkview(request,**kwargs):
-    pk=kwargs['pk']
-    prob=get_object_or_404(Problem, pk=pk)
-    com_num=prob.comments.count()+1
+    pk = kwargs['pk']
+    prob = get_object_or_404(Problem, pk=pk)
+    com_num = prob.comments.count()+1
     if request.method == "POST":
         com_form = CommentForm(request.POST)
         if com_form.is_valid():
-            com = com_form.save(commit=False)
-            com.comment_number=com_num
+            com = com_form.save(commit = False)
+            com.comment_number = com_num
             com.author = request.user
-            com.problem_label=prob.label
+            com.problem_label = prob.label
             com.save()
             prob.comments.add(com)
             prob.save()
@@ -593,8 +593,8 @@ def newcommentpkview(request,**kwargs):
                 )
             return redirect('../')
     else:
-        com=Comment(comment_text='', comment_number=com_num, problem_label=prob.label)
-        com_form = CommentForm(instance=com)
+        com = Comment(comment_text = '', comment_number = com_num, problem_label = prob.label)
+        com_form = CommentForm(instance = com)
 
     return render(request, 'problemeditor/newcom.html', {'form': com_form, 'nbar': 'problemeditor','problem':prob})
 
@@ -602,76 +602,76 @@ def newcommentpkview(request,**kwargs):
 
 @login_required
 def detailedproblemview(request,**kwargs):
-    pk=kwargs['pk']
-    prob=get_object_or_404(Problem, pk=pk)
+    pk = kwargs['pk']
+    prob = get_object_or_404(Problem, pk = pk)
     if request.method == "POST":
-        versions=prob.versions.all()
+        versions = prob.versions.all()
         for i in versions:
             if i.label in request.POST:
-                prob.current_version=i
+                prob.current_version = i
                 prob.save()
-    context={}
+    context = {}
     breadcrumbs=[]
 #    form=DetailedProblemForm(instance=prob)
     #sols...
-    sols=prob.current_version.solutions.all()
-    context['sols']=sols
+    sols = prob.current_version.solutions.all()
+    context['sols'] = sols
     #coms...
     coms=prob.comments.all()
-    context['coms']=coms
+    context['coms'] = coms
     #approvals
 #    status=prob.problem_status
 #    context['apprs']=apprs
     #other
-    context['problem']=prob
-    context['nbar']='problemeditor'
+    context['problem'] = prob
+    context['nbar'] = 'problemeditor'
 #    context['form']=form
-    context['breadcrumbs']=breadcrumbs
+    context['breadcrumbs'] = breadcrumbs
     return render(request, 'problemeditor/detailedview.html', context)
 
 @login_required
 def newversionview(request,pk):#args
-    problem=get_object_or_404(Problem, pk=pk)
-    vers=ProblemVersion()
+    problem = get_object_or_404(Problem, pk = pk)
+    vers = ProblemVersion()
     if request.method == "POST":
-        form = NewVersionForm(request.POST, instance=vers)
+        form = NewVersionForm(request.POST, instance = vers)
         if form.is_valid():
             version = form.save()
             version.save()
-            version.version_number = problem.top_version_number+1
+            version.version_number = problem.top_version_number + 1
             version.save()
-            version.label = 'Problem '+str(problem.pk)+'v'+str(version.version_number)
+            version.label = 'Problem ' + str(problem.pk) + 'v' + str(version.version_number)
             version.save()
             version.problem_latex = newtexcode(version.problem_text,version.label)#requires version.label...need to redo image naming conventions
             version.authors.add(request.user)
             version.save()
             problem.versions.add(version)
-            problem.top_version_number+=1
+            problem.top_version_number += 1
             problem.save()
             LogEntry.objects.log_action(
                 user_id = request.user.id,
                 content_type_id = ContentType.objects.get_for_model(version).pk,
                 object_id = version.id,
-                object_repr = version.author_name+" added a new version to "+problem.label,
+                object_repr = version.author_name + " added a new version to "+problem.label,
                 action_flag = ADDITION,
-                change_message = "/detailedview/"+str(problem.pk)+'/',
+                change_message = "/detailedview/" + str(problem.pk) + '/',
                 )
             return redirect('../')
     else:
-        form = NewVersionForm(instance=vers)
+        form = NewVersionForm(instance = vers)
         return render(request, 'problemeditor/newversionview.html', {'form': form, 'nbar': 'problemeditor','problem' : problem})
 
 @login_required
 def addproblemview(request):
     prob = Problem()
     if request.method == "POST":
-        form = AddProblemForm(request.POST, instance=prob)
+        form = AddProblemForm(request.POST, instance = prob)
         if form.is_valid():
             problem = form.save()
             problem.save()
             problem.label = 'Problem ' + str(problem.pk)
             problem.problem_latex = newtexcode(problem.problem_text,problem.label)
-            problem.problem_status='NP'
+            problem.problem_status = 'NP'
             problem.problem_status_new = ProblemStatus.objects.get(status = "NP")
             problem.topic_new = Topic.objects.get(topic = problem.topic)
             problem.status_topic = StatusTopic.objects.get(status = 'NP',topic = problem.topic)
@@ -682,14 +682,14 @@ def addproblemview(request):
                 problem_latex = problem.problem_latex,
                 version_number = 1,
                 author_name = problem.author_name,
-                label = problem.label+'v1'
+                label = problem.label + 'v1'
                 )
             pv.save()
             pv.authors.add(request.user)
             pv.save()
             problem.versions.add(pv)
             problem.current_version = pv
-            problem.top_version_number=1
+            problem.top_version_number = 1
             problem.save()
             LogEntry.objects.log_action(
                 user_id = request.user.id,
@@ -701,7 +701,7 @@ def addproblemview(request):
                 )
             return redirect('../detailedview/'+str(problem.pk)+'/')
     else:
-        form = AddProblemForm(instance=prob)
+        form = AddProblemForm(instance = prob)
         return render(request, 'problemeditor/addview.html', {'form': form, 'nbar': 'problemeditor'})
 
 @login_required
@@ -712,18 +712,18 @@ def pasttestsview(request):
 @login_required
 def viewpasttest(request,pk):
     T = get_object_or_404(FinalTest,pk=pk)
-    probs=T.problems.order_by('difficulty')
+    probs = T.problems.order_by('difficulty')
     return render(request,'problemeditor/pasttest.html',{'year':T.year,'nbar':'pasttests','problems':probs})
 
 @login_required
 def publishview(request,year):
     problems = Problem.objects.filter(problem_status='PN')
     if request.method == "POST":
-        T=FinalTest(year=year)
+        T = FinalTest(year = year)
         T.save()        
         for p in problems:
             T.problems.add(p)
-            p.problem_status='XX'
+            p.problem_status = 'XX'
             p.save()
         T.save()
         return redirect('/pasttests/')
@@ -749,7 +749,7 @@ def test_as_pdf(request, pk):
         # Create subprocess, supress output with PIPE and
         # run latex twice to generate the TOC properly.
         # Finally read the generated pdf.
-        fa=open(os.path.join(tempdir,'asymptote.sty'),'w')
+        fa = open(os.path.join(tempdir,'asymptote.sty'),'w')
         fa.write(asyr)
         fa.close()
         logger.debug(os.listdir(tempdir))
@@ -761,7 +761,7 @@ def test_as_pdf(request, pk):
                 })
         template = get_template('problemeditor/my_latex_template.tex')
         rendered_tpl = template.render(context).encode('utf-8')  
-        ftex=open(os.path.join(tempdir,'texput.tex'),'wb')
+        ftex = open(os.path.join(tempdir,'texput.tex'),'wb')
         ftex.write(rendered_tpl)
         ftex.close()
         logger.debug(os.listdir(tempdir))
@@ -777,7 +777,7 @@ def test_as_pdf(request, pk):
         logger.debug(os.listdir(tempdir))
 
         for i in range(0,len(L)):
-            if L[i][-4:]=='.asy':
+            if L[i][-4:] == '.asy':
                 process1 = Popen(
                     ['asy', L[i]],
                     stdin = PIPE,
@@ -797,7 +797,7 @@ def test_as_pdf(request, pk):
         logger.debug(os.listdir(tempdir))
         with open(os.path.join(tempdir, 'texput.pdf'), 'rb') as f:
             pdf = f.read()
-    r = HttpResponse(content_type='application/pdf')  
+    r = HttpResponse(content_type = 'application/pdf')  
     r.write(pdf)
     return r
 
@@ -809,9 +809,10 @@ def mocklistsview(request):
             shortlist = shortlist_form.save()
             shortlist.author = request.user
             shortlist.save()
-    F = ShortList.objects.all()
+    F = ShortList.objects.filter(archived = False)
+    archived = ShortList.objects.filter(archived = True)
     form = ShortListModelForm()
-    return render(request,'problemeditor/mocklistsview.html',{'mocklists':F,'nbar':'mocklists','form':form})
+    return render(request,'problemeditor/mocklistsview.html',{'mocklists':F,'nbar':'mocklists','form':form,'archived_mocklists':archived})
 
 
 @login_required
@@ -835,8 +836,8 @@ def remove_from_list(request):
 
 @login_required
 def shortlist_as_pdf(request, pk):
-    shortlist = get_object_or_404(ShortList, pk=pk)
-    P=shortlist.problems.order_by('difficulty')
+    shortlist = get_object_or_404(ShortList, pk = pk)
+    P = shortlist.problems.order_by('difficulty')
     context = Context({  
             'name':shortlist.name,
             'rows':P,
@@ -971,7 +972,7 @@ def load_edit_sol(request,**kwargs):
     prob = get_object_or_404(Problem,pk = pk)
     sol = get_object_or_404(Solution,pk = spk)
     form = EditSolutionForm(instance = sol)
-    return JsonResponse({'sol_form':render_to_string('problemeditor//edit_sol_form.html',{'form':form,'prob':prob})})
+    return JsonResponse({'sol_form':render_to_string('problemeditor/edit_sol_form.html',{'form':form,'prob':prob})})
 
 @login_required
 def save_sol(request,**kwargs):
@@ -1074,8 +1075,7 @@ def save_new_comment(request,**kwargs):
         action_flag = ADDITION,
         change_message = "/detailedview/"+str(prob.pk)+'/',
         )
-    return JsonResponse({'pk':pk,'com_count':prob.comments.count(),'com-html': render_to_string(
-'problemeditor/comment-body.html',{'request':request,'c': com,'p':prob})})
+    return JsonResponse({'pk':pk,'com_count':prob.comments.count(),'com-html': render_to_string('problemeditor/comment-body.html',{'request':request,'c': com,'p':prob})})
 
 @login_required
 def remove_comment(request,**kwargs):
@@ -1102,3 +1102,41 @@ def refresh_status(request):
     context['plist'] = plist
     context['request'] = request
     return JsonResponse({'refreshed-html':render_to_string('problemeditor/typeview-statusdiv.html',context)})
+
+@login_required
+def edit_problemtext(request,**kwargs):
+    pk = request.POST.get('pk','')
+    prob = get_object_or_404(Problem,pk = pk)
+    form = ProblemTextForm(instance = prob.current_version)
+    return JsonResponse({'modal-html':render_to_string('problemeditor/modal-edit-problemtext.html',{'form':form,'prob':prob})})
+
+
+@login_required
+def save_problemtext(request,**kwargs):
+    pk = request.POST.get('pk','')
+    prob =  get_object_or_404(Problem,pk=pk)
+    cv = prob.current_version
+    form = ProblemTextForm(request.POST,instance = cv)
+    if form.is_valid():
+        cvv = form.save()
+        cvv.problem_latex = newtexcode(cvv.problem_text,cvv.label)
+        cvv.save()
+        compileasy(cvv.problem_text,cvv.label)
+        compiletikz(cvv.problem_text,cvv.label)
+    return JsonResponse({'pk':pk,'prob-html': render_to_string('problemeditor/ptext.html',{'p':prob})})
+
+@login_required
+def archive_mocklist(request):
+    pk = request.POST.get('pk')
+    mklist = get_object_or_404(ShortList,pk=pk)
+    mklist.archived = True
+    mklist.save()
+    return JsonResponse({'mocklist-row': render_to_string('problemeditor/mocklist-row.html',{'t':mklist})})
+
+@login_required
+def unarchive_mocklist(request):
+    pk = request.POST.get('pk')
+    mklist = get_object_or_404(ShortList,pk=pk)
+    mklist.archived = False
+    mklist.save()
+    return JsonResponse({'mocklist-row': render_to_string('problemeditor/mocklist-row.html',{'t':mklist})})

@@ -3,24 +3,49 @@
 {% block title %}Mock Lists{% endblock %}
 
 {% block content %}
+<nav aria-label="breadcrumb" role="navigation">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item active">Mock Lists</li>
+  </ol>
+</nav>
 <div class="container">
   <div class="row">
-    <div class="col-xs-12">
+    <div class="col">
       <h2>Mock Lists</h2>
-      {% if mocklists|length == 0 %}
-      No Mock Lists Available.
-      {% else %}
-      <div class="list-group col-sm-6">
-	{% for t in mocklists %}
-	<a href="{{t.pk}}" class="list-group-item list-group-item-action">{{t.name}} ({{t.problems.count}} Problem{% if t.problems.count == 1 %}{% else %}s{% endif %}; Created on {{t.created_date}})</a>
-	{% endfor %}
-      </div>
-      {% endif %}
     </div>
   </div>
-
   <div class="row">
-    <div class="col-xs-12">
+    <div class="col-6">
+      <div class="card">
+	<div class="card-header">
+	  Current Mock Lists
+	</div>
+	<div class="list-group list-group-flush" id="mock-lists">
+	  {% for t in mocklists %}
+	  {% include 'problemeditor/mocklist-row.html' %}
+	  {% endfor %}
+	</div>
+      </div>
+    </div>
+    <div class="col-6">
+      <div id="accordion">
+	<div class="card">
+	  <div class="card-header" id="archived-header">
+	    Archived Mock Lists (<button class="btn btn-link" data-toggle="collapse" data-target="#archived-mocklists" aria-expanded="true" aria-controls="archived-mocklists">Click to show/hide</button>)
+	  </div>
+	  <div id="archived-mocklists" class="collapse" aria-labelledby="archived-header" data-parent="#accordion">
+	    <div class="list-group list-group-flush" id="archived-mock-lists">
+	      {% for t in archived_mocklists %}
+	      {% include 'problemeditor/mocklist-row.html' %}
+	      {% endfor %}
+	    </div>
+	  </div>
+	</div>
+      </div>
+    </div>
+  </div>
+  <div class="row mt-3">
+    <div class="col">
       <h2>Start a New Mock List</h2>
       <form action="." method="post" id="new-mocklist-form">
         {% csrf_token %}
@@ -30,4 +55,65 @@
     </div>
   </div>
 </div>
+
+<script>
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = jQuery.trim(cookies[i]);
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+var csrftoken = getCookie('csrftoken');
+
+function csrfSafeMethod(method) {
+    // these HTTP methods do not require CSRF protection
+    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+}
+
+$.ajaxSetup({
+        beforeSend: function(xhr, settings) {
+            if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+},
+            });
+$(document).on('click',".archive-link", function(e) {
+  var pk = $(this).attr('id').split('_')[1];
+  $.ajax({
+    type: 'POST',
+    url: '/ajax/archive-mocklist/',
+    data: 'pk='+pk,
+    dataType: 'json',
+    success: function(result) {
+      $("#mocklist_"+pk).remove();
+      $("#archived-mock-lists").append(result['mocklist-row']);
+    }
+  });
+});
+$(document).on('click',".unarchive-link", function(e) {
+  var pk = $(this).attr('id').split('_')[1];
+  $.ajax({
+    type: 'POST',
+    url: '/ajax/unarchive-mocklist/',
+    data: 'pk='+pk,
+    dataType: 'json',
+    success: function(result) {
+      $("#mocklist_"+pk).remove();
+      $("#mock-lists").append(result['mocklist-row']);
+    }
+  });
+
+});
+</script>
+
 {% endblock %}

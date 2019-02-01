@@ -1,0 +1,15 @@
+            <div class="list-group-item p-2" id="mocklist_{{t.pk}}">
+              <div class="d-flex flex-row justify-content-between">
+                <div class="p-0 flex-grow-1">
+
+                  <a href="{{t.pk}}">{{t.name}}</a> ({{t.problems.count}} Problem{% if t.problems.count == 1 %}{% else %}s{% endif %}; Created on {{t.created_date}})
+                </div>
+                <div class="p-0 float-right">
+		  {% if t.archived %}
+                  <button class="btn btn-secondary btn-sm unarchive-link" id="unarchive_{{t.pk}}">Unarchive</button>
+		  {% else %}
+                  <button class="btn btn-secondary btn-sm archive-link" id="archive_{{t.pk}}">Archive</button>
+		  {% endif %}
+                </div>
+              </div>
+            </div>

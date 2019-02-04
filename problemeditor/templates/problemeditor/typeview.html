@@ -14,9 +14,21 @@
 
 {% block content %}
 
+
+<nav id="navbar-topics" class="navbar navbar-light bg-light sticky-top">
+<!--  <a class="navbar-brand" href="#">Navbar</a>-->
+  <ul class="nav nav-pills">
+{% for labl,short_label,plist in allcats %}
+    <li class="nav-item">
+      <a class="nav-link" href="#heading-{{short_label}}">{{labl}}</a>
+    </li>
+{% endfor %}
+  </ul>
+</nav>
+
 <div class="container">
   <div class="row">
-    <div class="col-xs-12 col-sm-9">
+    <div class="col-12 col-sm-9">
       <div class="row">
 	<table class="table">
 	  <tbody>
@@ -114,15 +126,14 @@
 <!--Problems start here-->
       <div class="row">
 	<div class="col">
+	  {% for labl,short_label,plist in allcats %}
+	  <a name="type{{short_label}}"></a> 
+	  <h1 id="heading-{{short_label}}" class="navbar-headings">{{labl}} <button class="btn btn-secondary btn-sm refresh-status-link" id="refresh-status_{{short_label}}"><i class="fa fa-refresh" id="refresh-span_{{short_label}}"></i></button></h1>
 
-	{% for labl,short_label,plist in allcats %}
-      
-	<a name="type{{short_label}}"></a> 
-	<h1>{{labl}} <button class="btn btn-secondary btn-sm refresh-status-link" id="refresh-status_{{short_label}}"><i class="fa fa-refresh" id="refresh-span_{{short_label}}"></i></button></h1>
-	<div id="status-{{short_label}}">
-	  {% include 'problemeditor/typeview-statusdiv.html' %}
-	</div>
-	{% endfor %}
+	  <div id="status-{{short_label}}">
+	    {% include 'problemeditor/typeview-statusdiv.html' %}
+	  </div>
+	  {% endfor %}
 	</div>
       </div>
       <div class="row">

@@ -3,9 +3,14 @@
 {% block title %}Add New Problem{% endblock %}
 
 {% block content %}
+<nav aria-label="breadcrumb" role="navigation">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item active">Past Tests</li>
+  </ol>
+</nav>
 <div class="container">
   <div class="row">
-    <div class="col-6">
+    <div class="col">
       <h2>Past Tests</h2>
       {% if pasttests|length == 0 %}
       No Past Tests Available.

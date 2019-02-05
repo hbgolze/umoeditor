@@ -37,7 +37,8 @@ h1 {
 h2 { font-size:1.4em; }
 h3 { font-size:1.3em; }
 a:visited { color: #551a8b; }
-a.btn:visited { color: #ffffff; }
+a.btn-primary:visited { color: #ffffff; }
+a.btn-secondary:visited { color: #ffffff; }
 p { max-width: 60em; }
 
 a img { border:none; }
@@ -58,11 +59,13 @@ code {font-size:1.2em;
 .btn-link{
   border:none;
   outline:none;
-  background:none;
-  cursor:pointer;
-  padding:0;
-  text-decoration:underline;
-  font-family:inherit;
+//  background:none;
+//  cursor:pointer;
+//  padding:0;
+    padding-right:0;
+    padding-left:0;
+//  text-decoration:underline;
+//  font-family:inherit;
   font-size:inherit;
 }
 img.displayed {

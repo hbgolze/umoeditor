@@ -82,7 +82,7 @@ def index_view(request):
     log = LogEntry.objects.filter(change_message__contains="detailedview").filter(action_time__date__gte = datetime.today().date()-timedelta(days=7))
 
     context['log'] = log
-    context['mklists'] = ShortList.objects.all()
+    context['mklists'] = ShortList.objects.filter(archived=False)
     context['allcats'] = allcats
     context['nbar'] = 'problemeditor'
     context['request'] = request
@@ -228,7 +228,7 @@ def index_view2(request):
         
     context['log'] = log
 
-    context['mklists'] = ShortList.objects.all()
+    context['mklists'] = ShortList.objects.filter(archived=False)
 
     context['allcats'] = allcats
     context['nbar'] = 'problemeditor'
@@ -363,7 +363,7 @@ def change_status(request):
     prob.problem_status = form['stat']
     prob.status_topic = StatusTopic.objects.get(topic = prob.topic_new.topic,status = form['stat'])
     prob.save()
-    return JsonResponse({'prob-card': render_to_string('problemeditor/problemrow.html',{'p':prob,'request':request,'mklists':ShortList.objects.all()}),'add-here':form['stat']+'-'+prob.topic_new.short_topic,'subtract-here':old_stat+'-'+prob.topic_new.short_topic})
+    return JsonResponse({'prob-card': render_to_string('problemeditor/problemrow.html',{'p':prob,'request':request,'mklists':ShortList.objects.filter(archived=False)}),'add-here':form['stat']+'-'+prob.topic_new.short_topic,'subtract-here':old_stat+'-'+prob.topic_new.short_topic})
 
 @login_required
 def change_topic(request):
@@ -376,7 +376,7 @@ def change_topic(request):
     prob.topic_new = new_topic
     prob.status_topic = StatusTopic.objects.get(topic = form['topic'],status = prob.status_topic.status)
     prob.save()
-    return JsonResponse({'prob-card': render_to_string('problemeditor/problemrow.html',{'p':prob,'request':request,'mklists':ShortList.objects.all()}),'add-here':prob.problem_status+'-'+prob.topic_new.short_topic,'subtract-here':prob.problem_status+'-'+old_topic})
+    return JsonResponse({'prob-card': render_to_string('problemeditor/problemrow.html',{'p':prob,'request':request,'mklists':ShortList.objects.filter(archived=False)}),'add-here':prob.problem_status+'-'+prob.topic_new.short_topic,'subtract-here':prob.problem_status+'-'+old_topic})
 
 @login_required
 def add_to_list(request):
@@ -819,7 +819,7 @@ def mocklistsview(request):
 def mocklist(request,pk):
     T = get_object_or_404(ShortList,pk = pk)
     probs = T.problems.order_by('current_version__difficulty')
-    return render(request,'problemeditor/mocklist.html',{'nbar':'mocklists','problems':probs,'mocklist' : T, 'mklists': ShortList.objects.all()})
+    return render(request,'problemeditor/mocklist.html',{'nbar':'mocklists','problems':probs,'mocklist' : T, 'mklists': ShortList.objects.filter(archived=False)})
 
 @login_required
 def remove_from_list(request):
@@ -1044,7 +1044,7 @@ def save_new_problem(request):
             'Number Theory': 'NT',
             'Other':'OT',
             }
-        return JsonResponse({'prob-card': render_to_string('problemeditor/problemrow.html',{'p':problem,'request':request,'mklists':ShortList.objects.all()}),'add-here':'NP'+'-'+problem.topic_new.short_topic,'pk':problem.pk})
+        return JsonResponse({'prob-card': render_to_string('problemeditor/problemrow.html',{'p':problem,'request':request,'mklists':ShortList.objects.filter(archived=False)}),'add-here':'NP'+'-'+problem.topic_new.short_topic,'pk':problem.pk})
     return JsonResponse({})
 #comment-body.html
 
@@ -1098,7 +1098,7 @@ def refresh_status(request):
     context = {}
     if diff != '':
         context['difficulty'] = diff
-    context['mklists'] = ShortList.objects.all()
+    context['mklists'] = ShortList.objects.filter(archived=False)
     context['plist'] = plist
     context['request'] = request
     return JsonResponse({'refreshed-html':render_to_string('problemeditor/typeview-statusdiv.html',context)})

@@ -18,6 +18,9 @@
 <nav id="navbar-topics" class="navbar navbar-light bg-light sticky-top">
 <!--  <a class="navbar-brand" href="#">Navbar</a>-->
   <ul class="nav nav-pills">
+    <li class="nav-item">
+      <a class="nav-link" href="#top-tables">Tables</a>
+    </li>
 {% for labl,short_label,plist in allcats %}
     <li class="nav-item">
       <a class="nav-link" href="#heading-{{short_label}}">{{labl}}</a>
@@ -29,6 +32,7 @@
 <div class="container">
   <div class="row">
     <div class="col-12 col-sm-9">
+      <div id="top-tables" class="navbar-headings">
       <div class="row">
 	<table class="table">
 	  <tbody>
@@ -98,6 +102,7 @@
 	    </div>
 	  </div>
         </div>
+      </div>
       </div>
 
       <div class="row">

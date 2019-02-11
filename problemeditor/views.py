@@ -68,7 +68,7 @@ def index_view(request):
         elif request.GET.get('difficulty') == '6':
             context['difficulty'] = '6'
 
-    template = loader.get_template('problemeditor/typeview.html')
+#    template = loader.get_template('problemeditor/typeview.html')
 
     allcats = (
         ('New Problems', 'NP', StatusTopic.objects.filter(status='NP')),
@@ -86,7 +86,9 @@ def index_view(request):
     context['allcats'] = allcats
     context['nbar'] = 'problemeditor'
     context['request'] = request
-    return HttpResponse(template.render(context,request))
+    return render(request,'problemeditor/typeview.html',context)
+
+#HttpResponse(template.render(context,request))
 
 
 @login_required

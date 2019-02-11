@@ -71,13 +71,14 @@
 	<button class="btn btn-sm btn-primary new-solution-link" id="new-sol_{{p.pk}}" title="Add New Solution"><span class="fa fa-plus"></span></button>
       </div>
     </p>
+{% if p.current_version %}
     <label>Rating:</label>
     {% if request.user in p.current_version.authors.all %}
     <p>{% ratings p.current_version 20 20 'read_only' %}</p>
     {% else %}
     <p>{% ratings p.current_version 20 20 %}</p>
     {% endif %}
-    
+{% endif %}
     {% if mocklist %}
     <p>
       <button type="submit" id="remove_{{mocklist.pk}}_{{p.pk}}" class="btn btn-primary btn-sm remove-from-mocklist">Remove from List</button>

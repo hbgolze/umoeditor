@@ -33,7 +33,7 @@
 \maketitle
 \begin{enumerate}
 {% for p in rows %}
-\item {{p.current_version.problem_text}} [{{p.label}}]
+\item ({{p.label}}) {{p.current_version.problem_text}}
 
 {% endfor %}
 \end{enumerate}

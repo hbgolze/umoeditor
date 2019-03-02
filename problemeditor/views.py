@@ -800,6 +800,7 @@ def test_as_pdf(request, pk):
     r.write(pdf)
     return r
 
+
 @login_required
 def mocklistsview(request):
     if request.method == 'POST':
@@ -908,6 +909,26 @@ def shortlist_as_pdf(request, pk):
             with open(os.path.join(tempdir,'texput.log')) as f:
                 error_text = f.read()
                 return render(request,'problemeditor/latex_errors.html',{'nbar':'mocklists','mocklist':shortlist,'error_text':error_text})
+
+@login_required
+def shortlist_as_latex(request,pk):
+    shortlist = get_object_or_404(ShortList, pk = pk)
+    P = shortlist.problems.order_by('difficulty')
+    context = Context({
+            'name':shortlist.name,
+            'rows':P,
+            'pk':pk,
+            })
+    asyf = open(settings.BASE_DIR+'/asymptote.sty','r')
+    asyr = asyf.read()
+    asyf.close()
+    template = get_template('problemeditor/my_latex_template.tex')
+    rendered_tpl = template.render(context).encode('utf-8')
+
+    filename = shortlist.name + ".tex"
+    response = HttpResponse(rendered_tpl, content_type='text/plain')
+    response['Content-Disposition'] = 'attachment; filename={0}'.format(filename)
+    return response
 
 @login_required
 def new_solution(request):

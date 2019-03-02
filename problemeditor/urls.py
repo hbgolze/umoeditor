@@ -30,6 +30,7 @@ urlpatterns = [
     url(r'^mocklists/$',views.mocklistsview,name='mocklistsview'),
     url(r'^mocklists/(?P<pk>\w+)/$',views.mocklist,name='mocklist'),
     url(r'^mocklists/pdfs/(?P<pk>\w+)/$',views.shortlist_as_pdf,name='mocklist_pdf'),
+    url(r'^mocklists/latex/(?P<pk>\w+)/$',views.shortlist_as_latex,name='mocklist_latex'),
     url(r'^ajax/get-new-table/$',views.get_new_table,name='get_new_table'),
     url(r'^ajax/change-difficulty/$',views.change_difficulty,name='change_difficulty'),
     url(r'^ajax/change-status/$',views.change_status,name='change_status'),

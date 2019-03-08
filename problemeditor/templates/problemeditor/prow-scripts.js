@@ -194,6 +194,13 @@ $(document).on('submit',"#new-solution-form",function(event) {
 		    success: function(result) {
 		    $("#solution-link_"+result['pk']).text("Solutions ("+result['sol_count']+")");
 		    $("#solution-placeholder").hide();
+
+		    d = new Date();
+		    $("#solution-link_"+result['pk']+" img").each(function(e) {
+			    url = $(this).attr("src");
+			    $(this).attr("src",url+"?"+d.getTime());
+		    	});
+
 		    $("[data-dismiss=modal]").trigger({ type: "click" });
 		}
 	    });
@@ -482,6 +489,11 @@ $(document).on('submit',"#edit-latex-form",function(e) {
 		    MathJax.Hub.Queue(["Typeset",MathJax.Hub,"problem-code_"+result['pk']]);
 		    $("#edit-latex-placeholder").hide();
 		    $("[data-dismiss=modal]").trigger({ type: "click" });
+		    d = new Date();
+		    $("#problem-code_"+result['pk']+" img").each(function(e) {
+			    url = $(this).attr("src");
+			    $(this).attr("src",url+"?"+d.getTime());
+		    	});
 
 		}
 	    });

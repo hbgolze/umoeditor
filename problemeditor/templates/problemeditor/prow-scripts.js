@@ -164,7 +164,7 @@ $(document).on('click','.solution-link',function(e) {
 		    success: function(result) {		    
 		    $('#solution-placeholder').html(result['modal-html']);
 		    MathJax.Hub.Queue(["Typeset",MathJax.Hub,"solution-placeholder"]);
-		    $('#solution-placeholder').modal("show");
+		    $('#solution-placeholder').modal({backdrop: 'static', keyboard: false});;
 		}
 	    });
     });
@@ -179,7 +179,7 @@ $(document).on('click','.new-solution-link',function(e) {
 		    success: function(result) {		    
 		    $('#solution-placeholder').html(result['modal-html']);
 		    MathJax.Hub.Queue(["Typeset",MathJax.Hub,"solution-placeholder"]);		    
-		    $("#solution-placeholder").modal("show");
+		    $("#solution-placeholder").modal({backdrop: 'static', keyboard: false});;
 		}
 	    });
 	
@@ -351,7 +351,8 @@ $(document).on('click','.add-problem-link',function(e) {
 		    dataType: 'json',
 		    success: function(result) {
 		    $('#add-problem-placeholder').html(result['modal-html']);
-		    $("#add-problem-placeholder").modal("show");
+		    $("#add-problem-placeholder").modal({backdrop: 'static', keyboard: false});
+
 		}
 	    });
 	
@@ -409,7 +410,8 @@ $(document).on('click','.add-comment-link',function(e) {
 		    success: function(result) {		    
 		    $('#comment-placeholder').html(result['modal-html']);
 		    MathJax.Hub.Queue(["Typeset",MathJax.Hub,"comment-placeholder"]);
-		    $("#comment-placeholder").modal("show");
+		    $("#comment-placeholder").modal({backdrop: 'static', keyboard: false});;
+
 		}
 	    });
 	
@@ -472,7 +474,7 @@ $(document).on('click',".edit-latex-link", function(e) {
 		    success: function(result) {
 		    $("#edit-latex-placeholder").html(result['modal-html']);
 		    MathJax.Hub.Queue(["Typeset",MathJax.Hub,"edit-latex-placeholder"]);
-		    $('#edit-latex-placeholder').modal("show");
+		    $('#edit-latex-placeholder').modal({backdrop: 'static', keyboard: false});;
 		}
 	    });
     });

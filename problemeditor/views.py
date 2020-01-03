@@ -837,7 +837,7 @@ def remove_from_list(request):
 @login_required
 def shortlist_as_pdf(request, pk):
     shortlist = get_object_or_404(ShortList, pk = pk)
-    P = shortlist.problems.order_by('difficulty')
+    P = shortlist.problems.order_by('current_version__difficulty')###
     context = Context({  
             'name':shortlist.name,
             'rows':P,

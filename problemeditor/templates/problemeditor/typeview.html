@@ -112,8 +112,8 @@
       </div>
 
       <div class="row mb-2">
-        <div class="col-sm-5">
-          <div class="list-group">
+        <div class="col-sm-12">
+          <div class="list-group list-group-horizontal">
             <a href="/" class="p-2 list-group-item list-group-item-action{% if not difficulty %} active{% endif %}">
               All Difficulties
             </a>
@@ -132,9 +132,8 @@
       <div class="row">
 	<div class="col">
 	  {% for labl,short_label,plist in allcats %}
-	  <a name="type{{short_label}}"></a> 
+	  <a name="type{{short_label}}"></a>
 	  <h1 id="heading-{{short_label}}" class="navbar-headings">{{labl}} <button class="btn btn-secondary btn-sm refresh-status-link" id="refresh-status_{{short_label}}"><i class="fa fa-refresh" id="refresh-span_{{short_label}}"></i></button></h1>
-	  
 	  <div id="status-{{short_label}}">
 	    {% include 'problemeditor/typeview-statusdiv.html' %}
 	  </div>

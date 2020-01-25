@@ -1,0 +1,27 @@
+{% extends "./base.html" %}
+
+{% block title %}Error: Problem Does Not Exist{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="row">
+    <div class="col">
+      <h1>Error!</h1>
+      <p>The requested problem does not exist.</p>
+
+      <p>Search for another problem:</p>
+      <form class="form-inline my-2 my-lg-0" id="nav-search-form">
+	<input class="form-control mr-sm-2" type="number" min="1" placeholder="Go to Problem" id="search_problem_pk" aria-label="Search">
+	<button class="btn btn-outline-success my-2 my-sm-0" type="submit">Go</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+$(document).on('submit',"#nav-search-form",function(e) {
+  e.preventDefault();
+  window.location.assign('/detailedview/'+$("#search_problem_pk").val());
+});
+</script>
+{% endblock%}

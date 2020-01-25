@@ -606,7 +606,10 @@ def newcommentpkview(request,**kwargs):
 @login_required
 def detailedproblemview(request,**kwargs):
     pk = kwargs['pk']
-    prob = get_object_or_404(Problem, pk = pk)
+    try:
+        prob = Problem.objects.get(pk=pk)#get_object_or_404(Problem, pk = pk)
+    except Problem.DoesNotExist:
+        return render(request,'problemeditor/detailedviewerror.html',{'pk':pk,'nbar': 'problemeditor'})
     if request.method == "POST":
         versions = prob.versions.all()
         for i in versions:

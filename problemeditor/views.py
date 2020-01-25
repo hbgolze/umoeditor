@@ -54,6 +54,7 @@ def UpdatePassword(request):
 @login_required
 def index_view(request):
     context={}
+    context['status'] = 'NP'
     if request.method == "GET":
         if request.GET.get('difficulty') == '1':
             context['difficulty'] = '1'
@@ -67,6 +68,9 @@ def index_view(request):
             context['difficulty'] = '5'
         elif request.GET.get('difficulty') == '6':
             context['difficulty'] = '6'
+        if request.GET.get('status') in ['NP','PN','PL','MI','MJ','all']:
+            context['status'] = request.GET.get('status')
+
 
     allcats = (
         ('New Problems', 'NP', StatusTopic.objects.filter(status='NP')),

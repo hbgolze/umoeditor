@@ -235,13 +235,5 @@ background: #006699; color: #fff; }
     box-shadow: none;
 }
 
-.navbar-headings::before { 
-  display: block; 
-  content: " "; 
-  margin-top: -60px; 
-  height: 60px; 
-  visibility: hidden; 
-  pointer-events: none;
-}
 
 

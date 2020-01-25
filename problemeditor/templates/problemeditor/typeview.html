@@ -32,7 +32,7 @@
 <div class="container">
   <div class="row">
     <div class="col-12 col-sm-9">
-      <div id="top-tables" class="navbar-headings">
+      <div id="top-tables">
       <div class="row">
 	<table class="table">
 	  <tbody>
@@ -133,7 +133,7 @@
 	<div class="col">
 	  {% for labl,short_label,plist in allcats %}
 	  <a name="type{{short_label}}"></a>
-	  <h1 id="heading-{{short_label}}" class="navbar-headings">{{labl}} <button class="btn btn-secondary btn-sm refresh-status-link" id="refresh-status_{{short_label}}"><i class="fa fa-refresh" id="refresh-span_{{short_label}}"></i></button></h1>
+	  <h1 id="heading-{{short_label}}">{{labl}} <button class="btn btn-secondary btn-sm refresh-status-link" id="refresh-status_{{short_label}}"><span class="fa fa-refresh" id="refresh-span_{{short_label}}"></span></button></h1>
 	  <div id="status-{{short_label}}">
 	    {% include 'problemeditor/typeview-statusdiv.html' %}
 	  </div>

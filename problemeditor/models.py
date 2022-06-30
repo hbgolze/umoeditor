@@ -52,7 +52,7 @@ class Comment(models.Model):
     comment_text = models.TextField()
     problem_label = models.CharField(max_length=20,blank=True)
     comment_number = models.IntegerField(default=1)
-    author = models.ForeignKey(User,blank=True)
+    author = models.ForeignKey(User,blank=True,null=True,on_delete=models.SET_NULL)
     author_name = models.CharField(max_length=50,blank=True)
     created_date = models.DateTimeField(default = timezone.now)
     def __str__(self):
@@ -80,8 +80,8 @@ class ProblemVersion(models.Model):
     authors = models.ManyToManyField(User,blank=True)
 
 class Problem(models.Model):
-    topic_new = models.ForeignKey(Topic,blank=True,null=True)
-    problem_status_new = models.ForeignKey(ProblemStatus,blank=True,null=True)
+    topic_new = models.ForeignKey(Topic,blank=True,null=True,on_delete=models.SET_NULL)
+    problem_status_new = models.ForeignKey(ProblemStatus,blank=True,null=True,on_delete=models.SET_NULL)
     TOPIC_CHOICES = (
         ('Algebra','Algebra'),
         ('Combinatorics','Combinatorics'),
@@ -112,8 +112,8 @@ class Problem(models.Model):
     problem_status = models.CharField(max_length=2,default='NP')#ManyToManyField(ProblemStatus,blank=True)
     versions = models.ManyToManyField(ProblemVersion,blank=True,related_name='problem_version')
     top_version_number = models.IntegerField(default=0)
-    current_version = models.ForeignKey(ProblemVersion,blank=True,related_name='current_version', null=True)
-    status_topic = models.ForeignKey(StatusTopic,blank=True, related_name="problems", null=True)
+    current_version = models.ForeignKey(ProblemVersion,blank=True,related_name='current_version', null=True,on_delete = models.SET_NULL)
+    status_topic = models.ForeignKey(StatusTopic,blank=True, related_name="problems", null=True,on_delete=models.SET_NULL)
     def __str__(self):
         return self.label
 
@@ -125,7 +125,7 @@ class FinalTest(models.Model):
 #Probably useless
 class UserProfile(models.Model):
     # This line is required. Links UserProfile to a User model instance.
-    user = models.OneToOneField(User)
+    user = models.OneToOneField(User,null=True,on_delete=models.SET_NULL)
     def __unicode__(self):
         return self.user.username
 
@@ -134,7 +134,7 @@ class ShortList(models.Model):
     name = models.CharField(max_length=50)
     archived = models.BooleanField(default=False)
     created_date = models.DateTimeField(default = timezone.now)
-    author = models.ForeignKey(User,blank=True,null=True)
+    author = models.ForeignKey(User,blank=True,null=True,on_delete=models.SET_NULL)
     def __str__(self):
         return self.name
 

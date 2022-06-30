@@ -267,10 +267,10 @@ def compileasy(texcode,label,sol=''):
         asy_code = asy_code.rstrip().lstrip()
         filename = label+sol+'-'+str(i+1)
         filename = filename.replace(' ','')#this could be bad...
-        context = Context({
+        context = {
                 'asy_code':asy_code,
                 'filename':filename,
-                })
+                }
         template = get_template('problemeditor/my_asy_template.asy')
         rendered_tpl = template.render(context).encode('utf-8')
         with tempfile.TemporaryDirectory() as tempdir:
@@ -309,10 +309,10 @@ def compiletikz(texcode,label,sol=''):
         tikz_code = tikz_code.rstrip().lstrip()
         filename = 'tikz'+label+sol+'-'+str(i+1)
         filename = filename.replace(' ','')
-        context = Context({
+        context = {
                 'tikz_code':tikz_code,
                 'filename':filename,
-                })
+                }
         template = get_template('problemeditor/my_tikz_template.tex')
         rendered_tpl = template.render(context).encode('utf-8')
 

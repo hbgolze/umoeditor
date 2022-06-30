@@ -740,11 +740,11 @@ def publishview(request,year):
 def test_as_pdf(request, pk):
     test = get_object_or_404(FinalTest, pk=pk)
     P=test.problems.order_by('difficulty')
-    context = Context({  
+    context = {  
             'name':test.year+' UMO',
             'rows':P,
             'pk':pk,
-            })
+            }
     asyf = open(settings.BASE_DIR+'/asymptote.sty','r')
     asyr = asyf.read()
     asyf.close()
@@ -759,12 +759,12 @@ def test_as_pdf(request, pk):
         fa.write(asyr)
         fa.close()
         logger.debug(os.listdir(tempdir))
-        context = Context({  
+        context = {  
                 'name':test.year+' UMO',
                 'rows':P,
                 'pk':pk,
                 'tempdirect':tempdir,
-                })
+                }
         template = get_template('problemeditor/my_latex_template.tex')
         rendered_tpl = template.render(context).encode('utf-8')  
         ftex = open(os.path.join(tempdir,'texput.tex'),'wb')
@@ -845,11 +845,11 @@ def remove_from_list(request):
 def shortlist_as_pdf(request, pk):
     shortlist = get_object_or_404(ShortList, pk = pk)
     P = shortlist.problems.order_by('current_version__difficulty')###
-    context = Context({  
+    context = {  
             'name':shortlist.name,
             'rows':P,
             'pk':pk,
-            })
+            }
     asyf = open(settings.BASE_DIR+'/asymptote.sty','r')
     asyr = asyf.read()
     asyf.close()
@@ -864,12 +864,12 @@ def shortlist_as_pdf(request, pk):
         fa.write(asyr)
         fa.close()
         logger.debug(os.listdir(tempdir))
-        context = Context({  
+        context = {  
                 'name':shortlist.name,
                 'rows':P,
                 'pk':pk,
                 'tempdirect':tempdir,
-                })
+                }
         template = get_template('problemeditor/my_latex_template.tex')
         rendered_tpl = template.render(context).encode('utf-8')  
         ftex = open(os.path.join(tempdir,'texput.tex'),'wb')
@@ -921,11 +921,11 @@ def shortlist_as_pdf(request, pk):
 def shortlist_as_latex(request,pk):
     shortlist = get_object_or_404(ShortList, pk = pk)
     P = shortlist.problems.order_by('difficulty')
-    context = Context({
+    context = {
             'name':shortlist.name,
             'rows':P,
             'pk':pk,
-            })
+            }
     asyf = open(settings.BASE_DIR+'/asymptote.sty','r')
     asyr = asyf.read()
     asyf.close()

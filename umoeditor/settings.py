@@ -25,7 +25,10 @@ SECRET_KEY = 'u1zea2)%tlte1ln15_a5w0#^6bt$@yt8z=*n7f6f9ja34bnxmv'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['umoeditor.pythonanywhere.com','127.0.0.1']
+ALLOWED_HOSTS = [
+    'umoeditor.pythonanywhere.com',
+#    '127.0.0.1'
+]
 
 
 # Application definition

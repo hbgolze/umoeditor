@@ -329,8 +329,18 @@ def compiletikz(texcode,label,sol=''):
                     cwd = tempdir,
                     )
                 process.communicate(rendered_tpl)
-            L=os.listdir(tempdir)
-            command = "convert -density 150 -quality 95 %s/%s -trim -bordercolor White -border 10x10 +repage %s%s" % (tempdir, 'texput.pdf', settings.MEDIA_ROOT, filename+'.png')
+            t=os.getcwd()
+            os.chdir(tempdir)
+            command = "mtxrun --script pdftrimwhite --offset=10 texput.pdf texput-2.pdf"
+            proc1 = subprocess.Popen(command,
+                                    shell=True,
+                                    stdin=subprocess.PIPE,
+                                    stdout=subprocess.PIPE,
+                                    stderr=subprocess.PIPE,
+                                    )
+            stdout_value = proc1.communicate()[0]
+            os.chdir(t)
+            command = "pdftoppm -png %s/%s > %s%s" % (tempdir, 'texput-2.pdf', settings.MEDIA_ROOT, filename + '.png')
             proc = subprocess.Popen(command,
                                     shell=True,
                                     stdin=subprocess.PIPE,
@@ -338,4 +348,5 @@ def compiletikz(texcode,label,sol=''):
                                     stderr=subprocess.PIPE,
                                     )
             stdout_value = proc.communicate()[0]
+            
 

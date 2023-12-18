@@ -729,8 +729,7 @@ def publishview(request,year):
         T.save()        
         for p in problems:
             T.problems.add(p)
-            p.problem_status = 'XX'
-            p.save()
+            p.publish_it()
         T.save()
         return redirect('/pasttests/')
     return render(request,'problemeditor/publishview.html',{'year':year,'nbar':'pasttests','problems':problems})    

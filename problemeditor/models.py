@@ -116,6 +116,12 @@ class Problem(models.Model):
     status_topic = models.ForeignKey(StatusTopic,blank=True, related_name="problems", null=True,on_delete=models.SET_NULL)
     def __str__(self):
         return self.label
+    def publish_it(self):
+        self.problem_status = 'XX'
+        self.problem_status_new = ProblemStatus.objects.get(status = "XX")
+        self.topic_new = Topic.objects.get(topic = self.topic)
+        self.status_topic = StatusTopic.objects.get(status = 'XX',topic = self.topic)
+        self.save()
 
 class FinalTest(models.Model):
     problems=models.ManyToManyField(Problem,blank=True)

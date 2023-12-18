@@ -283,7 +283,8 @@ def compileasy(texcode,label,sol=''):
             L=os.listdir(tempdir)
             for j in L:
                 if 'pdf' in j:
-                    command = "convert -density 150 -quality 95 %s/%s %s%s" % (tempdir, j, settings.MEDIA_ROOT, j.replace('.pdf','.png'))
+                    command = "pdftoppm -png %s/%s > %s%s" % (tempdir, j, settings.MEDIA_ROOT, j.replace('.pdf','.png'))
+#                    command = "convert -density 150 -quality 95 %s/%s %s%s" % (tempdir, j, settings.MEDIA_ROOT, j.replace('.pdf','.png'))
                     proc = subprocess.Popen(command,
                                             shell=True,
                                             stdin=subprocess.PIPE,
